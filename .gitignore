@@ -1,0 +1,17 @@
+apps/api/config/app.yml
+apps/frontend/config/app.yml
+apps/frontend/config/routing.yml
+apps/frontend/config/settings.yml
+*.DS_Store
+cache/
+config/ProjectConfiguration.class.php
+config/databases.yml
+config/sphinx.conf
+data/dumps/
+data/sphinx*
+data/sql/
+lib/model/doctrine/lsOpenSecretsPlugin/
+log/
+plugins/.*
+plugins/lsOpenSecretsPlugin/
+web/.htaccess
