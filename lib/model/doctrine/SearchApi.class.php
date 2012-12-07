@@ -21,7 +21,7 @@ class SearchApi
 
   static function getEntities($options=array())
   {
-    $s = new SphinxClient();
+    $s = new LsSphinxClient();
     $s->SetServer('localhost', 3312);
     $s->SetMatchMode(SPH_MATCH_ANY);
 

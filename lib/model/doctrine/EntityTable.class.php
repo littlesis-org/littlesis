@@ -1276,7 +1276,7 @@ class EntityTable extends Doctrine_Table
   static function getSphinxHits($query, $page=1, $num=20, Array $listIds=null)
   {
    
-    $s = new SphinxClient();
+    $s = new LsSphinxClient();
     $s->SetServer('localhost', 3312);
     $s->SetMatchMode(SPH_MATCH_EXTENDED);
     $s->SetFieldWeights(array('name' => 3, 'aliases' => 3));

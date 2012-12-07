@@ -40,6 +40,7 @@ class LsSphinxClient extends SphinxClient
   
   function Query($query, $index="*", $comment="")
   {
+    $query = $this->EscapeString($query);
     $result = parent::Query($query, $index="*", $comment="");
     
     $this->_total = $result['total_found'];
