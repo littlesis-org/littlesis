@@ -1,0 +1,13 @@
+Index: plugins/sfDoctrinePlugin/lib/doctrine/Doctrine/Connection.php
+===================================================================
+--- plugins/sfDoctrinePlugin/lib/doctrine/Doctrine/Connection.php	(revision 5330)
++++ plugins/sfDoctrinePlugin/lib/doctrine/Doctrine/Connection.php	(working copy)
+@@ -53,7 +53,7 @@
+  * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
+  * @author      Lukas Smith <smith@pooteeweet.org> (MDB2 library)
+  */
+-abstract class Doctrine_Connection extends Doctrine_Configurable implements Countable, IteratorAggregate, Serializable
++abstract class Doctrine_Connection extends Doctrine_Configurable implements Countable, IteratorAggregate
+ {
+     /**
+      * @var $dbh                                the database handler

@@ -1,0 +1,20 @@
+matchDonationsSuccess:
+  javascripts:    [%SF_PROTOTYPE_WEB_DIR%/js/prototype]
+
+matchDonorsSuccess:
+  javascripts:    [%SF_PROTOTYPE_WEB_DIR%/js/prototype]
+
+addBulkSuccess:
+  javascripts:    [%SF_PROTOTYPE_WEB_DIR%/js/prototype, %SF_PROTOTYPE_WEB_DIR%/js/scriptaculous, %SF_PROTOTYPE_WEB_DIR%/js/effects]
+
+uploadBulkSuccess:
+  javascripts:    [%SF_PROTOTYPE_WEB_DIR%/js/prototype, %SF_PROTOTYPE_WEB_DIR%/js/scriptaculous, %SF_PROTOTYPE_WEB_DIR%/js/effects]
+
+editExternalKeysSuccess:
+  javascripts:    [%SF_PROTOTYPE_WEB_DIR%/js/prototype, %SF_PROTOTYPE_WEB_DIR%/js/scriptaculous, %SF_PROTOTYPE_WEB_DIR%/js/effects]
+  
+editCustomFieldsSuccess:
+  javascripts:    [%SF_PROTOTYPE_WEB_DIR%/js/prototype]
+  
+viewSuccess:
+  javascripts:    [d3,%SF_PROTOTYPE_WEB_DIR%/js/prototype, %SF_PROTOTYPE_WEB_DIR%/js/scriptaculous, %SF_PROTOTYPE_WEB_DIR%/js/effects]

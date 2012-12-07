@@ -1,0 +1,13 @@
+Index: plugins/sfDoctrinePlugin/config/doctrine.yml
+===================================================================
+--- plugins/sfDoctrinePlugin/config/doctrine.yml	(revision 12457)
++++ plugins/sfDoctrinePlugin/config/doctrine.yml	(working copy)
+@@ -16,6 +16,8 @@
+     # enable autoloading of table class
+     autoload_table_classes: true
+ 
++    use_dql_callbacks: true
++
+   listeners:        []
+   record_listeners: []
+ 

@@ -1,0 +1,23 @@
+rendering: ~
+
+security:
+  class: sfGuardBasicSecurityFilter
+
+cookies:
+  class: LsSecurityFilter
+
+input_escape:
+  class: InputEscapeFilter
+  param:
+    custom: true
+
+request_filter:
+  class: LsRequestFilter
+
+# insert your own filters here
+
+cache:
+ class: LsCacheFilter
+ 
+common:    ~
+execution: ~

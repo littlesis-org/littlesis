@@ -1,0 +1,191 @@
+source entities
+{
+    type                            = mysql    
+    sql_host                        = localhost
+    sql_user                        = [username]
+    sql_pass                        = [password]
+    sql_db                          = [database]
+    sql_sock                        = [path/to/mysqld.sock]
+    sql_port                        = 3306                  
+
+    sql_query_pre = REPLACE INTO sphinx_index SELECT 'entities', MAX(updated_at) FROM entity;
+    sql_query = \
+            SELECT \
+                    e.id, e.name, e.blurb, e.summary, e.primary_ext, \
+                    GROUP_CONCAT(DISTINCT a.name SEPARATOR ' ') AS aliases, \
+                    GROUP_CONCAT(DISTINCT er.definition_id) AS type_ids, \
+                    GROUP_CONCAT(DISTINCT le.list_id) AS list_ids \
+            FROM \
+                    entity e \
+                    LEFT JOIN alias a ON (e.id = a.entity_id) \
+                    LEFT JOIN extension_record er ON (e.id = er.entity_id) \
+                    LEFT JOIN ls_list_entity le ON (e.id = le.entity_id) \
+            WHERE \
+                    e.is_deleted = 0 \
+                    AND le.is_deleted = 0 \
+                    AND e.updated_at <= ( SELECT updated_at FROM sphinx_index WHERE name = 'entities' ) \
+            GROUP BY \
+                    e.id;
+                    
+    sql_attr_multi          = uint type_ids from field
+    sql_attr_multi          = uint list_ids from field
+    sql_query_info          = SELECT * FROM entity WHERE id=$id
+}
+
+
+source entities-delta : entities
+{
+    type                            = mysql    
+    sql_host                        = localhost
+    sql_user                        = [username]
+    sql_pass                        = [password]
+    sql_db                          = [database]
+    sql_sock                        = [path/to/mysqld.sock]
+    sql_port                        = 3306                  
+
+    sql_query_pre =
+    sql_query = \
+            SELECT \
+                    e.id, e.name, e.blurb, e.summary, e.primary_ext, \
+                    GROUP_CONCAT(DISTINCT a.name SEPARATOR ' ') AS aliases, \
+                    GROUP_CONCAT(DISTINCT er.definition_id) AS type_ids, \
+                    GROUP_CONCAT(DISTINCT le.list_id) AS list_ids \
+            FROM \
+                    entity e \
+                    LEFT JOIN alias a ON (e.id = a.entity_id) \
+                    LEFT JOIN extension_record er ON (e.id = er.entity_id) \
+                    LEFT JOIN ls_list_entity le ON (e.id = le.entity_id) \
+            WHERE \
+                    e.is_deleted = 0 \
+                    AND le.is_deleted = 0 \
+                    AND e.updated_at > ( SELECT updated_at FROM sphinx_index WHERE name = 'entities' ) \
+            GROUP BY \
+                    e.id;
+                    
+    sql_attr_multi          = uint type_ids from field
+    sql_attr_multi          = uint list_ids from field
+    sql_query_info          = SELECT * FROM entity WHERE id=$id
+}
+
+
+source notes
+{
+    type                            = mysql    
+    sql_host                        = localhost
+    sql_user                        = [username]
+    sql_pass                        = [password]
+    sql_db                          = [database]
+    sql_sock                        = [path/to/mysqld.sock]
+    sql_port                        = 3306                  
+
+    sql_query_pre = REPLACE INTO sphinx_index SELECT 'notes', MAX(updated_at) FROM note;
+    sql_query = \
+            SELECT \
+                    n.id, n.user_id, n.title, n.body, n.alerted_user_ids, n.entity_ids, \
+                    n.relationship_ids, n.lslist_ids, n.sfguardgroup_ids, \
+                    n.network_ids, n.is_private, UNIX_TIMESTAMP(n.created_at) AS created_at, \
+                    CONCAT_WS('', IF(n.is_private, '', '0,'), n.user_id, n.alerted_user_ids) AS visible_to_user_ids \
+            FROM \
+                    note n \
+            WHERE \
+                    n.created_at <= ( SELECT updated_at FROM sphinx_index WHERE name = 'notes' )
+                    
+    sql_attr_multi          = uint alerted_user_ids from field
+    sql_attr_multi          = uint entity_ids from field
+    sql_attr_multi          = uint relationship_ids from field
+    sql_attr_multi          = uint lslist_ids from field
+    sql_attr_multi          = uint sfguardgroup_ids from field
+    sql_attr_multi          = uint network_ids from field
+    sql_attr_multi          = uint visible_to_user_ids from field
+    sql_attr_timestamp      = created_at
+    sql_attr_uint           = user_id
+    sql_query_info          = SELECT * FROM note WHERE id=$id
+}
+
+
+source notes-delta : notes
+{
+    type                            = mysql    
+    sql_host                        = localhost
+    sql_user                        = [username]
+    sql_pass                        = [password]
+    sql_db                          = [database]
+    sql_sock                        = [path/to/mysqld.sock]
+    sql_port                        = 3306                  
+
+    sql_query_pre =
+    sql_query = \
+            SELECT \
+                    n.id, n.user_id, n.title, n.body_raw, n.alerted_user_ids, n.entity_ids, \
+                    n.relationship_ids, n.lslist_ids, n.sfguardgroup_ids, \
+                    n.network_ids, n.is_private, UNIX_TIMESTAMP(n.created_at) AS created_at, \
+                    CONCAT_WS('', IF(n.is_private, '', '0,'), n.user_id, n.alerted_user_ids) AS visible_to_user_ids \
+            FROM \
+                    note n \
+            WHERE \
+                    n.created_at > ( SELECT updated_at FROM sphinx_index WHERE name = 'notes' )
+                    
+    sql_attr_multi          = uint alerted_user_ids from field
+    sql_attr_multi          = uint entity_ids from field
+    sql_attr_multi          = uint relationship_ids from field
+    sql_attr_multi          = uint lslist_ids from field
+    sql_attr_multi          = uint sfguardgroup_ids from field
+    sql_attr_multi          = uint network_ids from field
+    sql_attr_multi          = uint visible_to_user_ids from field
+    sql_attr_timestamp      = created_at
+    sql_attr_uint           = user_id
+    sql_query_info          = SELECT * FROM entity WHERE id=$id
+}
+
+
+index entities
+{
+    source                  = entities
+    path                    = [path/to/littlesis]/data/sphinx.entities.index
+    enable_star             = 1
+    min_word_len            = 2
+    min_prefix_len          = 0
+    min_infix_len           = 2
+    charset_type            = utf-8
+}
+
+
+index entities-delta : entities
+{
+    source                  = entities-delta
+    path                    = [path/to/littlesis]/data/sphinx.entities-delta.index
+    charset_type            = utf-8
+}
+
+
+index notes
+{
+    source                  = notes
+    path                    = [path/to/littlesis]/data/sphinx.notes.index
+    enable_star             = 1
+    min_word_len            = 2
+    min_prefix_len          = 0
+    min_infix_len           = 2
+    charset_type            = utf-8
+}
+
+
+index notes-delta : notes
+{
+    source                  = notes-delta
+    path                    = [path/to/littlesis]/data/sphinx.notes-delta.index
+    charset_type            = utf-8
+}
+
+indexer
+{
+		mem_limit 							= 256M
+}
+
+searchd
+{
+    port                    = 3312
+    log                     = [path/to/littlesis/logs]/searchd/searchd.log
+    query_log               = [path/to/littlesis/logs]/searchd/query.log
+    pid_file                = [path/to/littlesis/logs]/searchd/searchd.pid
+}

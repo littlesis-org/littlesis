@@ -1,0 +1,11 @@
+rendering: ~
+security:  ~
+
+request_filter:
+  class: LsRequestFilter
+
+# insert your own filters here
+
+cache:     ~
+common:    ~
+execution: ~

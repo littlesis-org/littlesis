@@ -1,0 +1,167 @@
+---
+options:
+  collate: utf8_unicode_ci
+  charset: utf8 
+  
+GovtrackPerson:
+  connection: raw
+  columns:
+    govtrack_id:
+      type: integer
+      primary: true
+    os_id: string(20)
+    bioguide_id: string(20)
+    name_last:
+      type: string(50)
+      notnull: true
+      notblank: true
+    name_first:
+      type: string(50)
+      notnull: true
+      notblank: true
+    name_middle:
+      type: string(50)
+      notblank: true
+    gender:
+      type: enum
+      length: 1
+      values: ['M', 'F']
+    start_date: string(10)
+    url: string(100)
+    party_id: integer
+    state_id: integer
+    district: integer
+  relations:
+    Party:
+      class: GovtrackParty
+      local: party_id
+      foreign: id
+      onUpdate: CASCADE
+    State:
+      class: GovtrackState
+      local: state_id
+      foreign: id
+      onUpdate: CASCADE
+
+GovtrackRole:
+  connection: raw
+  columns:
+    person_id:
+      type: integer
+      notnull: true
+    type_id:
+      type: integer
+      notnull: true
+    party_id: integer
+    state_id: integer
+    district: integer
+    start_date: string(10)
+    end_date: string(10)
+    url: string(100)
+  relations:
+    Person:
+      class: GovtrackPerson
+      local: person_id
+      foreign: govtrack_id
+      onUpdate: CASCADE
+      onDelete: CASCADE
+    Type:
+      class: GovtrackRoleType
+      local: type_id
+      foreign: id
+      onUpdate: CASCADE
+    Party:
+      class: GovtrackParty
+      local: party_id
+      foreign: id
+      onUpdate: CASCADE
+    State:
+      class: GovtrackState
+      local: state_id
+      foreign: id
+      onUpdate: CASCADE
+
+GovtrackRoleType:
+  connection: raw
+  columns:
+    name: 
+      type: string(10)
+      notnull: true
+      notblank: true
+
+GovtrackParty:
+  connection: raw
+  columns:
+    name: 
+      type: string(30)
+      notnull: true
+      notblank: true
+
+GovtrackState:
+  connection: raw
+  columns:
+    name: 
+      type: string(50)
+      notblank: true
+    abbreviation: 
+      type: string(2)
+      notnull: true
+      notblank: true
+    country_id: integer
+
+GovtrackCommittee:
+  connection: raw
+  columns:
+    name:
+      type: string(100)
+      notnull: true
+      notblank: true
+
+GovtrackSubcommittee:
+  connection: raw
+  columns:
+    committee_id:
+      type: integer
+      notnull: true
+    name:
+      type: string(200)
+      notnull: true
+      notblank: true
+  relations:
+    Committee:
+      class: GovtrackCommittee
+      local: committee_id
+      foreign: id
+      onUpdate: CASCADE
+      onDelete: CASCADE
+
+GovtrackPersonCommittee:
+  connection: raw
+  columns:
+    person_id:
+      type: integer
+      notnull: true
+    committee_id:
+      type: integer
+      notnull: true
+    subcommittee_id: integer
+    role: string(50)
+  relations:
+    Person:
+      class: GovtrackPerson
+      local: person_id
+      foreign: govtrack_id
+      onUpdate: CASCADE
+      onDelete: CASCADE
+    Committee:
+      class: GovtrackCommittee
+      local: committee_id
+      foreign: id
+      onUpdate: CASCADE
+      onDelete: CASCADE
+    Subcommittee:
+      class: GovtrackSubcommittee
+      local: subcommittee_id
+      foreign: id
+      onUpdate: CASCADE
+      onDelete: CASCADE

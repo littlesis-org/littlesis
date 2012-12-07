@@ -1,0 +1,65 @@
+# default rules
+homepage:
+  url:   /
+  param: { module: home, action: start }
+
+default_symfony:
+  url:   /symfony/:action/*
+  param: { module: default }
+
+default_index:
+  url:   /:module
+  param: { action: index }
+
+default:
+  url:   /:module/:action/*
+
+
+# SLUGS
+person:
+  url:   person/:id/:slug/:target/*
+  param: { module: entity, action: person }
+
+personView:
+  url:   person/:id/:slug/*
+  param: { module: entity, action: person, target: view }
+
+org:
+  url:   org/:id/:slug/:target/*
+  param: { module: entity, action: org }
+
+orgView:
+  url:   org/:id/:slug/*
+  param: { module: entity, action: org, target: view }
+
+addPerson:
+  url:   entity/addPerson/*
+  param: { module: entity, action: addPerson }
+
+addOrg:
+  url:   entity/addOrg/*
+  param: { module: entity, action: addOrg }
+
+entityRoute:
+  url:   entity/route/*
+  param: { module: entity, action: route }
+
+entityCatch:
+  url:   entity/:target/*
+  param: { module: entity, action: route }
+
+list:
+  url:   list/:id/:slug/:target/*
+  param: { module: list, action: slug }
+
+listView:
+  url:   list/:id/:slug/*
+  param: { module: list, action: slug, target: view }
+
+listRoute:
+  url:   list/route/*
+  param: { module: list, action: route }
+
+listCatch:
+  url:   list/:target/*
+  param: { module: list, action: route }

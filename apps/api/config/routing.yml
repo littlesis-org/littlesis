@@ -1,0 +1,175 @@
+search_entities_chains:
+  url:    /entities/chains/:id1;:id2.:format
+  param: { module: search, action: entitiesChains }
+  requirements: { id1: \d+, id2: \d+ }
+
+batch_relationships:
+  url:   /batch/relationships.:format
+  param: { module: batch, action: relationships }
+
+batch_entities_with_orgs:
+  url:   /batch/entities/with-orgs.:format
+  param: { module: batch, action: entitiesWithOrgs }
+
+batch_entities:
+  url:   /batch/entities.:format
+  param: { module: batch, action: entities }
+
+search_lists:
+  url:   /lists.:format
+  param: { module: search, action: lists }
+  requirements: { id: \d+ }
+
+search_relationships:
+  url:   /relationships/:entity1_id;:entity2_id.:format
+  param: { module: search, action: relationships }
+  requirements: { entity1_id: \d+, entity2_id: \d+ }
+
+search_entites_by_id:
+  url:   /entities/:id_name/:id_value.:format
+  param: { module: search, action: lookupEntities }
+  requirements: { id: \d+ }
+
+search_entities_with_orgs:
+  url:   /entities/with-orgs.:format
+  param: { module: search, action: entitiesWithOrgs }
+  requirements: { id: \d+ }
+
+search_entities:
+  url:   /entities.:format
+  param: { module: search, action: entities }
+  requirements: { id: \d+ }
+
+list_entities_with_orgs:
+  url:   /list/:id/entities/with-orgs.:format
+  param: { module: list, action: entitiesWithOrgs }
+  requirements: { id: \d+ }
+
+list_entities:
+  url:   /list/:id/entities.:format
+  param: { module: list, action: entities }
+  requirements: { id: \d+ }
+
+list_view:
+  url:   /list/:id.:format
+  param: { module: list, action: view }
+  requirements: { id: \d+ }
+
+relationship_references:
+  url:   /relationship/:id/references.:format
+  param: { module: relationship, action: references }
+  requirements: { id: \d+ }
+
+relationship_details:
+  url:   /relationship/:id/details.:format
+  param: { module: relationship, action: details }
+  requirements: { id: \d+ }
+
+relationship_view:
+  url:   /relationship/:id.:format
+  param: { module: relationship, action: view }
+  requirements: { id: \d+ }
+
+entity_image:
+  url:   /entity/:id/image
+  param: { module: entity, action: image }
+  requirements: { id: \d+ }
+
+entity_images:
+  url:   /entity/:id/images.:format
+  param: { module: entity, action: images }
+  requirements: { id: \d+ }
+
+entity_child-orgs:
+  url:   /entity/:id/child-orgs.:format
+  param: { module: entity, action: childOrgs }
+  requirements: { id: \d+ }
+
+entity_relationship_references:
+  url:   /entity/:id/relationships/references.:format
+  param: { module: entity, action: relationshipReferences }
+  requirements: { id: \d+ }
+  
+entity_references:
+  url:   /entity/:id/references.:format
+  param: { module: entity, action: references }
+  requirements: { id: \d+ }
+
+entity_lists: 
+  url:   /entity/:id/lists.:format
+  param: { module: entity, action: lists }
+  requirements: { id: \d+ }
+
+entity_related_degree2:
+  url:   /entity/:id/related/degree2.:format
+  param: { module: entity, action: degree2 }
+  requirements: { id: \d+ }
+
+entity_leadership_degree2:
+  url:   /entity/:id/leadership/degree2.:format
+  param: { module: entity, action: leadershipDegree2 }
+  requirements: { id: \d+ }
+
+entity_orgs:
+  url:   /entity/:id/orgs.:format
+  param: { module: entity, action: orgs }
+  requirements: { id: \d+ }
+
+entity_leadership:
+  url:   /entity/:id/leadership.:format
+  param: { module: entity, action: leadership }
+  requirements: { id: \d+ }
+  
+entity_related:
+  url:   /entity/:id/related.:format
+  param: { module: entity, action: related }
+  requirements: { id: \d+ }
+
+entity_relationships:
+  url:   /entity/:id/relationships.:format
+  param: { module: entity, action: relationships }
+  requirements: { id: \d+ }
+
+entity_aliases:
+  url:   /entity/:id/aliases.:format
+  param: { module: entity, action: aliases }
+  requirements: { id: \d+ }
+  
+entity_details:
+  url:   /entity/:id/details.:format
+  param: { module: entity, action: details }
+  requirements: { id: \d+ }
+  
+entity_view:
+  url:   /entity/:id.:format
+  param: { module: entity, action: view }
+  requirements: { id: \d+ }
+
+register:
+  url:   /register
+  param: { module: home, action: register }
+
+documentation:
+  url:   /documentation
+  param: { module: home, action: documentation }
+
+relationship_categories:
+  url:   /relationships/categories.:format
+  param: { module: lookup, action: relationshipCategories }
+
+entity_types:
+  url:   /entities/types.:format
+  param: { module: lookup, action: entityTypes }
+
+
+# default rules
+homepage:
+  url:   /
+  param: { module: home, action: index }
+
+default_index:
+  url:   /:module
+  param: { action: index }
+
+default:
+  url:   /:module/:action/*

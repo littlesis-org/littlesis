@@ -1,0 +1,240 @@
+# PUBLIC PAGES
+about:
+  url:   /about
+  param: { module: home, action: about }
+
+purpose:
+  url:   /purpose
+  param: { module: home, action: purpose }
+
+features:
+  url:   /features
+  param: { module: home, action: features }
+
+faq:
+  url:   /faq
+  param: { module: home, action: faq }
+
+status:
+  url:   /status
+  param: { module: home, action: status }
+
+team:
+  url:   /team
+  param: { module: home, action: team }
+
+join:
+  url:   /join
+  param: { module: home, action: join }
+
+jobs:
+  url:   /jobs
+  param: { module: home, action: jobs }
+
+funding:
+  url:   /funding
+  param: { module: home, action: funding }
+
+contact:
+  url:   /contact
+  param: { module: home, action: contact }
+  
+startpage:
+  url:   /start
+  param: { module: home, action: start }
+
+confirm:
+  url:   /confirm
+  param: { module: home, action: confirmEmail }
+
+password:
+  url:   /password
+  param: { module: home, action: resetPassword }
+
+guide:
+  url:   /guide
+  param: { module: home, action: guide }
+
+account:
+  url:   /account
+  param: { module: home, action: account }
+
+lists:
+  url:   /lists
+  param: { module: list, action: list }
+
+howto:
+  url:   /howto
+  param: { module: home, action: howto }
+
+videos:
+  url:   /videos
+  param: { module: home, action: videos }
+  
+disclaimer:
+  url:   /disclaimer
+  param: { module: home, action: disclaimer }
+
+notes:
+  url:   /notes
+  param: { module: note, action: search }
+
+press:
+  url:   /press
+  param: { module: home, action: press }
+
+search:
+  url:   /search
+  param: { module: search, action: simple }
+
+groups:
+  url:   /groups
+  param: { module: group, action: list }
+  
+analysts:
+  url:   /analysts
+  param: { module: user, action: featured }
+
+chat:
+  url:   /chat
+  param: { module: home, action: chat }
+
+data:
+  url:   /data
+  param: { module: home, action: data }
+
+
+# SLUGS
+personPager:
+  url:   person/:id/:slug/:action/page/:page/*
+  param: { module: entity }
+  requirements: { page: \d+ }
+
+person:
+  url:   person/:id/:slug/:action/*
+  param: { module: entity }
+
+personView:
+  url:   person/:id/:slug/*
+  param: { module: entity, action: view }
+
+orgPager:
+  url:   org/:id/:slug/:action/page/:page/*
+  param: { module: entity }
+  requirements: { page: \d+ }
+
+org:
+  url:   org/:id/:slug/:action/*
+  param: { module: entity }
+
+orgView:
+  url:   org/:id/:slug/*
+  param: { module: entity, action: view }
+
+addPerson:
+  url:   entity/addPerson/*
+  param: { module: entity, action: addPerson }
+
+addOrg:
+  url:   entity/addOrg/*
+  param: { module: entity, action: addOrg }
+
+entityRoute:
+  url:   entity/:target/*
+  param: { module: entity, action: route }
+
+listPager:
+  url:   list/:id/:slug/:action/page/:page/*
+  param: { module: list }
+  requirements: { page: \d+ }
+  
+list:
+  url:   list/:id/:slug/:action/*
+  param: { module: list }
+
+listView:
+  url:   list/:id/:slug/*
+  param: { module: list, action: view }
+
+listRoute:
+  url:   list/:target/*
+  param: { module: list, action: route }
+
+
+# RELATIONSHIPS
+relationship:
+  url:   relationship/:action/id/:id/*
+  param: { module: relationship }
+
+
+# USERS
+userNote:
+  url:  user/:name/note/:id
+  param: { module: user, action: note }
+
+user:
+  url:  user/:name/:action/*
+  param: { module: user }
+
+userView:
+  url:  user/:name/*
+  param: { module: user, action: notes }
+
+
+# GROUPS
+group:
+  url: group/:name/:action/*
+  param: { module: group }
+
+groupView:
+  url: group/:name
+  param: { module: group, action: view }
+
+
+# INDUSTRIES
+industries:
+  url: /industries
+  param: { module: industry, action: list }
+
+categoryView:
+  url: /industry/category/:category
+  param: { module: industry, action: category }
+
+categoryPeople:
+  url: /industry/category/:category/people
+  param: { module: industry, action: category, type: people }
+
+categoryOrgs:
+  url: /industry/category/:category/orgs
+  param: { module: industry, action: category, type: orgs }
+
+
+# LOCAL
+local:
+  url: local/:name/:action/*
+  param: { module: local }
+
+localView:
+  url: local/:name
+  param: { module: local, action: index }
+
+localHome:
+  url:   /:name
+  param: { module: local, action: index }
+
+
+# default rules
+homepage:
+  url:   /
+  param: { module: home, action: welcome }
+
+default_symfony:
+  url:   /symfony/:action/*
+  param: { module: default }
+
+default:
+  url:   /:module/:action/*
+
+sf_guard_signin:
+  url:   /login/*
+  param: { module: sfGuardAuth, action: signin }

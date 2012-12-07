@@ -1,0 +1,16 @@
+Index: plugins/sfDoctrineGuardPlugin/config/doctrine/schema.yml
+===================================================================
+--- plugins/sfDoctrineGuardPlugin/config/doctrine/schema.yml	(revision 12617)
++++ plugins/sfDoctrineGuardPlugin/config/doctrine/schema.yml	(working copy)
+@@ -53,7 +53,10 @@
+       onDelete: CASCADE
+ 
+ sfGuardUser:
+-  actAs: [Timestampable]
++  actAs: 
++    Timestampable:
++    SoftDelete:
++      name: is_deleted
+   columns:
+     id:
+       type: integer(4)

@@ -1,0 +1,19 @@
+# default values
+all:
+  sf_guard_plugin:
+    remember_key_expiration_age:  2592000   # 30 days in seconds
+    remember_cookie_name:         LittleSisRememberMe
+    success_signout_url:          @homepage
+
+  mail:
+    invite_sender_address:  join@littlesis.org
+    invite_sender_name:     LittleSis
+  
+  
+  versioning:
+    track_modifications:  on
+    
+  
+  api:
+    sender_address:  api@littlesis.org
+    sender_name:     LittleSis Web Services

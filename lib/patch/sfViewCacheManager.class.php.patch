@@ -1,0 +1,20 @@
+Index: lib/view/sfViewCacheManager.class.php
+===================================================================
+--- lib/view/sfViewCacheManager.class.php	(revision 14050)
++++ lib/view/sfViewCacheManager.class.php	(working copy)
+@@ -606,7 +606,14 @@
+    */
+   public function computeCacheKey(array $parameters)
+   {
+-    return isset($parameters['sf_cache_key']) ? $parameters['sf_cache_key'] : md5(serialize($parameters));
++    try
++    {
++      return isset($parameters['sf_cache_key']) ? $parameters['sf_cache_key'] : md5(serialize($parameters));
++    }
++    catch (PDOException $e)
++    {
++      return null;
++    }
+   }
+ 
+   /**

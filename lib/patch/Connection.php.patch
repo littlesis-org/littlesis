@@ -1,0 +1,25 @@
+*** Connection.php	2008-08-22 12:52:16.000000000 -0700
+--- Connection.php.1	2008-08-22 12:53:49.000000000 -0700
+***************
+*** 456,461 ****
+--- 456,463 ----
+                                       (!$this->options['password'] ? '':$this->options['password']), $this->options['other']);
+  
+                      $this->dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
++                     $this->dbh->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, true);
++ 					
+              	} catch (PDOException $e) {
+              		throw new Doctrine_Connection_Exception('PDO Connection Error: ' . $e->getMessage());
+              	}
+***************
+*** 1562,1565 ****
+      {
+          return Doctrine_Lib::getConnectionAsString($this);
+      }
+! }
+\ No newline at end of file
+--- 1564,1567 ----
+      {
+          return Doctrine_Lib::getConnectionAsString($this);
+      }
+! }

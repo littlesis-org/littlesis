@@ -1,0 +1,50 @@
+<?php
+
+require_once '[PATH TO SYMFONY 1.1 HERE]/lib/autoload/sfCoreAutoload.class.php';
+sfCoreAutoload::register();
+
+class ProjectConfiguration extends sfProjectConfiguration
+{
+  static protected $zendLoaded = false;
+ 
+
+  public function setup()
+  {
+  }
+
+
+  public function configure()
+  {
+    self::configureDirs();
+    self::configureCache();
+  }
+
+
+  static function configureDirs()
+  {
+    sfConfig::set('sf_image_dir', sfConfig::get('sf_web_dir') . DIRECTORY_SEPARATOR . 'images');
+    sfConfig::set('sf_temp_dir', sfConfig::get('sf_root_dir') . DIRECTORY_SEPARATOR . 'tmp');  
+  }
+
+
+  static function configureCache()
+  {
+    sfConfig::set('sf_cache_namespace_callable', array('LsCache', 'generateCacheKey'));
+  }
+  
+
+  static public function registerZend()
+  {
+    if (self::$zendLoaded)
+    {
+      return;
+    }
+ 
+    set_include_path(sfConfig::get('sf_lib_dir') . '/vendor' . PATH_SEPARATOR . get_include_path());
+    require_once sfConfig::get('sf_lib_dir') . '/vendor/Zend/Loader.php';
+    Zend_Loader::registerAutoload();
+    self::$zendLoaded = true;
+
+    Zend_Search_Lucene_Analysis_Analyzer::setDefault(new Zend_Search_Lucene_Analysis_Analyzer_Common_TextNum_CaseInsensitive());
+  }
+}

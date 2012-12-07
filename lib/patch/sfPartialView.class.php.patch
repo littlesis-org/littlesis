@@ -1,0 +1,22 @@
+Index: lib/view/sfPartialView.class.php
+===================================================================
+--- lib/view/sfPartialView.class.php	(revision 14050)
++++ lib/view/sfPartialView.class.php	(working copy)
+@@ -110,7 +110,16 @@
+     $this->viewCache = $this->context->getViewCacheManager();
+     $this->viewCache->registerConfiguration($this->moduleName);
+ 
+-    $this->cacheKey = $this->viewCache->computeCacheKey($this->partialVars);
++    if (!sfConfig::get('app_cache_partials_enabled'))
++    {
++      return null;
++    }
++
++    if (!$this->cacheKey = $this->viewCache->computeCacheKey($this->partialVars))
++    {
++      return null;
++    }
++
+     if ($retval = $this->viewCache->getPartialCache($this->moduleName, $this->actionName, $this->cacheKey))
+     {
+       return $retval;

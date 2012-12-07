@@ -1,0 +1,15 @@
+* html #banner {
+	height: 287px;
+}
+
+* html #rightcol.equal {
+	width: 457px;
+}
+
+ul.tabs li a {
+	top: -1px;
+}
+
+ul.tabs li.on a {
+	top: 0;
+}

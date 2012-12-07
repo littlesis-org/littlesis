@@ -1,0 +1,1 @@
+<?php echo LsDataFormat::toXml($entity, 'Entity') ?>

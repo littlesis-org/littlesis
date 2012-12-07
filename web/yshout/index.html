@@ -1,0 +1,92 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+		<title>YShout: Welcome!</title>
+		
+		<script src="js/jquery.js" type="text/javascript"></script>
+		<script src="js/yshout.js" type="text/javascript"></script>
+
+		<link rel="stylesheet" href="example/css/example.yshout.css" />
+		<link rel="stylesheet" href="css/style.css" />
+		
+		<script>
+			$(function() {
+				var loc = document.location.href.toString();
+				if (loc.charAt(loc.length - 1) != '/') {
+					loc = loc.substring(0, loc.lastIndexOf('/')) + '/';
+				}
+				
+				$('.ys-url').html(loc);
+				
+				$('body').ScrollToAnchors({	duration: 500 });
+
+			});
+			
+			new YShout({
+				yPath: '',
+				yLink: 'ylink'
+			});
+		</script>
+	</head>
+	<body>
+		<div id="container">
+			<div id="top">
+				<h1>YShout.Welcome</h1>
+				<div id="nav">Have a look around:
+					<a href="example/">Example</a>,
+					<a href="history/">History</a>,
+					<a href="cp/">Control panel</a>.
+				</div>
+			</div>
+			
+			<div id="main">
+				<h2>Congratulations!</h2>
+				<p>Hello and congratulations on your installation of YShout. This page is here to inform you of a hopefully successful installation. If you'd like to see if YShout has installed properly, mosey on over to the <a href="example/">example YShout</a> &mdash; if it's there, then everything has worked!</p>
+				<p>If the example does not appear, try chmodding everything inside the YShout directory to <em>777</em>. This step is not required on all servers, but there are some for which it is imperative in order for YShout to be able to function.</p>
+
+				<h2>Integration</h2>
+				<p>To include YShout within your webpage, follow these instructions. First, add the following code to your <code>&lt;head&gt;</code> of a page you wish YShout to appear on. (make sure the paths are correct):
+<pre><code>&lt;script src="yshout/js/jquery.js" type="text/javascript"&gt;&lt;/script&gt;
+&lt;script src="yshout/js/yshout.js" type="text/javascript"&gt;&lt;/script&gt;
+&lt;link rel="stylesheet" href="yshout/example/css/light.yshout.css" /&gt;
+
+&lt;script type="text/javascript"&gt;
+   new YShout();
+&lt;/script&gt;</code></pre>
+					<p>YShout can take a few arguments in its constructor, as shown below:</p>
+					
+<pre><code>&lt;script type="text/javascript"&gt;
+	new YShout({
+	   yPath: '<span class="ys-url"></span>',
+	   log: 1
+	});
+&lt;script type="text/javascript"&gt;
+</code></pre>
+	
+				<ul>
+					<li><code>yPath</code>: When using YShout on your own page, set this to the complete URL to YShout &mdash in this case, <em class="ys-url"></em>. This is the only necessary argument, the rest are fully optional.</li>
+					<li><code>log</code>: If you want the same shoutbox to appear on all pages you include YShout on, you don't even need to include <code>log</code> in the constructor. If you do want different conversations on different pages, however, set <code>log</code> to a different number on each page. By default, you can only have 5 different chat logs, but this can be changed from the <a href="cp/">control panel</a>.</li>
+					<li><code>yLink</code>: Set this to the id of an <code>&lt;a&gt;</code> element. That link, when clicked, will open YShout in a translucent overlay &mdash; <a id="ylink" href="#">example</a>.</li>
+				</ul>
+				<p>Lastly, add the following code where you want YShout to be displayed:</p>
+				<pre><code>&lt;div id="yshout"&gt;&lt;/div&gt;</code></pre>
+
+				<p>And that's it &mdash; you're all set, enjoy!</p>
+				
+				<h2>Customization</h2>
+				<p>If you're not satisfied with the way YShout set up and would like to twiddle with some preferences, there is a <a href="cp/">control panel</a> set up for that express purpose &mdash; the default password is <em>fortytwo</em>. You can configure many options from the control panel, as well as manage bans.</p>
+				<p>If you'd like to peruse through the previous messages, YShout 5 also includes a new and improved <a href="history/">history viewer</a>. In order to ban people and delete messages from the history, log into the control panel; once you're logged in, you will see little hover controls next to the messages, allowing you to manage the messages.</p>
+				<p>As for custom stylesheets, YShout comes with the example style, as well as two simpler ones: light and dark. These two are located in the <em>example/css</em> folder, and you can either use them directly, or modify them to your liking. View the <a href="example/light.html">light</a>  or the <a href="example/dark.html">dark</a> style.</p>
+				
+				<h2>Contact</h2>
+				<p>If you have any questions or comments, feedback is always appreciated. I can be reached at <a href="mailto:yurivish@gmail.com">yurivish@gmail.com</a>, or at <a href="aim:goim?screenname=yurivish42">yurivish42</a> on AIM.</p>
+			</div>
+		</div>
+		
+		<div id="footer">
+			&copy; Yuri Vishnevsky, 1730&ndash;3010. I demand that all rights may or may not be reserved! YShout loves the wonderful <a href="jquery.com">jQuery</a> javascript library. <a href="#container">Back to top</a>.
+		</div>
+	</body>
+</html>

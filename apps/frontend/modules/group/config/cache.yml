@@ -1,0 +1,7 @@
+view:
+  enabled: off
+
+updates:
+  enabled: on
+  lifetime: 60
+  with_layout: false

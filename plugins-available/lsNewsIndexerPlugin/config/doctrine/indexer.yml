@@ -1,0 +1,95 @@
+Article:
+  columns:
+    id: 
+      type: integer(4)
+      primary: true
+      autoincrement: true
+    url:
+      type: string(300)
+      notnull: true
+    title:
+      type: string(200)
+      notnull: true
+    authors:
+      type: string(200)
+    body:
+      type: clob
+      notnull: true
+    description: string(500)
+    source_id: integer(4)
+    published_at:
+      type: timestamp
+    is_indexed:
+      type: boolean
+      notnull: true
+      default: 0
+    reviewed_at:
+      type: timestamp
+      notnull: false
+      default: null
+    reviewed_by_user_id:
+      type: integer      
+    is_featured:
+      type: boolean
+      notnull: true
+      default: 0
+    is_hidden:
+      type: boolean
+      notnull: true
+      default: 0
+    found_at:
+      type: timestamp
+      notnull: true
+  relations:
+    ArticleSource:
+      local: source_id
+      foreign: id
+      onUpdate: CASCADE
+      onDelete: SET NULL
+    User:
+      local: reviewed_by_user_id
+      foreign: id
+      onUpdate: CASCADE
+      onDelete: CASCADE
+
+ArticleSource:
+  columns:
+    id: 
+      type: integer(4)
+      primary: true
+      autoincrement: true
+    name:
+      type: string(100)
+      notnull: true
+    abbreviation:
+      type: string(10)
+      notnull: true
+
+ArticleEntity:
+  columns:
+    id:
+      type: integer(4)
+      primary: true
+      autoincrement: true
+    article_id:
+      type: integer(4)
+      notnull: true
+    entity_id:
+      type: integer(4)
+      notnull: true
+    original_name:
+      type: string(100)
+      notnull: true
+    is_verified: 
+      type: boolean
+      notnull: true
+      default: 0
+    reviewed_by_user_id: integer
+    reviewed_at: timestamp
+  relations:
+    Article:
+      local: article_id
+      foreign: id
+    Entity:
+      local: entity_id
+      foreign: id

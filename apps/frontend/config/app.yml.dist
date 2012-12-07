@@ -1,0 +1,80 @@
+# default values
+all:
+  login_enabled: on
+
+  sf_guard_plugin:
+    remember_key_expiration_age:  2592000   # 30 days in seconds
+    remember_cookie_name:         LittleSisRememberMe
+    success_signout_url:          @homepage
+    
+  versioning:
+    track_modifications:  on
+
+  logging:
+    views:                off
+
+  accounts:
+    auto_approve:         on
+    
+  mail:
+    join_sender_address:        join@littlesis.org
+    join_sender_name:           LittleSis
+
+    password_sender_address:    admin@littlesis.org
+    password_sender_name:       LittleSis
+    
+    contact_sender_address:     admin@littlesis.org
+    contact_sender_name:        LittleSis
+    contact_recipient_address:  admin@littlesis.org
+
+    alert_sender_address:       admin@littlesis.org
+    alert_sender_name:          LittleSis
+    alert_recipient_address:    admin@littlesis.org
+
+    notes_sender_name:          LittleSis
+    notes_sender_address:       noreply@littlesis.org
+        
+  cache:
+    partials_enabled:     off
+    query_enabled:        off
+    result_enabled:       off
+    driver:               Apc
+
+  login:
+    admin_only:           off
+
+  search:
+    engine:               sphinx
+    lucene_index_file:    lucene.entity.index
+
+  amazon:
+    enable_s3:            false
+    enable_s3_assets:     false
+    s3_base:              "http://s3.amazonaws.com"
+    s3_bucket:            littlesis
+    s3_folder:            images
+    access_key:           AMAZON_ACCESS_KEY
+    secret_key:           AMAZON_SECRET_KEY
+
+  google:
+    maps_key:             GOOGLE_MAPS_KEY
+
+  nytimes:
+    username:             NYTIMES_USERNAME
+    password:             NYTIMES_PASSWORD
+    
+  opencalais:
+    license_id:           OPENCALAIS_LICENSE_ID
+    
+  recaptcha:
+    public_key:           RECAPTCHA_PUBLIC_KEY
+    private_key:          RECAPTCHA_PRIVATE_KEY
+
+  sunlight:
+    api_key:              SUNLIGHT_API_KEY
+
+  votesmart:
+    api_key:              VOTESMART_API_KEY
+
+  yahoo:
+    api_key:              YAHOO_API_KEY

@@ -1,0 +1,236 @@
+LdaGovt:
+  connection: raw
+  columns:
+    name: 
+      type: string(100)
+      notnull: true
+      notblank: true
+    
+LdaClient:
+  connection: raw
+  columns:
+    name:
+      type: string(100)
+      notnull: true
+      notblank: true
+    abbreviation:
+      type: string(50)
+    description:
+      type: clob
+    federal_client_id:
+      type: integer
+    registrant_id:
+      type: integer
+    contact_name:
+      type: string(100)
+    country:
+      type: string(50)
+    state:
+      type: string(20)
+  relations:
+    LdaRegistrant:
+      local: registrant_id
+      foreign: id
+
+LdaRegistrant:
+  connection: raw
+  columns:
+    name:
+      type: string(100)
+      notnull: true
+      notblank: true
+    abbreviation:
+      type: string(100)
+    description:
+      type: clob
+    federal_registrant_id:
+      type: integer
+    country:
+      type: string(50)
+    address:
+      type: string(100)
+
+LdaLobbyist:
+  connection: raw
+  columns:
+    name: 
+      type: string(100)
+      notnull: true
+      notblank: true
+    status:
+      type: integer
+    indicator:
+      type: integer
+    official_position:
+      type: string(50)
+    registrant_id:
+      type: integer
+  relations:
+    LdaRegistrant:
+       local: registrant_id
+       foreign: id
+    LdaFilings:
+      refClass: LdaFilingLobbyist
+      class: LdaFiling
+      local: lobbyist_id
+      foreign: filing_id
+      
+      
+LdaType:
+  connection: raw
+  columns:
+    description:
+      type: string(100)
+      notnull: true
+      notblank: true
+
+LdaPeriod:
+  connection: raw
+  columns:
+    description:
+      type: string(100)
+      notnull: true
+      notblank: true
+  
+LdaImport:
+  connection: raw
+  columns:
+    year:
+      type: integer
+      notnull: true
+    quarter:
+      type: integer
+    filename:
+      type: string(100)
+      notnull: true
+    filesize:
+      type: integer
+      notnull: true
+    offset:
+      type: integer
+      notnull: true
+    done:
+      type: integer
+      notnull: true
+      default: 0
+            
+LdaFiling:
+  connection: raw
+  columns:
+    federal_filing_id:
+      type: string(50)
+      notnull: true
+    client_id:
+      type: integer
+    registrant_id:
+      type: integer
+      notnull: true
+    year:
+      type: integer
+      default: null
+    amount:
+      type: integer
+      default: null
+    type_id:
+      type: integer
+      notnull: true
+    received:
+      type:  string(20)
+    period_id:
+      type: integer
+    import_id:
+      type: integer
+    offset:
+      type: integer
+  relations:
+    LdaClient:
+      local: client_id
+      foreign: id
+    LdaRegistrant:
+      local: registrant_id
+      foreign: id
+    LdaType:
+      local: type_id
+      foreign: id  
+    LdaImport:
+      local: import_id
+      foreign: id
+    LdaPeriod:
+      local: period_id
+      foreign: id
+    LdaIssues:
+      refClass: LdaFilingIssue
+      class: LdaIssue
+      local: filing_id
+      foreign: issue_id
+    LdaLobbyists:
+      refClass: LdaFilingLobbyist
+      class: LdaLobbyist
+      local: filing_id
+      foreign: lobbyist_id
+    LdaGovts:
+      refClass: LdaFilingGovt
+      class: LdaGovt
+      local: filing_id
+      foreign: govt_id
+
+LdaFilingGovt:
+  connection: raw
+  columns:
+    filing_id:
+      type: integer
+      notnull: true
+    govt_id:  
+      type: integer
+      notnull: true
+  relations:
+    LdaFiling:
+      local: filing_id
+      foreign: id
+    LdaGovt:
+      local: govt_id
+      foreign: id  
+    
+LdaIssue:
+  connection: raw
+  columns:
+    name:
+      type: string(100)
+      notnull: true
+      
+LdaFilingIssue:
+  connection: raw
+  columns:
+    filing_id:
+      type: integer
+      notnull: true
+    issue_id:
+      type: integer
+      notnull: true
+    specific_issue:
+      type: clob
+  relations:
+    LdaFiling:
+      local: filing_id
+      foreign: id
+    LdaIssue:
+      local: issue_id
+      foreign: id
+
+LdaFilingLobbyist:
+  connection: raw
+  columns:
+    filing_id: 
+      type: integer
+      notnull: true
+    lobbyist_id:
+      type: integer
+  relations:
+    LdaFiling:
+      local: filing_id
+      foreign: id
+    LdaLobbyist:
+      local: lobbyist_id
+      foreign: id
+
+  

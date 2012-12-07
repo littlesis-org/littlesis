@@ -1,0 +1,17 @@
+toolbarSuccess:
+  javascripts:  [%SF_PROTOTYPE_WEB_DIR%/js/prototype, %SF_PROTOTYPE_WEB_DIR%/js/scriptaculous, %SF_PROTOTYPE_WEB_DIR%/js/effects]
+  
+toolbarCategoriesSuccess:
+  has_layout:   off
+  
+toolbarCategoryFieldsSuccess:
+  has_layout:   off
+
+toolbarSearchSuccess:
+  has_layout:   off
+  
+toolbarCreateSuccess:
+  has_layout:   off
+  
+toolbarCheckExisting:
+  has_layout:   off

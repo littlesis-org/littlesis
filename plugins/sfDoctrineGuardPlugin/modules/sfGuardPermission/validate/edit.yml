@@ -1,0 +1,16 @@
+methods:
+  post:
+    - "sf_guard_permission{name}"
+
+names:
+  sf_guard_permission{name}:
+    required:     yes
+    required_msg: Please, enter a name
+    validators:   nameUniqueValidator
+
+nameUniqueValidator: 
+  class:          sfDoctrineUniqueValidator
+  param:
+    class:        sfGuardPermission
+    column:       name
+    unique_error: This permission name already exists

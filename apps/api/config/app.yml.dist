@@ -1,0 +1,21 @@
+# default values
+all:
+  recaptcha:
+    public_key:           RECAPTCHA_PUBLIC_KEY
+    private_key:          RECPATCHA_PRIVATE_KEY
+
+  mail:
+    sender_address:       api@littlesis.org
+    sender_name:          LittleSis Web Services
+    
+  documentation:
+    admin_key:            API_ADMIN_KEY
+
+  amazon:
+    enable_s3:            false
+    enable_s3_assets:     false
+    s3_base:              "http://s3.amazonaws.com"
+    s3_bucket:            littlesis
+    s3_folder:            images
+    access_key:           AMAZON_ACCESS_KEY
+    secret_key:           AMAZON_SECRET_KEY    

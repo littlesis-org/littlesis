@@ -1,0 +1,40 @@
+methods:
+  post:
+    - "sf_guard_user{username}"
+    - "sf_guard_user{password}"
+    - "sf_guard_user{password_bis}"
+
+names:
+  sf_guard_user{username}:
+    required:     yes
+    required_msg: Please, enter a username
+    validators:   usernameUniqueValidator
+
+  sf_guard_user{password}:
+    required:     no
+    group:        password
+    validators:   passwordValidator
+
+  sf_guard_user{password_bis}:
+    required:     no
+    group:        password
+    validators:   comparePasswordValidator
+
+usernameUniqueValidator:
+  class:          sfDoctrineUniqueValidator
+  param:
+    class:        sfGuardUser
+    column:       username
+    unique_error: This username already exists
+
+passwordValidator:
+  class:          sfStringValidator
+  param:
+    min:          4
+    min_error:    The minimum length for the password is 4
+
+comparePasswordValidator:
+  class:           sfCompareValidator
+  param:
+    check:         "sf_guard_user[password]"
+    compare_error: Passwords do not match

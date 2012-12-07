@@ -1,0 +1,11 @@
+remove:
+  is_secure: on
+  credentials: deleter
+  
+addTag:
+  is_secure: on
+  credentials: contributor
+  
+untag:
+  is_secure: on
+  credentials: editor

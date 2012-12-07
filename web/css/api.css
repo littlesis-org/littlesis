@@ -1,0 +1,71 @@
+.api_body
+{
+  font-family: Arial, Helvetica, sans-serif;
+  margin: 50px;
+}
+
+.api_container
+{
+  width: 800px;
+  margin: 0 auto;
+}
+
+.api_form_error
+{
+  color: #f00;
+}
+
+table.api_form
+{
+  font-size: 15px;
+}
+
+table.api_form td
+{
+  padding: 0.2em;
+  text-align: left;
+}
+
+td.api_form_label
+{
+  width: 150px;
+  vertical-align: top;
+  font-weight: bold; 
+}
+
+.api_form input, .api_form textarea
+{
+  padding: 0.2em;
+  background-color: #eef;
+  border: 1px solid #ccf;
+  font-size: 14px;
+}
+
+.api_form input[type=submit]
+{
+  padding: 0.3em;
+  border-right: 1px solid #88f;
+  border-bottom: 1px solid #88f;
+}
+
+.api_terms
+{
+  padding: 0.2em;
+  font-size: 12px;
+  background-color: #f0f0f0;
+  border: 1px solid #ddd;  
+}
+
+.api_code
+{
+  font-family: monospace;
+}
+
+div.api_code
+{
+  padding: 0.5em;
+  background: #f0f0f0;
+  border: 1px solid #eee;
+  height: 300px;
+  overflow: auto;
+}

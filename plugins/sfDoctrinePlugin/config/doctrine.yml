@@ -1,0 +1,30 @@
+all:
+  # all attributes below are set on the Doctrine_Manager instance
+  attributes:
+    # export sql (none, tables, constraints, all)
+    export:  all
+
+    # enable doctrine side validation (true, false)
+    validate: false
+    
+    # recursive merge functions from different directories/plugins
+    recursive_merge_fixtures: true
+
+    # enable quoting
+    quote_identifier: false
+    
+    # enable autoloading of table class
+    autoload_table_classes: true
+
+    use_dql_callbacks: true
+
+  listeners:        []
+  record_listeners: []
+
+# Configuration for specific connection names 
+#  connections:
+#    connection_name1:
+#      attributes:
+#        export: all
+#      listeners:        []
+#      record_listeners: []

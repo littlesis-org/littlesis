@@ -1,0 +1,5 @@
+all:
+  javascripts:    [list-ajax]
+
+addBulkSuccess:
+  javascripts:  [%SF_PROTOTYPE_WEB_DIR%/js/prototype, %SF_PROTOTYPE_WEB_DIR%/js/scriptaculous, %SF_PROTOTYPE_WEB_DIR%/js/effects]

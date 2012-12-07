@@ -1,0 +1,29 @@
+add:
+  is_secure: on
+  credentials: lister
+  
+edit:
+  is_secure: on
+  credentials: editor
+  
+remove:
+  is_secure: on
+  credentials: deleter
+  
+addEntity:
+  is_secure: on
+  credentials: contributor
+  
+removeEntity:
+  is_secure: on
+  credentials: editor
+  
+setRank:
+  is_secure: on
+  credentials: editor
+  
+refresh:
+  is_secure: on
+  credentials: admin
+  
+

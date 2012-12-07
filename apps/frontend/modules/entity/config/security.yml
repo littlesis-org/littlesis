@@ -1,0 +1,187 @@
+edit:
+  is_secure: on
+  credentials: editor
+  
+remove:
+  is_secure: on
+  credentials: deleter
+  
+addPerson:
+  is_secure: on
+  credentials: contributor
+
+addOrg:
+  is_secure: on
+  credentials: contributor
+  
+merge:
+  is_secure: on
+  credentials: merger
+
+editImage:
+  is_secure: on
+  credentials: editor
+
+removeImage:
+  is_secure: on
+  credentials: deleter
+  
+featureImage:
+  is_secure: on
+  credentials: editor
+  
+uploadImage:
+  is_secure: on
+  credentials: contributor
+  
+editContact:
+  is_secure: on
+  credentials: contacter
+  
+addAddress:
+  is_secure: on
+  credentials: contributor
+
+editAddress:
+  is_secure: on
+  credentials: editor
+  
+removeAddress:
+  is_secure: on
+  credentials: deleter
+
+addPhone:
+  is_secure: on
+  credentials: contributor
+  
+editPhone:
+  is_secure: on
+  credentials: editor
+  
+removePhone:
+  is_secure: on
+  credentials: deleter
+
+addEmail:
+  is_secure: on
+  credentials: contributor
+  
+editEmail:
+  is_secure: on
+  credentials: editor
+  
+removeEmail:
+  is_secure: on
+  credentials: deleter
+
+addRelationship:
+  is_secure: on
+  credentials: contributor
+
+addRelationshipCategory:
+  is_secure: on
+  credentials: contributor
+  
+editAliases:
+  is_secure: on
+  credentials: editor
+
+addAlias:
+  is_secure: on
+  credentials: editor
+
+removeAlias:
+  is_secure: on
+  credentials: deleter
+  
+makePrimaryAlias:
+  is_secure: on
+  credentials: editor
+  
+editHierarchy:
+  is_secure: on
+  credentials: editor
+
+addChild:
+  is_secure: on
+  credentials: editor
+
+removeChild:
+  is_secure: on
+  credentials: editor
+
+changeParent:
+  is_secure: on
+  credentials: editor
+  
+removeParent:
+  is_secure: on
+  credentials: editor
+
+matchDonations:
+  is_secure: on
+  credentials: importer
+
+matchDonors:
+  is_secure: on
+  credentials: importer
+  
+refresh:
+  is_secure: on
+  credentials: admin
+
+addBulk:
+  is_secure: on
+  credentials: bulker
+
+addBoard:
+  is_secure: on
+  credentials: bulker
+  
+addresses:
+  is_secure: on
+  credentials: contributor
+
+theyRuleGenders:
+  is_secure: on
+  credentials: admin
+  
+editCustomFields:
+  is_secure: on
+  credentials: editor
+  
+editCustomField:
+  is_secure: on
+  credentials: editor
+
+editExternalKeys:
+  is_secure: on
+  credentials: editor
+  
+removeCustomField:
+  is_secure: on
+  credentials: deleter
+  
+addList:
+  is_secure: on
+  credentials: editor
+
+political:
+  is_secure: on
+  credentials: admin
+  
+editCategories:
+  is_secure: on
+  credentials: editor
+
+addCategory:
+  is_secure: on
+  credentials: editor
+
+removeCategory:
+  is_secure: on
+  credentials: deleter
+
+updateCategores:
+  is_secure: on
+  credentials: importer

@@ -1,0 +1,16 @@
+default:
+  http_metas:
+    content-type: text/html
+
+  metas:
+    title:        LittleSis
+    description:  An involuntary facebook of powerful Americans, collaboratively edited and maintained by people like you.
+    keywords:     littlesis, little, sis, power, network, database, elite, money, profiles, people, corporations, companies, research, politics, corruption, relationships, business, government, politicians, elections, news, analysis, leadership, influence
+    robots:       index, follow
+
+  stylesheets:    [main]
+
+  javascripts:    []
+
+  has_layout:     on
+  layout:         layout

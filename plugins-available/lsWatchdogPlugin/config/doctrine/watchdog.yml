@@ -1,0 +1,37 @@
+---
+options:
+  collate: utf8_unicode_ci
+  charset: utf8 
+  
+WatchdogPerson:
+  connection: raw
+  columns:
+    watchdog_id:
+      type: string(100)
+      notnull: true
+      notblank: true
+      primary: true
+    govtrack_id: string(10)
+    pvs_id: string(10)
+    fec_id: string(10)
+
+WatchdogPersonFec:
+  connection: raw
+  columns:
+    watchdog_id:
+      type: string(100)
+      notnull: true
+      notblank: true
+      primary: true
+    fec_id:
+      type: string(10)
+      notnull: true
+      notblank: true
+      primary: true
+  relations:
+    WatchdogPerson:
+      local: watchdog_id
+      foreign: watchdog_id
+      onUpdate: CASCADE
+      onDelete: CASCADE
+      foreignAlias: Fec

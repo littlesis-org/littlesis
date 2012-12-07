@@ -1,0 +1,12 @@
+modifications:
+  enabled: on
+
+tagModifications:
+  enabled: on
+
+descriptions:
+  enabled: on
+
+all:
+  with_layout: false
+  lifetime: 86400

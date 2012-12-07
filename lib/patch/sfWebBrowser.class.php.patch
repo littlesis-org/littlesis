@@ -1,0 +1,37 @@
+Index: plugins/sfWebBrowserPlugin/lib/sfWebBrowser.class.php
+===================================================================
+--- plugins/sfWebBrowserPlugin/lib/sfWebBrowser.class.php	(revision 11317)
++++ plugins/sfWebBrowserPlugin/lib/sfWebBrowser.class.php	(working copy)
+@@ -31,7 +31,8 @@
+     $responseDomCssSelector  = null,
+     $responseXml             = null,
+     $fields                  = array(),
+-    $urlInfo                 = array();
++    $urlInfo                 = array(),
++    $adapterOptions          = array();
+ 
+   public function __construct($defaultHeaders = array(), $adapterClass = null, $adapterOptions = array())
+   {
+@@ -52,6 +53,7 @@
+     }
+     $this->defaultHeaders = $this->fixHeaders($defaultHeaders);
+     $this->adapter = new $adapterClass($adapterOptions);
++    $this->adapterOptions = $adapterOptions;
+   }
+     
+   // Browser methods
+@@ -216,6 +218,14 @@
+ 
+     $browser = $this->adapter->call($this, $uri, $method, $parameters, $headers);
+ 
++    //set new adapter
++    if (get_class($this->adapter) == 'sfCurlAdapter')
++    {
++      unset($browser->adapter);
++      
++      $browser->adapter = new sfCurlAdapter($this->adapterOptions);
++    }
++
+     // redirect support
+     if ((in_array($browser->getResponseCode(), array(301, 307)) && in_array($method, array('GET', 'HEAD'))) || in_array($browser->getResponseCode(), array(302,303)))
+     {

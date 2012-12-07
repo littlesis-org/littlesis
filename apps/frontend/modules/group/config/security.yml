@@ -1,0 +1,20 @@
+all:
+  is_secure: on
+  
+view:
+  is_secure: off
+
+contest:
+  is_secure: off
+
+updates:
+  is_secure: off
+
+analysts:
+  is_secure: off
+
+changeOwner:
+  credentials: admin
+  
+list:
+  is_secure: off

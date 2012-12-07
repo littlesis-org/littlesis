@@ -1,0 +1,24 @@
+generator:
+  class:              sfDoctrineAdminGenerator
+  param:
+    model_class:      sfGuardUser
+    theme:            default
+    
+    list:
+      title:          User list
+      display:        [ =username, created_at, last_login ]
+      filters:        [ username ]
+
+        
+    edit:
+      title:          Edit "%%username%%" user
+      fields:
+        password:
+        password_bis:
+        groups:       { name: Groups/Roles, type: doctrine_admin_check_list, params: through_class=sfGuardUserGroup }
+        permissions:  { name: Permissions, type: doctrine_admin_check_list, params: through_class=sfGuardUserPermission }
+        last_login:   { type: plain }
+      display:
+        "NONE":                   [ username, _password, _password_bis ]
+        "Information":            [ last_login ]
+        "Permissions and groups": [ is_active, groups, permissions ]

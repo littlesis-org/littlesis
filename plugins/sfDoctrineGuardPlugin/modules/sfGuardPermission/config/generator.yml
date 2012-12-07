@@ -1,0 +1,13 @@
+generator:
+  class:              sfDoctrineAdminGenerator
+  param:
+    model_class:      sfGuardPermission
+    theme:            default
+
+    list:
+      title:          Permission list
+      display:        [=name, description]
+
+    edit:
+      title:          Edit "%%name%%" permission
+      display:        [name, description]

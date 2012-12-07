@@ -1,0 +1,10 @@
+all:
+  raw:
+    class:      sfDoctrineDatabase
+    param:
+      dsn:      mysql://USERNAME:PASSWORD@localhost/DATABASE
+
+  main:
+    class:      sfDoctrineDatabase
+    param:
+      dsn:      mysql://USERNAME:PASSWORD@localhost/DATABASE

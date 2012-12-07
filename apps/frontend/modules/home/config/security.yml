@@ -1,0 +1,36 @@
+account:
+  is_secure: on
+
+editProfile:
+  is_secure: on
+  
+editSettings:
+  is_secure: on
+
+hideFavorites:
+  is_secure: on
+  
+hideViews:
+  is_secure: on
+  
+listFavorites:
+  is_secure: on
+
+listViews:
+  is_secure: on
+  
+favorites:
+  is_secure: on
+
+removeFavorite:
+  is_secure: on
+  
+clearViews:
+  is_secure: on
+  
+modifications:
+  is_secure: on
+  
+chat:
+  is_secure: on
+  credentials: talker

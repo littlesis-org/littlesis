@@ -1,0 +1,11 @@
+autoload:
+  Doctrine:
+    name:       Doctrine classes
+    ext:        .php
+    path:       <?php echo realpath(dirname(__FILE__) . '/../lib') . "\n"; ?>
+    recursive:  on
+  doctrine_model_classes:
+    name:       Doctrine model classes
+    ext:        .php
+    path:       "%SF_LIB_DIR%/model/doctrine"
+    recursive:  on

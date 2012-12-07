@@ -1,0 +1,165 @@
+<?php
+  $sf_response->addJavascript('http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js', 'first');
+  $sf_response->addJavascript('/lsUkPlugin/js/tabs.js');
+  $sf_response->addJavascript('/lsUkPlugin/js/jquery.jcarousel.min.js');
+  $sf_response->addStylesheet('/lsUkPlugin/css/uk-layout.css');
+  $sf_response->addStylesheet('/lsUkPlugin/css/uk-main.css');
+  
+  $image_path = '/lsUkPlugin/images/';
+?>
+<!-- new Tui content -->
+<div id="container" class="home">
+	<div id="signup">
+    <?php if ($sf_user->isAuthenticated()) : ?>
+      <?php if ($sf_user->getGuardUser()->Profile->home_network_id != $network['id']) : ?>
+        <p><?php echo link_to('Make this your home network &raquo;', 'home/settings') ?></p>
+      <?php endif; ?>
+    <?php else : ?>
+  		<p><a href="<?php echo url_for('@sf_guard_signin') ?>">Login</a> or <a href="<?php echo url_for('home/join?home_network_id=' . $network['id'] . '#signup') ?>">Sign Up</a> to join this network</p>
+    <?php endif; ?>
+	</div>
+	<div id="banner">
+		<h1>LittleSis UK - how the rich and politically powerful are connected</h1>
+		<h2>LittleSis is an involuntary facebook of the power elite collaboratively edited by you</h2>
+		<p>LittleSis started in the United States to bring transparency to influential social networks by tracking key relationships of politicians, corporate executives, lobbyists, financiers and the affiliated organizations. Now we have our own LittleSis in the UK.</p>
+		<div class="buttons">
+			<a href="<?php echo url_for('home/join?home_network_id=' . $network['id'] . '#signup') ?>">Get Involved&nbsp;&raquo;</a> <a href="<?php echo url_for('@about') ?>">Learn More&nbsp;&raquo;</a>
+		</div>
+		<!-- 380x287 transparent PNG image goes here -->
+		<img src="<?php echo image_path($image_path . 'system/hats1.png'); ?>" id="banner_image" />
+	</div>
+	<div id="search">
+		<form action="<?php echo url_for('search/simple') ?>"><label for="search">Search for an MP, person, organisation</label>
+	  <?php $existing = $sf_request->getParameter('q') && ($sf_request->getParameter('action') == 'simple') ?>
+		<input type="text" class="text" name="q" value="<?php echo $sf_request->getParameter('q') ?>"/> <input type="submit" value="Search" />
+		<?php echo input_hidden_tag('network_ids[]', $network['id']) ?>
+		</form>
+	</div>
+	<div id="research_groups">
+		<h2>Featured Research Groups <a href="<?php echo url_for('@groups') ?>">more</a></h2>
+		<ol id="moveslides">
+					<li class="on"><a href="#">1</a></li>
+					<li><a href="#">2</a></li>
+		</ol>
+		<div class="slide">
+			<ul id="rg_carousel">
+			  <li>
+					<div class="pic_holder">
+						<img src="<?php echo image_path($image_path . '/system/slide2.jpg'); ?>" />
+						<a class="flickr" href="http://www.flickr.com/photos/dani_darling/446432551/">Original image</a>
+					</div>
+          <?php $mpGroup = Doctrine::getTable('sfGuardGroup')->find(14) ?>
+					<div class="main">
+						<h3><?php echo link_to($mpGroup->display_name, $mpGroup->getInternalUrl()) ?></h3>
+						<p><a href="http://en.wikipedia.org/wiki/MPs_standing_down_at_the_United_Kingdom_general_election,_2010" title="List of MPs standing down at the United Kingdom general election, 2010 - Wikipedia, the free encyclopedia">Nearly 150 MPs stood down</a> from this election, and many more <a href="http://en.wikipedia.org/wiki/List_of_MPs_elected_in_the_United_Kingdom_general_election,_2010" title="List of MPs elected in the United Kingdom general election, 2010 - Wikipedia, the free encyclopedia">lost their seats</a>. Most of them will go on to jobs in the private sector, with many retaining the <a href="http://www.spinwatch.org/blogs-mainmenu-29/tamasin-cave-mainmenu-107/5348-parliament-opens-its-doors-to-lobbying-ex-mps" title="Parliament opens its doors to lobbying ex-MPs">parliamentary passes</a> that allow them to continue treading the corridors of Westminster. As Channel 4's Dispatches programme “<a href="http://www.channel4.com/programmes/dispatches/episode-guide/series-57/episode-1" title="Dispatches - Politicians for Hire - Channel 4">Politicians for hire</a>” revealed, many former MPs are eager to sell their privileged access, knowledge and contacts to major lobbying firms that further the interests of their corporate clients. And there are many other new faces in parliament today with PR and corporate lobbying backgrounds. What are their financial interests? On what issues might they be compromised? <?php echo link_to('More...', $mpGroup->getInternalUrl()) ?></p>
+					</div>
+				</li>
+				<li>
+					<div class="pic_holder">
+						<img src="<?php echo image_path($image_path . '/system/slide1.jpg'); ?>" />
+						<a class="flickr" href="http://www.flickr.com/photos/ictsan/3025907110/">Original image</a>
+					</div>
+          <?php $educationGroup = Doctrine::getTable('sfGuardGroup')->find(15) ?>
+					<div class="main">
+						<h3><?php echo link_to($educationGroup->display_name, $educationGroup->getInternalUrl()) ?></h3>
+						<p>The government is eager to reform schooling, inviting communities of parents to start their own schools. Lining up to support them are major corporations who offer everything from building management to a specialised curriculum and the appointment of headmasters. But could the duty to their shareholders conflict with these companies' obligations to the children in their care? To succeed in improving education, these companies must be held accountable and their workings made transparent. <?php echo link_to('More...', $educationGroup->getInternalUrl()) ?></p>
+					</div>
+				</li>
+			</ul>
+		</div>
+		<div class="right">
+			<h4>What are Research Groups?</h4>
+			<p>Research groups allow LittleSis analysts to work together on research projects. Currently groups can only be created by LittleSis staff, but soon any analyst will be able to create them.</p>
+			<p>In the meantime, if you want to create a group to help you organize a project on LittleSis, please <?php echo link_to('contact us', '@contact') ?>.</p>	
+		</div>
+	</div>
+	
+	
+	<div id="rightcol" class="equal">
+		<div class="analyst_notes">
+			<h2>Analyst notes</h2>
+			<p>Recent <?php echo link_to('notes', '@features', array('anchor' => 'notes')) ?> posted by analysts in the United Kingdom network.</p>
+
+      <?php if ($sf_user->isAuthenticated() || !cache('recent_notes', 60)) : ?>
+        <?php include_component('home', 'recentNotes', array(
+          'network_ids' => array($network['id']),
+          'more' => LsListTable::getNetworkInternalUrl($network, 'notes'),
+          'write' => 'home/notes?network_ids[]=' . $network['id'] . '&compose=1',
+          'hide_header' => true
+        )) ?> 
+        <?php if (!$sf_user->isAuthenticated()) : ?>
+          <?php cache_save() ?>
+        <?php endif; ?>
+      <?php endif; ?>
+
+		</div>
+		<div class="analysts_network">
+			<h2>Analysts in this network <a href="<?php echo url_for(LsListTable::getNetworkInternalUrl($network, 'analysts')) ?>">more</a></h2>
+			<p>Analysts are users who contribute research to LittleSis. <?php echo link_to('Sign up', '@join') ?> to become an Analyst!</p>
+			<ul>
+
+      <?php foreach ($user_pager->execute() as $user) : ?>
+				<li>
+          <?php echo user_pic($user, 'small', array('style' => 'width: 40px; border: 0;')) ?>
+          <h3><?php echo user_link($user) ?></h3>
+					<p><?php echo $user['num_notes'] ?> notes | <?php echo $user['num_groups'] ?> groups</p>
+				</li>      
+      <?php endforeach; ?>
+		</div>
+	</div>
+	
+	<div id="leftcol" class="equal">
+		<ul class="tabs" id="tabs1">
+			<li class="on"><a href="#" rel="tab_featured_profiles">Featured profiles</a></li>
+			<li><a href="#" rel="tab_recently_updated">Recently updated</a></li>
+		</ul>
+		<div id="tab_featured_profiles" class="tab_content">
+			<p>People and organisations in the news</p>
+      <?php if ($featuredListId = $network['featured_list_id']) : ?>
+        <?php if (!cache('featuredProfiles', 600)) : ?>
+          <?php include_component('home', 'featuredProfiles', array(
+            'list_id' => $featuredListId,
+            'hide_header' => true
+          )) ?>
+          <?php cache_save() ?>
+        <?php endif; ?>
+      <?php endif; ?>
+		</div>
+		<div id="tab_recently_updated" class="tab_content">
+			<p>Recent edits by LittleSis analysts. <a href="#">Sign up</a> to become an analyst! </p>
+      <?php foreach ($recent_ids as $recent_id) : ?>
+        <?php include_component('entity', 'mini', array('id' => $recent_id)) ?>
+      <?php endforeach; ?>
+		</div>
+		<script type="text/javascript">
+						var tabs=new ddtabcontent("tabs1") //enter ID of Tab Container
+						tabs.setpersist(false) //toogle persistence of the tabs' state
+						tabs.setselectedClassTarget("linkparent") //"link" or "linkparent"
+						tabs.init()
+		</script>
+		<script type="text/javascript">
+    function mycarousel_initCallback(carousel) {
+        jQuery('#moveslides a').bind('click', function() {
+            carousel.scroll(jQuery.jcarousel.intval(jQuery(this).text()));
+    	   $this = $(this);
+    	   $this.parent('li').addClass('on').siblings('li').removeClass('on');
+
+            return false;
+        });
+       };
+
+    jQuery(document).ready(function() {
+        jQuery('#rg_carousel').jcarousel({
+        		initCallback: mycarousel_initCallback,
+            visible: 1,
+    	   scroll: 1,
+    	 //  auto: 2,
+    	   wrap: "circular",
+    	   buttonNextHTML: null,
+    	   buttonPrevHTML: null
+        });
+
+
+    });
+    </script>
+	</div>

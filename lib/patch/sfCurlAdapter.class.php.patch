@@ -1,0 +1,13 @@
+Index: plugins/sfWebBrowserPlugin/lib/sfCurlAdapter.class.php
+===================================================================
+--- plugins/sfWebBrowserPlugin/lib/sfCurlAdapter.class.php	(revision 11317)
++++ plugins/sfWebBrowserPlugin/lib/sfCurlAdapter.class.php	(working copy)
+@@ -178,6 +178,8 @@
+     // clear response headers
+     $this->headers = array();
+ 
++		curl_close($this->curl);
++		
+     return $browser;
+   }
+ 

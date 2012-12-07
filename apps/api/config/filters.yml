@@ -1,0 +1,16 @@
+rendering: ~
+security:  ~
+
+# insert your own filters here
+
+api_request:
+  class: LsApiRequestFilter
+
+api_cache:
+  class: LsApiCacheFilter
+
+cache:
+  enabled: false
+  
+common:    ~
+execution: ~

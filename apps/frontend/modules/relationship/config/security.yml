@@ -1,0 +1,19 @@
+edit:
+  is_secure: on
+  credentials: editor
+
+remove:
+  is_secure: on
+  credentials: deleter
+  
+descriptions:
+  is_secure: on
+  credentials: editor
+  
+findEntity:
+  is_secure: on
+  credentials: editor
+
+refresh:
+  is_secure: on
+  credentials: admin

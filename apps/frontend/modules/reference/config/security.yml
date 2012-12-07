@@ -1,0 +1,19 @@
+add:
+  is_secure: on
+  credentials: contributor
+  
+edit:
+  is_secure:
+  credentials: editor
+  
+remove:
+  is_secure: on
+  credentials: deleter
+  
+addExcerpt:
+  is_secure: on
+  credentials: contributor
+  
+removeExcerpt:
+  is_secure: on
+  credentials: deleter

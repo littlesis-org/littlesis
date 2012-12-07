@@ -1,0 +1,1611 @@
+---
+options:
+  collate: utf8_unicode_ci
+  charset: utf8 
+
+Entity:
+  connection: main
+  actAs: 
+    Timestampable:
+    Dateable:
+    LsVersionable:
+    Referenceable:
+    SoftDelete:
+      name: is_deleted  
+    Taggable:
+    Customizable:
+    Trimmable:
+      fields: [name, blurb, website]
+  columns:
+    name: 
+      type: string(200)
+      notblank: true
+    blurb: 
+      type: string(200)
+      notblank: true
+    summary:
+      type: clob
+      notblank: true
+    notes:
+      type: clob
+      notblank: true
+    website: string(100)
+    parent_id: integer
+    primary_ext: 
+      type: string(50)
+      notnull: true
+    merged_id: integer
+  relations:
+    Relationship:
+      local: id
+      foreign: entity1_id
+    LsList:
+      refClass: LsListEntity
+      local: entity_id
+      foreign: list_id
+    Parent:
+      class: Entity
+      local: parent_id
+      foreign: id
+      onUpdate: CASCADE
+      onDelete: SET NULL
+      foreignAlias: Child
+    Link:
+      local: id
+      foreign: entity1_id
+
+
+#FIRST TIER EXTENSIONS & RELATED TABLES
+
+Person:
+  actAs:
+    Extension:
+    Trimmable:
+      fields: [name_last, name_first, name_middle, name_nick, birthplace]
+  columns:
+    name_last:
+      type: string(50)
+      notnull: true
+      notblank: true
+    name_first:
+      type: string(50)
+      notnull: true
+      notblank: true
+    name_middle: string(50)
+    name_prefix: string(30)
+    name_suffix: string(30)
+    name_nick: string(30)
+    birthplace: string(50)
+    gender_id: integer
+    party_id: integer
+    is_independent: boolean
+    net_worth: integer
+  relations:
+    Gender:
+      local: gender_id
+      foreign: id
+    Party:
+      class: Entity
+      local: party_id
+      foreign: id
+      onUpdate: CASCADE
+      onDelete: SET NULL
+      foreignAlias: PartyMember
+
+Gender:
+  columns:
+    name:
+      type: string(10)
+      notnull: true
+
+Org:
+  actAs: 
+    Extension:
+    Trimmable:
+      fields: [name, name_nick]
+  columns:
+    name:
+      type: string(200)
+      notnull: true
+      notblank: true
+    name_nick:
+      type: string(200)
+      notblank: true
+    employees: integer
+    revenue: integer
+    fedspending_id: string(10)
+    lda_registrant_id: string(10)
+
+
+#SECOND TIER PERSON EXTENSIONS & RELATED TABLES
+
+BusinessPerson:
+  actAs: [Extension]
+  columns:
+    sec_cik: integer
+
+ElectedRepresentative:
+  actAs: [Extension]
+  columns:
+    bioguide_id: string(20)
+    govtrack_id: string(20)
+    crp_id: string(20)
+    pvs_id: string(20)
+    watchdog_id: string(50)
+  relations:
+    ElectedDistrict:
+      class: PoliticalDistrict
+      refClass: RepresentativeDistrict
+      local: representative_id
+      foreign: district_id
+
+RepresentativeDistrict:
+  actAs: [Timestampable]
+  columns:
+    representative_id:
+      type: integer
+      notnull: true
+    district_id:
+      type: integer
+      notnull: true
+  indexes:
+    uniqueness:
+      fields: [representative_id, district_id]
+      type: unique
+  relations:
+    Representative:
+      class: ElectedRepresentative
+      local: representative_id
+      foreign: id
+      onUpdate: CASCADE
+      onDelete: CASCADE
+    District:
+      class: PoliticalDistrict
+      local: district_id
+      foreign: id
+      onUpdate: CASCADE
+      onDelete: CASCADE
+         
+PoliticalCandidate:
+  actAs: [Extension]
+  columns:
+    is_federal: boolean
+    is_state: boolean
+    is_local: boolean    
+    pres_fec_id: string(20)
+    senate_fec_id: string(20)
+    house_fec_id: string(20)
+    crp_id: string(20)
+  relations:
+    CandidateDistrict:
+      class: PoliticalDistrict
+      refClass: CandidateDistrict
+      local: candidate_id
+      foreign: district_id
+
+Lobbyist:
+  actAs: [Extension]
+  columns:
+    lda_registrant_id: integer
+  relations:
+    LobbyFiling:
+      refClass: LobbyFilingLobbyist
+      class: LobbyFiling
+      local: lobbyist_id
+      foreign: lobby_filing_id
+
+CandidateDistrict:
+  actAs: [Timestampable]
+  columns:
+    candidate_id:
+      type: integer
+      notnull: true
+    district_id:
+      type: integer
+      notnull: true
+  indexes:
+    uniqueness:
+      fields: [candidate_id, district_id]
+      type: unique
+  relations:
+    Candidate:
+      class: PoliticalCandidate
+      local: candidate_id
+      foreign: id
+      onUpdate: CASCADE
+      onDelete: CASCADE
+    District:
+      class: PoliticalDistrict
+      local: district_id
+      foreign: id
+      onUpdate: CASCADE
+      onDelete: CASCADE
+
+PoliticalDistrict:
+  columns:
+    state_id: integer
+    federal_district: string(2)
+    state_district: string(2)
+    local_district: string(2)
+  relations:
+    State:
+      class: AddressState
+      local: state_id
+      foreign: id
+      onUpdate: CASCADE
+    
+    
+#SECOND TIER ORG EXTENSIONS & RELATED TABLES
+
+Business:
+  actAs: [Extension]
+  columns:
+    annual_profit: integer
+  relations:
+    Industry:
+      refClass: BusinessIndustry
+      class: Industry
+      local: business_id
+      foreign: industry_id
+      onUpdate: CASCADE
+      onDelete: CASCADE
+
+Industry:
+  actAs: [Timestampable]
+  columns:
+    name:
+      type: string(100)
+      notnull: true
+      notblank: true
+    context:
+      type: string(30)
+    code:
+      type: string(30)
+  relations:
+    Business:
+      refClass: BusinessIndustry
+      class: Entity
+      local: industry_id
+      foreign: business_id
+      onUpdate: CASCADE
+      onDelete: CASCADE
+      
+BusinessIndustry:
+  columns:
+    business_id:
+      type: integer
+      notnull: true
+      notblank: true
+    industry_id:
+      type: integer
+      notnull: true
+      notblank: true
+  relations:
+    Business:
+      class: Entity
+      local: business_id
+      foreign: id
+      onUpdate: CASCADE
+      onDelete: CASCADE
+    Industry:
+      local: industry_id
+      foreign: id
+      onUpdate: CASCADE
+      onDelete: CASCADE
+
+School:
+  actAs: [Extension]
+  columns:
+    endowment: integer
+    students: integer
+    faculty: integer
+    tuition: integer
+    is_private: boolean
+
+PoliticalFundraising:
+  actAs: [Extension]
+  columns:
+    fec_id: string(20)
+    type_id: integer
+    state_id: integer
+  relations:
+    State:
+      class: AddressState
+      local: state_id
+      foreign: id
+      onUpdate: CASCADE
+    Type:
+      class: PoliticalFundraisingType
+      local: type_id
+      foreign: id
+      onUpdate: CASCADE
+
+PoliticalFundraisingType:
+  columns:
+    name:
+      type: string(50)
+      notnull: true
+      notblank: true
+
+GovernmentBody:
+  actAs: [Extension]
+  columns:
+    is_federal: boolean
+    state_id: integer
+    city: string(50)
+    county: string(50)
+  relations:
+    State:
+      class: AddressState
+      local: state_id
+      foreign: id
+      onUpdate: CASCADE
+
+#THIRD TIER ORG EXTENSIONS & RELATED TABLES
+
+PublicCompany:
+  actAs: [Extension]
+  columns:
+    ticker: 
+      type: string(10)
+      notblank: true
+    sec_cik: integer
+
+
+#EXTENSION MANAGEMENT
+
+ExtensionRecord:
+  actAs: [LsVersionable]
+  columns:
+    entity_id:
+      type: integer
+      notnull: true
+      notblank: true
+    definition_id:
+      type: integer
+      notnull: true
+  relations:
+    Entity:
+      local: entity_id
+      foreign: id
+      onUpdate: CASCADE
+      onDelete: CASCADE
+    Definition:
+      class: ExtensionDefinition
+      local: definition_id
+      foreign: id
+      onUpdate: CASCADE
+
+ExtensionDefinition:
+  columns:
+    name:
+      type: string(30)
+      notnull: true
+      notblank: true
+    display_name:
+      type: string(50)
+      notnull: true
+      notblank: true
+    has_fields:
+      type: boolean
+      notnull: true
+      default: false
+    parent_id: integer
+    tier: integer
+  relations:
+    Parent:
+      class: ExtensionDefinition
+      local: parent_id
+      foreign: id
+      onUpdate: CASCADE
+    Child:
+      class: ExtensionDefinition
+      local: id
+      foreign: parent_id
+      type: many
+
+
+#RELATIONSHIP TABLES
+
+Relationship:
+  actAs: 
+    Timestampable:
+    Dateable:
+    LsVersionable:
+    Referenceable:
+    SoftDelete:
+      name: is_deleted
+    Customizable:
+  columns:
+    entity1_id:
+      type: integer
+      notnull: true
+    entity2_id:
+      type: integer
+      notnull: true
+    category_id:
+      type: integer
+      notnull: true
+    description1: string(200)
+    description2: string(200)
+    amount: integer
+    goods: clob
+    filings: integer
+    notes: clob
+  relations:
+    Entity1:
+      class: Entity
+      local: entity1_id
+      foreign: id
+      onUpdate: CASCADE
+      onDelete: CASCADE
+    Entity2:
+      class: Entity
+      local: entity2_id
+      foreign: id
+      onUpdate: CASCADE
+      onDelete: CASCADE
+    Category:
+      class: RelationshipCategory
+      local: category_id
+      foreign: id
+      onUpdate: CASCADE
+    Position:
+      local: id
+      foreign: relationship_id
+    Education:
+      local: id
+      foreign: relationship_id
+    Membership:
+      local: id
+      foreign: relationship_id
+    Family:
+      local: id
+      foreign: relationship_id
+    Donation:
+      local: id
+      foreign: relationship_id
+    Transaction:
+      local: id
+      foreign: relationship_id
+    Lobbying:
+      local: id
+      foreign: relationship_id
+    Ownership:
+      local: id
+      foreign: relationship_id
+    LobbyFiling:
+      class: LobbyFiling
+      refClass: LobbyFilingRelationship
+      local: relationship_id
+      foreign: lobby_filing_id
+    Link:
+      local: id
+      foreign: relationship_id
+    Reference:
+      type: many
+      foreignType: one
+      local: id
+      foreign: object_id
+
+Link:
+  columns:
+    entity1_id:
+      type: integer
+      notnull: true
+    entity2_id:
+      type: integer
+      notnull: true
+    category_id:
+      type: integer
+      notnull: true
+    relationship_id:
+      type: integer
+      notnull: true
+    is_reverse:
+      type: boolean
+      notnull: true
+  relations:
+    Entity1:
+      class: Entity
+      local: entity1_id
+      foreign: id
+      foreignAlias: Link
+    Entity2:
+      class: Entity
+      local: entity2_id
+      foreign: id
+    Category:
+      class: RelationshipCategory
+      local: category_id
+      foreign: id
+    Relationship:
+      local: relationship_id
+      foreign: id
+      
+RelationshipCategory:
+  actAs: [Timestampable]
+  columns:
+    name:
+      type: string(30)
+      notnull: true
+      notblank: true
+    display_name:
+      type: string(30)
+      notnull: true
+      notblank: true
+    default_description:
+      type: string(50)
+      notblank: true
+    entity1_requirements:
+      type: string
+    entity2_requirements:
+      type: string
+    has_fields:
+      type: boolean
+      notnull: true
+      default: false
+  indexes:
+    uniqueness:
+      fields: [name]
+      type: unique
+
+
+#RELATIONSHIP CATEGORIES & RELATED TABLES
+
+Position:
+  actAs: [RelationshipCategoryTemplate]
+  columns:
+    is_board: boolean
+    is_executive: boolean
+    is_employee: boolean
+    compensation: integer
+    boss_id: integer
+  relations:
+    Boss:
+      class: Entity
+      local: boss_id
+      foreign: id
+      onUpdate: CASCADE
+      onDelete: SET NULL
+      foreignAlias: OverseenPosition
+      
+Membership:
+  actAs: [RelationshipCategoryTemplate]
+  columns:
+    dues: integer
+
+Education:
+  actAs: [RelationshipCategoryTemplate]
+  columns:
+    degree_id: integer
+    field: string(30)
+    is_dropout: boolean
+  relations:
+    Degree:
+      local: degree_id
+      foreign: id
+      onUpdate: CASCADE
+      onDelete: SET NULL
+
+Degree:
+  columns:
+    name:
+      type: string(50)
+      notnull: true
+      notblank: true
+    abbreviation:
+      type: string(10)
+      notblank: true
+
+Family:
+  actAs: [RelationshipCategoryTemplate]
+  columns:
+    is_nonbiological: boolean
+
+Donation:
+  actAs: [RelationshipCategoryTemplate]
+  columns:
+    bundler_id: integer
+  relations:
+    Bundler:
+      class: Entity
+      local: bundler_id
+      foreign: id
+      onUpdate: CASCADE
+      onDelete: SET NULL
+      foreignAlias: BundledDonation
+
+FecFiling:
+  actAs: [Dateable]
+  columns:
+    relationship_id: integer
+    amount: integer
+    fec_filing_id: string(30)
+    crp_cycle: integer
+    crp_id: string(7)
+  relations:
+    Relationship:
+      local: relationship_id
+      foreign: id
+      onUpdate: CASCADE
+      onDelete: CASCADE
+      
+Transaction:
+  actAs: [RelationshipCategoryTemplate]
+  columns:
+    contact1_id: integer
+    contact2_id: integer
+    district_id: integer
+    is_lobbying: boolean 
+  relations:
+    Contact1:
+      class: Entity
+      local: contact1_id
+      foreign: id
+      onUpdate: CASCADE
+      onDelete: SET NULL
+      foreignAlias: Contact1Transaction
+    Contact2:
+      class: Entity
+      local: contact2_id
+      foreign: id
+      onUpdate: CASCADE
+      onDelete: SET NULL
+      foreignAlias: Contact2Transaction
+
+FedspendingFiling:
+  actAs: [Dateable]
+  columns:
+    relationship_id: integer
+    amount: integer
+    goods: clob    
+    district_id: integer
+    fedspending_id: string(30)
+  relations:
+    Relationship:
+      local: relationship_id
+      foreign: id
+      onUpdate: CASCADE
+      onDelete: CASCADE
+    District:
+      class: PoliticalDistrict
+      local: district_id
+      foreign: id
+      onUpdate: CASCADE
+      onDelete: SET NULL
+      
+Lobbying:
+  actAs: [RelationshipCategoryTemplate]
+    
+Social:
+  actAs: [RelationshipCategoryTemplate]
+
+Professional:
+  actAs: [RelationshipCategoryTemplate]
+
+Ownership:
+  actAs: [RelationshipCategoryTemplate]
+  columns:
+    percent_stake: integer
+    shares: integer
+
+#LOBBYING EXTRAS
+
+LobbyFiling:
+  actAs: [Dateable, Referenceable]
+  columns:
+    federal_filing_id:
+      type: string(50)
+      notblank: true
+      notnull: true
+    amount: integer
+    year: integer
+    period: string(100)
+    report_type: string(100)
+  relations:
+    LobbyIssue:
+      refClass: LobbyFilingLobbyIssue
+      local: lobby_filing_id
+      foreign: issue_id
+    Lobbyist:
+      class: Entity
+      refClass: LobbyFilingLobbyist
+      local: lobby_filing_id
+      foreign: lobbyist_id
+    Relationship:
+      refClass: LobbyFilingRelationship
+      local: lobby_filing_id
+      foreign: relationship_id
+    
+LobbyFilingLobbyist:
+  columns:
+    lobbyist_id:
+      type: integer
+      notnull: true
+      notblank: true
+    lobby_filing_id:
+      type: integer
+      notnull: true
+      notblank: true
+  relations:
+    Lobbyist:
+      class: Entity
+      local: lobbyist_id
+      foreign: id
+      onUpdate: CASCADE
+      onDelete: CASCADE
+    Filing:
+      class: LobbyFiling
+      local: lobby_filing_id
+      foreign: id
+      onUpdate: CASCADE
+      onDelete: CASCADE
+      
+LobbyFilingLobbyIssue:
+  columns:
+    issue_id: 
+      type: integer
+      notnull: true
+      notblank: true
+    lobby_filing_id: 
+      type: integer
+      notnull: true
+      notblank: true
+    specific_issue: clob
+  relations:
+    Issue:
+      class: LobbyIssue
+      local: issue_id
+      foreign: id
+      onUpdate: CASCADE
+      onDelete: CASCADE
+    Filing:
+      class: LobbyFiling
+      local: lobby_filing_id
+      foreign: id
+      onUpdate: CASCADE
+      onDelete: CASCADE
+    
+LobbyIssue:
+  columns:
+    name:
+     type: string(50)
+     notnull: true
+     notblank: true
+     
+LobbyFilingRelationship:
+  columns:
+    relationship_id:
+      type: integer
+      notnull: true
+      notblank: true
+    lobby_filing_id:
+      type: integer
+      notnull: true
+      notblank: true
+  relations:
+    Relationship:
+      local: relationship_id
+      foreign: id
+    LobbyFiling:
+      local: lobby_filing_id
+      foreign: id      
+      
+#VERSIONING
+
+Modification:
+  actAs: [Timestampable, Objectable]
+  columns:
+    object_name:
+      type: string(100)
+      notblank: true
+    user_id:
+      type: integer
+      notnull: true
+      default: 1
+    is_create:
+      type: boolean
+      notnull: true
+      default: false
+    is_delete:
+      type: boolean
+      notnull: true
+      default: false
+    is_merge:
+      type: boolean
+      notnull: true
+      default: false
+    merge_object_id: integer
+  relations:
+    User:
+      class: sfGuardUser
+      local: user_id
+      foreign: id
+      onUpdate: CASCADE
+      
+ModificationField:
+  columns:
+    modification_id:
+      type: integer
+      notnull: true
+    field_name:
+      type: string(50)
+      notnull: true
+      notblank: true
+    old_value:
+      type: clob
+      default: NULL
+    new_value:
+      type: clob
+      default: NULL
+  relations:
+    Modification:
+      local: modification_id
+      foreign: id
+      onUpdate: CASCADE
+      onDelete: CASCADE
+      foreignAlias: Field
+
+
+#LISTS
+
+LsList:
+  actAs: 
+    Timestampable:
+    LsVersionable:
+    Referenceable:
+    SoftDelete:
+      name: is_deleted    
+    Customizable:
+  columns:
+    name:
+      type: string(100)
+      notnull: true
+      notblank: true
+    description: clob
+    is_ranked:
+      type: boolean
+      notnull: true
+      default: false
+    is_admin:
+      type: boolean
+      notnull: true
+      default: false
+    is_featured:
+      type: boolean
+      notnull: true
+      default: false
+    is_network:
+      type: boolean
+      notnull: true
+      default: false
+    display_name:
+      type: string(50)
+    featured_list_id: integer
+  indexes:
+    uniqueness:
+      fields: [name]
+      type: unique
+  relations:
+    Entity:
+      refClass: LsListEntity
+      local: list_id
+      foreign: entity_id
+    FeaturedList:
+      class: LsList
+      local: featured_list_id
+      foreign: id
+      onDelete: SET NULL
+      onUpdate: CASCADE
+
+LsListEntity:
+  actAs:
+    Timestampable:
+    LsVersionable:
+    SoftDelete:
+      name: is_deleted
+  columns:
+    list_id:
+      type: integer
+      notnull: true
+    entity_id:
+      type: integer
+      notnull: true
+    rank: integer
+  indexes:
+    item_uniqueness:
+      fields: [list_id, entity_id]
+      type: unique
+  relations:
+    LsList:
+      local: list_id
+      foreign: id
+      onUpdate: CASCADE
+      onDelete: CASCADE
+    Entity:
+      local: entity_id
+      foreign: id
+      onUpdate: CASCADE
+      onDelete: CASCADE
+      
+
+#ANNOTATION
+
+Reference:
+  actAs: [Timestampable, Objectable]
+  columns:
+    fields:
+      type: string(200)
+      notblank: true
+    name:
+      type: string(100)
+      notblank: true
+    source:
+      type: string(200)
+      notnull: true
+      notblank: true
+    source_detail:
+      type: string(50)
+      notblank: true
+    publication_date:
+      type: string(10)
+      notblank: true
+
+ReferenceExcerpt:
+  actAs: [Timestampable]
+  columns:
+    reference_id:
+      type: integer
+      notnull: true
+    body:
+      type: clob
+      notnull: true
+      notblank: true
+  relations:
+    Reference:
+      local: reference_id
+      foreign: id
+      onUpdate: CASCADE
+      onDelete: CASCADE
+      foreignAlias: Excerpt
+
+Tag:
+  actAs: [Timestampable]
+  columns:
+    name:
+      type: string(100)
+      notblank: true
+    is_visible:
+      type: boolean
+      notnull: true
+      default: 1      
+    triple_namespace:
+      type: string(30)
+      notblank: true
+    triple_predicate:
+      type: string(30)
+      notblank: true
+    triple_value:
+      type: string(100)
+      notblank: true
+  indexes:
+    uniqueness:
+      fields: [name]
+      type: unique
+      
+ObjectTag:
+  actAs: [Timestampable, Objectable, LsVersionable]
+  columns:
+    tag_id:
+      type: integer
+      notnull: true
+  indexes:
+    uniqueness:
+      fields: [object_model, object_id, tag_id]
+      type: unique
+  relations:
+    Tag:
+      local: tag_id
+      foreign: id
+      onUpdate: CASCADE
+      onDelete: CASCADE
+
+ExternalKey:
+  columns:
+    entity_id:
+      type: integer
+      notnull: true
+    external_id:
+      type: string(200)
+      notblank: true
+      notnull: true
+    domain_id:
+      type: integer   
+      notnull: true
+  indexes:
+    uniqueness:
+      fields: [external_id,domain_id]
+      type: unique
+  relations:
+    Entity:
+      local: entity_id
+      foreign: id
+      onUpdate: CASCADE
+      onDelete: CASCADE
+    Domain:
+      local: domain_id
+      foreign: id
+      
+Domain:
+  columns:
+    name:
+      type: string(40)
+      notnull: true
+      notblank: true
+    url:
+      type: string(200)
+      notnull: true
+      notblank: true
+
+CustomKey:
+  actAs: [Timestampable, Objectable, Referenceable]
+  columns:
+    name:
+      type: string(50)
+      notnull: true
+      notblank: true
+    value:
+      type: clob
+      default: NULL
+    description:
+      type: string(200)
+      default: NULL
+
+#IMAGES
+
+Image:
+  actAs:
+    Timestampable:
+    LsVersionable:
+    Referenceable:
+    SoftDelete:
+      name: is_deleted
+  columns:
+    entity_id:
+      type: integer
+      notnull: true
+    filename:
+      type: string(100)
+      notnull: true
+      notblank: true
+    title:
+      type: string(100)
+      notnull: true
+      notblank: true
+    caption: clob
+    is_featured:
+      type: boolean
+      notnull: true
+      default: false
+    is_free: boolean
+    url: string(200)
+    width: integer
+    height: integer
+  relations:
+    Entity:
+      local: entity_id
+      foreign: id
+      onUpdate: CASCADE
+      onDelete: CASCADE
+   
+ 
+#ADDRESS TABLES 
+  
+Address:
+  actAs:
+    Timestampable:
+    Referenceable:
+    LsVersionable:
+    SoftDelete:
+      name: is_deleted    
+  columns:
+    entity_id:
+      type: integer
+      notnull: true
+      notblank: true
+    street1: 
+      type: string(100)
+      notnull: true
+      notblank: true
+    street2: 
+      type: string(100)
+      notblank: true
+    street3: 
+      type: string(100)
+      notblank: true
+    city: 
+      type: string(50)
+      notnull: true
+      notblank: true
+    county: string(50)
+    state_id: 
+      type: integer
+      notnull: true
+    country_id: 
+      type: integer
+      notnull: true
+      default: 1
+    postal: string(5)
+    latitude: string(20)
+    longitude: string(20)
+    category_id: integer
+  relations:
+    State:
+      class: AddressState
+      local: state_id
+      foreign: id
+      onUpdate: CASCADE
+    Country:
+      class: AddressCountry
+      local: country_id
+      foreign: id
+      onUpdate: CASCADE
+    Category:
+      class: AddressCategory
+      local: category_id
+      foreign: id
+      onUpdate: CASCADE
+      onDelete: SET NULL
+    Entity:
+      local: entity_id
+      foreign: id
+      onUpdate: CASCADE
+      onDelete: CASCADE
+      
+AddressState:
+  columns:
+    name:
+      type: string(50)
+      notnull: true
+      notblank: true
+    abbreviation:
+      type: string(2)
+      notnull: true
+      notblank: true
+    country_id:
+      type: integer
+      notnull: true
+  indexes:
+    uniqueness:
+      fields: [name]
+      type: unique
+  relations:
+    Country:
+      class: AddressCountry
+      local: country_id
+      foreign: id
+      onUpdate: CASCADE
+      onDelete: CASCADE
+        
+AddressCountry:
+  columns:
+    name: 
+      type: string(50)
+      notnull: true
+      notblank: true
+  indexes:
+    uniqueness:
+      fields: [name]
+      type: unique  
+
+AddressCategory:
+  columns:
+    name:
+      type: string(20)
+      notnull: true
+  
+Phone:
+  actAs: 
+    Timestampable: 
+    Referenceable: 
+    LsVersionable:
+    SoftDelete:
+      name: is_deleted
+  columns:
+    entity_id:
+      type: integer
+      notnull: true
+    number:
+      type: string(20)
+      notnull: true
+    type:
+      type: enum
+      values: ['phone', 'fax']
+  relations:
+    Entity:
+      local: entity_id
+      foreign: id
+      onUpdate: CASCADE
+      onDelete: CASCADE
+
+Email:
+  actAs: 
+    Timestampable: 
+    Referenceable: 
+    LsVersionable:
+    SoftDelete:
+      name: is_deleted
+  columns:
+    entity_id:
+      type: integer
+      notnull: true
+    address:
+      type: string(60)
+      notnull: true
+  relations:
+    Entity:
+      local: entity_id
+      foreign: id
+      onUpdate: CASCADE
+      onDelete: CASCADE
+
+
+#ALIASES
+
+Alias:
+  actAs: 
+    Timestampable: 
+    LsVersionable: 
+    Trimmable:
+      fields: [name]
+  columns:
+    entity_id:
+      type: integer
+      notnull: true
+    name:
+      type: string(200)
+      notnull: true
+    context:
+      type: string(50)
+    is_primary:
+      type: boolean
+      notnull: true
+      default: false
+  indexes:
+    uniqueness:
+      fields: [entity_id, name, context]
+      type: unique
+  relations:
+    Entity:
+      local: entity_id
+      foreign: id
+      onUpdate: CASCADE
+      onDelete: CASCADE
+
+
+#SCRAPER META
+
+ScraperMeta:
+  actAs: [Timestampable]
+  columns:
+    scraper:
+      type: string(100)
+      notnull: true
+      notblank: true
+    namespace:
+      type: string(50)
+      notnull: true
+      notblank: true
+    predicate:
+      type: string(50)
+      notnull: true
+      notblank: true
+    value:
+      type: string(50)
+      notnull: true
+      notblank: true
+  indexes:
+    uniqueness:
+      fields: [scraper, namespace, predicate]
+      type: unique
+
+
+#TASK META
+
+TaskMeta:
+  actAs: [Timestampable]
+  columns:
+    task:
+      type: string(100)
+      notnull: true
+      notblank: true
+    namespace:
+      type: string(50)
+      notnull: true
+      notblank: true
+    predicate:
+      type: string(50)
+      notnull: true
+      notblank: true
+    value:
+      type: string(50)
+      notnull: true
+      notblank: true
+  indexes:
+    uniqueness:
+      fields: [task, namespace, predicate]
+      type: unique
+
+
+# NOTES
+
+Note:
+  actAs: [Timestampable]
+  columns:
+    user_id:
+      type: integer
+      notnull: true
+    title:
+      type: string(50)
+    body:
+      type: string(2000)
+      notnull: true
+    body_raw:
+      type: string(1000)
+      notnull: true
+    alerted_user_names: string(500)
+    alerted_user_ids: string(500)
+    entity_ids: string(200)
+    relationship_ids: string(200)
+    lslist_ids: string(200)
+    sfguardgroup_ids: string(200)
+    network_ids: string(200)
+    is_private:
+      type: boolean
+      notnull: true
+      default: false
+  relations:
+    User:
+      class: sfGuardUser
+      local: user_id
+      foreign: id
+      onUpdate: CASCADE
+      onDelete: CASCADE
+      foreignAlias: Note
+
+ScheduledEmail:
+  actAs: [Timestampable]
+  columns:
+    from_email:
+      type: string(200)
+      notnull: true
+    from_name: string(200)
+    to_email:
+      type: string(200)
+      notnull: true
+    to_name: string(200)
+    subject: string(500)
+    body_text: clob
+    body_html: clob
+    is_sent:
+      type: boolean
+      notnull: true
+      default: false
+
+
+#CHAT
+
+ChatUser:
+  columns:
+    user_id:
+      type: integer
+      notnull: true
+    room:
+      type: integer
+      notnull: true
+    updated_at:
+      type: timestamp
+      notnull: true
+  relations:
+    User:
+      class: sfGuardUser
+      local: user_id
+      foreign: id
+      onUpdate: CASCADE
+      onDelete: CASCADE
+
+
+#SPHINX
+
+SphinxIndex:
+  columns:
+    name:
+      type: string(50)
+      primary: true
+      notnull: true
+    updated_at:
+      type: timestamp
+      notnull: true
+      
+
+#API USAGE
+
+ApiUser:
+  actAs: [Timestampable]
+  columns:
+    api_key:
+      type: string(100)
+      notnull: true
+    name_first:
+      type: string(50)
+      notnull: true
+    name_last:
+      type: string(50)
+      notnull: true
+    email:
+      type: string(100)
+      notnull: true
+    reason:
+      type: clob
+      notnull: true
+    is_active:
+      type: boolean
+      notnull: true
+      default: 0
+    request_limit:
+      type: integer(4)
+      notnull: true
+      default: 10000
+  indexes:
+    api_key_unique:
+      fields: api_key
+      type: unique
+    email_unique:
+      fields: email
+      type: unique
+    
+ApiRequest:
+  actAs: [Timestampable]
+  columns:
+    api_key:
+      type: string(100)
+      notnull: true
+    resource:
+      type: string(200)
+      notnull: true
+    ip_address:
+      type: string(50)
+      notnull: true
+  relations:
+    ApiUser:
+      local: api_key
+      foreign: api_key
+      onUpdate: CASCADE
+      onDelete: CASCADE
+      foreignAlias: Request
+
+      
+#USER PROFILE FOR SFDOCTRINEGUARD
+
+sfGuardUserProfile:
+  actAs: [Timestampable]
+  columns:
+    user_id:
+      type: integer
+      notnull: true    
+    name_first:
+      type: string(50)
+      notnull: true
+      notblank: true
+    name_last:
+      type: string(50)
+      notnull: true
+      notblank: true      
+    email:
+      type: string(50)
+      notnull: true
+      notblank: true
+    reason: clob
+    analyst_reason: clob
+    is_visible: 
+      type: boolean
+      notnull: true
+      default: 1
+    invitation_code: string(50)
+    enable_html_editor:
+      type: boolean
+      notnull: true
+      default: 1
+    enable_recent_views:
+      type: boolean
+      notnull: true
+      default: true
+    enable_favorites:
+      type: boolean
+      notnull: true
+      default: true
+    enable_pointers:
+      type: boolean
+      notnull: true
+      default: true
+    public_name: 
+      type: string(50)
+      notnull: true
+    bio: clob
+    is_confirmed:
+      type: boolean
+      notnull: true
+      default: false
+    confirmation_code: string(100)
+    filename: string(100)
+    ranking_opt_out:
+      type: boolean
+      notnull: true
+      default: false
+    watching_opt_out:
+      type: boolean
+      notnull: true
+      default: false
+    enable_notes_list:
+      type: boolean
+      notnull: true
+      default: true
+    enable_announcements:
+      type: boolean
+      notnull: true
+      default: true
+    enable_notes_notifications:
+      type: boolean
+      notnull: true
+      default: true
+    score: integer
+    show_full_name:
+      type: boolean
+      notnull: true
+      default: false
+    unread_notes:
+      type: integer(4)
+      notnull: true
+      default: 0
+    home_network_id:
+      type: integer
+      notnull: true
+  indexes:
+    unique_user:
+      fields: [user_id]
+      type: unique
+    unique_email:
+      fields: [email]
+      type: unique
+  relations:
+    User:
+      class: sfGuardUser
+      local: user_id
+      foreign: id
+      onUpdate: CASCADE
+      onDelete: CASCADE
+      foreignAlias: Profile
+      foreignType: one
+
+sfGuardGroupList:
+  columns:
+    group_id:
+      type: integer
+      primary: true
+    list_id:
+      type: integer
+      primary: true
+  relations:
+    Group:
+      class: sfGuardGroup
+      local: group_id
+      foreign: id
+      onUpdate: CASCADE
+      onDelete: CASCADE
+    List:
+      class: LsList
+      local: list_id
+      foreign: id
+      onUpdate: CASCADE
+      onDelete: CASCADE
