@@ -662,7 +662,6 @@ class relationshipActions extends sfActions
       }
       else
       {  
-        $terms = '@(name,aliases) ' . $terms;  //search only name and aliases
         $pager = EntityTable::getSphinxPager($terms, $this->page, $num);  
         $this->entities = $pager->execute();
         $this->total = $pager->getNumResults();

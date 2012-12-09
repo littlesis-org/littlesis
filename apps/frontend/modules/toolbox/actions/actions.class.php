@@ -87,8 +87,7 @@ class toolboxActions extends sfActions
           {
             $name_terms = PersonTable::nameSearch($name);
           }
-          $terms = '@(name,aliases) ' . $name_terms . ' @primary_ext Person';  
-          $pager = EntityTable::getSphinxPager($terms, 1, 20); 
+          $pager = EntityTable::getSphinxPager($terms, $page=1, $num=20, $listIds=null, $aliases=true, $primary_ext="Person"); 
           $match['name'] = $name;
           $match['search_results'] = $pager->execute();
           $this->matches[] = $match;

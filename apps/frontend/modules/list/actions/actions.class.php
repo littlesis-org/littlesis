@@ -220,7 +220,6 @@ class listActions extends sfActions
         switch (sfConfig::get('app_search_engine'))
         {
           case 'sphinx':
-            $terms = '@(name,aliases) ' . $terms;  //search only name and aliases
             $this->results_pager = EntityTable::getSphinxPager($terms, $page, $num);  
             break;
             
@@ -845,18 +844,21 @@ class listActions extends sfActions
                   {
                     $name_terms = PersonTable::nameSearch($name, true);
                   }
-                  $terms = '@(name,aliases) ' . $name_terms . ' @primary_ext Person'; 
+                  $terms = $name_terms;
+                  $primary_ext = "Person";
                 }
                 else if ($this->default_type == 'Org')
                 {
                   $name_terms = OrgTable::nameSearch($name);
-                  $terms = '@(name,aliases) ' . $name_terms . ' @primary_ext Org'; 
+                  $terms = $name_terms;
+                  $primary_ext = "Org";
                 }
                 else
                 {
-                  $terms = '@(name,aliases) ' . $name_terms; 
+                  $terms = $name_terms;
+                  $primary_ext = null;
                 }
-                $pager = EntityTable::getSphinxPager($terms, 1, 20); 
+                $pager = EntityTable::getSphinxPager($terms, $page=1, $num=20, $listIds=null, $aliases=true, $primary_ext); 
                 $match = array('name' => $name);
                 $match['search_results'] = $pager->execute();
                 $match['blurb'] = isset($names[$i]['blurb']) ? $names[$i]['blurb'] : null;
@@ -1018,7 +1020,6 @@ class listActions extends sfActions
         }
         else
         {  
-          $terms = '@(name,aliases) ' . $terms;  //search only name and aliases
           $this->entity_pager = EntityTable::getSphinxPager($terms, $page, $num);  
         }
       }

@@ -725,7 +725,6 @@ class entityActions extends sfActions
         switch (sfConfig::get('app_search_engine'))
         {
           case 'sphinx':
-            $terms = '@(name,aliases) ' . $terms;  //search only name and aliases
             $this->match_pager = EntityTable::getSphinxPager($terms, $page, $num);  
             break;
             
@@ -2309,7 +2308,6 @@ class entityActions extends sfActions
         switch (sfConfig::get('app_search_engine'))
         {
           case 'sphinx':
-            $terms = '@(name,aliases) ' . $terms;  //search only name and aliases
             $this->entity_pager = EntityTable::getSphinxPager($terms, $page, $num);  
             break;
             
@@ -3665,8 +3663,7 @@ class entityActions extends sfActions
           }
 
           $name = $board_names[$i];
-          $terms = '@(name,aliases) ' . $name . ' @primary_ext Person';  //search only name and aliases
-          $pager = EntityTable::getSphinxPager($terms, 1, 10);  
+          $pager = EntityTable::getSphinxPager($terms, $page=1, $num=10, $listIds=null, $aliases=true, $primary_ext="Person");  
           $this->matches[$name] = $pager->execute();
           $this->total = $pager->getNumResults();
         }
@@ -4395,18 +4392,21 @@ class entityActions extends sfActions
 										{
 											$name_terms = PersonTable::nameSearch($name);
 										}
-										$terms = '@(name,aliases) ' . $name_terms . ' @primary_ext Person'; 
+										$terms = $name_terms;
+										$primary_ext = "Person"; 
 									}
 									else if ($this->default_type == 'Org')
 									{
 										$name_terms = OrgTable::nameSearch($name);
-										$terms = '@(name,aliases) ' . $name_terms . ' @primary_ext Org'; 
+										$terms = $name_terms;
+										$primary_ext = "Org";
 									}
 									else
 									{
-										$terms = '@(name,aliases) ' . $name_terms; 
+										$terms = $name_terms;
+										$primary_ext = null;
 									}
-									$pager = EntityTable::getSphinxPager($terms, 1, 20); 
+									$pager = EntityTable::getSphinxPager($terms, $page=1, $num=20, $listIds=null, $aliases=true, $primary_ext); 
 									$match = $names[$i];
 									
 									$match['search_results'] = $pager->execute();

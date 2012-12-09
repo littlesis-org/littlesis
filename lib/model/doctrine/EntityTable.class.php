@@ -1273,21 +1273,20 @@ class EntityTable extends Doctrine_Table
   }
 
 
-  static function getSphinxHits($query, $page=1, $num=20, Array $listIds=null)
-  {
-   
+  static function getSphinxHits($query, $page=1, $num=20, Array $listIds=null, $aliases=true, $primary_ext=null)
+  {   
     $s = new LsSphinxClient();
     $s->SetServer('localhost', 3312);
     $s->SetMatchMode(SPH_MATCH_EXTENDED);
     $s->SetFieldWeights(array('name' => 3, 'aliases' => 3));
     $s->SetLimits(($page - 1) * $num, $num);
 
-    if ($listIds)
+    if (is_array($listIds) && count($listIds))
     {
       $s->setFilter('list_ids', $listIds);
     }
 
-    $query = LsSphinxClient::cleanQuery($query);    
+    $query = $s->buildEntityQuery($query, $aliases, $primary_ext);
 
     $result = $s->Query($query, 'entities entities-delta');
     
@@ -1300,10 +1299,10 @@ class EntityTable extends Doctrine_Table
   }
 
 
-  static function getSphinxPager($query, $page, $num, Array $listIds=null)
+  static function getSphinxPager($query, $page, $num, Array $listIds=null, $aliases=true, $primary_ext=null)
   {
     $entities = array();
-    $result = self::getSphinxHits($query, $page, $num, $listIds);
+    $result = self::getSphinxHits($query, $page, $num, $listIds, $aliases, $primary_ext);
 
     if ($result['total_found'] > 0 && isset($result['matches']))
     {

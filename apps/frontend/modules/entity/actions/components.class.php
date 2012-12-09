@@ -69,8 +69,7 @@ class entityComponents extends sfComponents
 
       if (count($filtered_terms))
       {
-        $terms = '@primary_ext Org @(name,aliases) ' . join(' ', $filtered_terms);  //search only name and aliases
-        $similar = EntityTable::getSphinxPager($terms, $page=1, $num=3)->execute();
+        $similar = EntityTable::getSphinxPager(join(' ', $filtered_terms), $page=1, $num=3, $listIds=null, $aliases=true, $primary_ext="Org")->execute();
 
         foreach ($similar as $entity)
         {
@@ -523,7 +522,6 @@ class entityComponents extends sfComponents
           switch (sfConfig::get('app_search_engine'))
           {
             case 'sphinx':
-              $terms = '@(name,aliases) ' . $terms;  //search only name and aliases
               $this->entity_pager = EntityTable::getSphinxPager($terms, $page, $num);  
               break;
               

@@ -25,6 +25,17 @@ class LsSphinxClient extends SphinxClient
     $str = preg_replace('#[\(\)\[\]@|*"~/<=\$\^:,]#', '', $str);
     return $str;
   }
+
+  public function buildEntityQuery($terms, $aliases=true, $primary_ext=null)
+  {
+    $terms = self::cleanQuery($terms);    
+    $terms = $this->EscapeString($terms);
+    $ext = $primary_ext ? " @primary_ext " . $primary_ext : "";
+    $fields = "@(name" . ($aliases ? ",aliases" : "") . ") ";
+
+    return $fields . $terms . $ext;
+  }
+  
   
   public function __construct($page=1, $num=20)
   {
@@ -40,8 +51,7 @@ class LsSphinxClient extends SphinxClient
   
   function Query($query, $index="*", $comment="")
   {
-    $query = $this->EscapeString($query);
-    $result = parent::Query($query, $index="*", $comment="");
+    $result = parent::Query($query, $index, $comment);
     
     $this->_total = $result['total_found'];
     
