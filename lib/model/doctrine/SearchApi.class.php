@@ -30,6 +30,8 @@ class SearchApi
     {
       $query = 'bleahbleahbleahbleahbleahbleahbleah';
     }
+    $query = LsSphinxClient::cleanQuery($query);
+    $query = $s->EscapeString($query);
 
     //filter by type_ids, if requested    
     if ($typeIds = @$options['type_ids'])
