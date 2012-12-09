@@ -1,7 +1,7 @@
 About LittleSis
 ===============
 
-[LittleSis](http://littlesis.org) is a software project of [Public Accountability Initiative, Inc.](http://public-accountability.org). 
+[LittleSis](http://littlesis.org) is a free database of who-knows-who at the heights of business and government. LittleSis is a project of [Public Accountability Initiative](http://public-accountability.org), a non-profit public interest research organization investigating power and corruption at the heights of business and government. 
 
 LittleSis is open source software licensed under the [GNU Public License](http://www.gnu.org/copyleft/gpl.html).
 
@@ -12,8 +12,7 @@ Install Notes
 LittleSis requires PHP 5.2.3+ with cURL, GD, PDO and Memcache extensions. The application requires that version 1.1.7 (through 1.1.9) of the [Symfony framework](http://symfony-project.org) and [Sphinx](http://sphinxsearch.com) are installed on the server.
 
 
-Download LittleSis on gitHub
-----------------------------
+### Download LittleSis on gitHub
 
 First you must download the source code from the LittleSis repository on gitHub. You must have [Git](http://git-scm.com/) installed. Email admin@littlesis.org if you'd like to contribute to the LittleSis code.
 
@@ -26,8 +25,7 @@ Create a directory in your web root and perform the checkout:
 Git will download the source code (roughly 42 MB) to your machine.
 
 
-Create and Load Databases
--------------------------
+### Create and Load Databases
 
 Create two databases, one for the application and one for raw parsed & scraped data, for example:
 
@@ -50,8 +48,7 @@ Edit `config/databases.yml.dist`, enter the connection parameters for the two da
           dsn:      mysql://littlesis:fakepassword@localhost/littlesis
 
 
-LittleSis Configuration
------------------------
+### LittleSis Configuration
 
 Edit `config/ProjectConfiguration.class.php.dist`, fill in the path to the symfony 1.1 libraries, and save as `config/ProjectConfiguration.class.php`:
 
@@ -81,8 +78,7 @@ Now you need to make the cache directory recursively writable, and create a log 
     symfony fix-perms
 
 
-Configure Apache
-----------------
+### Configure Apache
 
 Now you need to create Apache aliases pointing the `/littlesis` and `/littlesis/sf` URL paths to the proper locations on your machine. This can be tricky if you haven't created Apache aliases before. An example is below.
 
@@ -104,8 +100,7 @@ Now you need to create Apache aliases pointing the `/littlesis` and `/littlesis/
 Restart Apache.
 
 
-Load Initial Data
------------------
+### Load Initial Data
 
 If you have a database dump, import it: 
 
@@ -134,8 +129,7 @@ You can check that LittleSis is up and running by visiting http://localhost/litt
  * **Admin** [username: admin@example.org, password: admin]
 
 
-Setup Search
-------------
+### Setup Search
 
 However, at this point search on LittleSis will not work. For this you will need to install and configure [Sphinx](http://www.sphinxsearch.com/).
 
@@ -173,8 +167,7 @@ Clear the Symfony cache and search on the site should now work!
     symfony cc
     
 
-Other Cron Jobs
----------------
+### Other Cron Jobs
 
 You'll also need to install these cron jobs to enable LittleSis-triggered emails and keep the link table synced with the relationship table:
 
