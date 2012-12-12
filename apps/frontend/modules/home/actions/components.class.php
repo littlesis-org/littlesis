@@ -9,7 +9,6 @@ class homeComponents extends sfComponents
     if ($this->getUser()->isAuthenticated())
     {
       $name = $this->getUser()->getGuardUser()->getProfile()->public_name;
-      $
       
       $this->items[$name]['highlighted'] = true;
       $this->items[$name]['url'] = 'home/notes';
