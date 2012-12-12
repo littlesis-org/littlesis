@@ -9,14 +9,15 @@ class homeComponents extends sfComponents
     if ($this->getUser()->isAuthenticated())
     {
       $name = $this->getUser()->getGuardUser()->getProfile()->public_name;
+      $
       
       $this->items[$name]['highlighted'] = true;
       $this->items[$name]['url'] = 'home/notes';
-      $this->items[$name]['items']['Groups'] = 'home/groups';    
-      $this->items[$name]['items']['Notes'] = 'home/notes';
-      $this->items[$name]['items']['Edits'] = 'home/modifications';
-      $this->items[$name]['items']['Settings'] = 'home/settings';    
-      $this->items[$name]['items']['Logout'] = '@sf_guard_signout';
+      $this->items[$name]['items'][$this->getContext()->getI18N()->__('Groups')] = 'home/groups';    
+      $this->items[$name]['items'][$this->getContext()->getI18N()->__('Notes')] = 'home/notes';
+      $this->items[$name]['items'][$this->getContext()->getI18N()->__('Edits')] = 'home/modifications';
+      $this->items[$name]['items'][$this->getContext()->getI18N()->__('Settings')] = 'home/settings';    
+      $this->items[$name]['items'][$this->getContext()->getI18N()->__('Logout')] = '@sf_guard_signout';
 
       $network_name = LsListTable::getNameById(sfGuardUserTable::getHomeNetworkId());
       $network_path = LsListTable::getDisplayNameById(sfGuardUserTable::getHomeNetworkId());
@@ -24,13 +25,13 @@ class homeComponents extends sfComponents
       $this->items[$network_name]['url'] = '@localHome?name=' . 
         $network_path;
       $this->items[$network_name]['highlighted'] = true;
-      $this->items[$network_name]['items']['Notes'] = 'local/notes?name=' . $network_path;
-      $this->items[$network_name]['items']['Analysts'] = 'local/analysts?name=' . $network_path;
+      $this->items[$network_name]['items'][$this->getContext()->getI18N()->__('Notes')] = 'local/notes?name=' . $network_path;
+      $this->items[$network_name]['items'][$this->getContext()->getI18N()->__('Analysts')] = 'local/analysts?name=' . $network_path;
 
       //recent views
       if ($this->getUser()->getGuardUser()->getProfile()->enable_recent_views && $entityIds = $this->getUser()->getAttribute('viewed_entity_ids'))
       {
-        $this->items['Recent'] = array(
+        $this->items[$this->getContext()->getI18N()->__('Recent')] = array(
           'url' => null,
           'highlighted' => true,
           'items' => array()
@@ -57,7 +58,7 @@ class homeComponents extends sfComponents
         
         foreach ($orderedEntities as $entity)
         {
-          $this->items['Recent']['items'][$entity['name']] = EntityTable::generateRoute($entity);
+          $this->items[$this->getContext()->getI18N()->__('Recent')]['items'][$entity['name']] = EntityTable::generateRoute($entity);
         }
       }
     }
@@ -65,82 +66,82 @@ class homeComponents extends sfComponents
     {
       if (sfConfig::get('app_login_enabled'))
       {
-        $this->items["Login"] = array('url' => '@sf_guard_signin');
-        $this->items["Sign Up"] = array('url' => '@join');
+        $this->items[$this->getContext()->getI18N()->__("Login")] = array('url' => '@sf_guard_signin');
+        $this->items[$this->getContext()->getI18N()->__("Sign Up")] = array('url' => '@join');
       }
     }
 
     $this->items = array_merge($this->items, array(
-      'Explore' => array(
+      $this->getContext()->getI18N()->__('Explore') => array(
         'items' => array(
-          'Lists' => 'list/list',
+          $this->getContext()->getI18N()->__('Lists') => 'list/list',
           //'Top Analysts' => '@analysts',
-          'Recent Updates' => 'modification/latest',
-          'Analyst Notes' => '@notes',
-          'Research Groups' => '@groups'
+          $this->getContext()->getI18N()->__('Recent Updates') => 'modification/latest',
+          $this->getContext()->getI18N()->__('Analyst Notes') => '@notes',
+          $this->getContext()->getI18N()->__('Research Groups') => '@groups'
         )
       ),
-      'Add' => null,
-      'Help' => array(
+      $this->getContext()->getI18N()->__('Add') => null,
+      $this->getContext()->getI18N()->__('Help') => array(
         'items' => array(
-          'Site Guide' => '@guide',
-          'FAQ' => '@faq',
-          'Analyst Howto' => '@howto',
-          'Videos' => '@videos'
+          $this->getContext()->getI18N()->__('Site Guide') => '@guide',
+          $this->getContext()->getI18N()->__('FAQ') => '@faq',
+          $this->getContext()->getI18N()->__('Analyst Howto') => '@howto',
+          $this->getContext()->getI18N()->__('Videos') => '@videos'
         )
       ),
-      'About' => array(
+      $this->getContext()->getI18N()->__('About') => array(
         'url' => '@about',
         'items' => array(
-          'Features' => '@features',
-          'Our Team' => '@team',
-          'Blog' => 'http://blog.littlesis.org',
-          'Press' => '@press',
-          'Data API' => 'http://api.littlesis.org',
-          'Source Code' => 'http://code.littlesis.org',
-          'Disclaimer' => '@disclaimer',
-          'Contact Us' => '@contact'          
+          $this->getContext()->getI18N()->__('Features') => '@features',
+          $this->getContext()->getI18N()->__('Our Team') => '@team',
+          $this->getContext()->getI18N()->__('Blog') => 'http://blog.littlesis.org',
+          $this->getContext()->getI18N()->__('Press') => '@press',
+          $this->getContext()->getI18N()->__('Data API') => 'http://api.littlesis.org',
+          $this->getContext()->getI18N()->__('Source Code') => 'https://github.com/littlesis-org/littlesis',
+          $this->getContext()->getI18N()->__('Disclaimer') => '@disclaimer',
+          $this->getContext()->getI18N()->__('Contact Us') => '@contact'          
         )
       )
     ));
 
     if (!$this->getUser()->isAuthenticated())
     {
-      unset($this->items['About']['items']['Blog']);
-      $this->items['Blog'] = array(
+      unset($this->items[$this->getContext()->getI18N()->__('About')]['items'][$this->getContext()->getI18N()->__('Blog')]);
+      $this->items[$this->getContext()->getI18N()->__('Blog')] = array(
         'url' => 'http://blog.littlesis.org'
       );      
     }
 
     if ($this->getUser()->isAuthenticated())
     {
-      $this->items['Add'] = array(
+      $this->items[$this->getContext()->getI18N()->__('Add')] = array(
         'items' => array(
-          'Person' => 'entity/addPerson',
-          'Organization' => 'entity/addOrg'
+          $this->getContext()->getI18N()->__('Person') => 'entity/addPerson',
+          $this->getContext()->getI18N()->__('Organization') => 'entity/addOrg'
         )
       );
     }
 
     if ($this->getUser()->hasCredential('lister'))
     {
-      $this->items['Add']['items']['List'] = 'list/add';
+      $this->items[$this->getContext()->getI18N()->__('Add')]['items'][$this->getContext()->getI18N()->__('List')] = 'list/add';
     }
 
     if ($this->getUser()->hasCredential('admin'))
     {
       $base = backend_base();
       unset($this->items['Help']);
-      $this->items['About']['items']['Blog'] = 'http://blog.littlesis.org';
+      $this->items[$this->getContext()->getI18N()->__('About')]['items'][$this->getContext()->getI18N()->__('Blog')] = 'http://blog.littlesis.org';
 
       /* hiding for now...
-      $this->items['Admin'] = array(
+      $this->items[$this->getContext()->getI18N()->__('Admin')] = array(
         'url' => $base,
         'items' => array(
-          'Users' => $base . '/user/list',
-          'Groups' => $base . '/sfGuardGroup',
-          'Modifications' => $base . '/modification/list',
-          'API' => $base . '/api/users'
+          $this->getContext()->getI18N()->__('Users') => $base . '/user/list',
+          $this->getContext()->getI18N()->__('Groups') => $base . '/sfGuardGroup',
+          $this->getContext()->getI18N()->__('Modifications') => $base . '/modification/list',
+          $this->getContext()->getI18N()->__('API') => $base . '/api/users'
         )
       );
       */
