@@ -9,21 +9,6 @@
 
 
 <?php $sections = array(
-  'Family' => array(
-    'more_action' => 'family',
-    'category_ids' => array(RelationshipTable::FAMILY_CATEGORY),
-    'pointer' => 'People in the same family as ' . $entity['name'],
-  ),
-  'Friends & Colleagues' => array(
-    'more_action' => 'friends',
-    'category_ids' => array(RelationshipTable::SOCIAL_CATEGORY),
-    'pointer' => 'People with close social ties to ' . $entity['name']
-  ),
-  'Professional Associates' => array(
-    'more_action' => 'friends',
-    'category_ids' => array(RelationshipTable::PROFESSIONAL_CATEGORY),
-    'pointer' => 'People ' . $entity['name'] . ' has worked with closely'
-  ),
   'Government Positions' => array(
     'more_action' => 'government',
     'category_ids' => array(RelationshipTable::POSITION_CATEGORY, RelationshipTable::MEMBERSHIP_CATEGORY),
@@ -36,20 +21,6 @@
     'extensions' => array('Business'),
     'pointer' => 'Companies ' . $entity['name'] . ' has had a position in'
   ),
-  'In The Office Of' => array(
-    'more_action' => 'officeOf',
-    'category_ids' => array(RelationshipTable::POSITION_CATEGORY),
-    'extensions' => array('Person'),
-    'order' => 1,
-    'pointer' => 'People ' . $entity['name'] . ' has worked for directly',
-  ),
-  'Office/Staff' => array(
-    'more_action' => 'office',
-    'category_ids' => array(RelationshipTable::POSITION_CATEGORY),
-    'extensions' => array('Person'),
-    'order' => 2,
-    'pointer' => 'People who have worked for ' . $entity['name'] . ' directly'
-  ),
   'Other Positions & Memberships' => array(
     'more_action' => 'otherPositions',
     'category_ids' => array(RelationshipTable::POSITION_CATEGORY, RelationshipTable::MEMBERSHIP_CATEGORY),
@@ -61,23 +32,39 @@
     'category_ids' => array(RelationshipTable::EDUCATION_CATEGORY),
     'pointer' => 'Schools ' . $entity['name'] . ' has attended',
   ),
+
+  'Holdings' => array(
+    'more_action' => 'holdings',
+    'category_ids' => array(RelationshipTable::OWNERSHIP_CATEGORY),
+    'pointer' => 'Orgs that ' . $entity['name'] . ' owns at least a piece of',
+  ),
   'Services/Transactions' => array(
     'more_action' => 'transactions',
     'category_ids' => array(RelationshipTable::TRANSACTION_CATEGORY),
     'pointer' => 'People and orgs ' . $entity['name'] . ' has done business with',
     'order_by_amount' => true
   ),
-  'Holdings' => array(
-    'more_action' => 'holdings',
-    'category_ids' => array(RelationshipTable::OWNERSHIP_CATEGORY),
-    'pointer' => 'Orgs that ' . $entity['name'] . ' owns at least a piece of',
+  'Family' => array(
+    'more_action' => 'family',
+    'category_ids' => array(RelationshipTable::FAMILY_CATEGORY),
+    'pointer' => 'People in the same family as ' . $entity['name'],
   ),
-  'Political Fundraising Committees' => array(
-    'more_action' => 'fundraising',
-    'category_ids' => array(RelationshipTable::DONATION_CATEGORY),
-    'extensions' => array('PoliticalFundraising'),
-    'order' => 2,
-    'pointer' => 'Orgs that have raised political donations for ' . $entity['name']
+  'Professional Associates' => array(
+    'more_action' => 'friends',
+    'category_ids' => array(RelationshipTable::PROFESSIONAL_CATEGORY),
+    'pointer' => 'People ' . $entity['name'] . ' has worked with closely'
+  ),
+  'In The Office Of' => array(
+    'more_action' => 'officeOf',
+    'category_ids' => array(RelationshipTable::POSITION_CATEGORY),
+    'extensions' => array('Person'),
+    'order' => 1,
+    'pointer' => 'People ' . $entity['name'] . ' has worked for directly',
+  ),
+  'Friends & Colleagues' => array(
+    'more_action' => 'friends',
+    'category_ids' => array(RelationshipTable::SOCIAL_CATEGORY),
+    'pointer' => 'People with close social ties to ' . $entity['name']
   ),
   'Donors' => array(
     'more_action' => 'donors',
@@ -93,6 +80,20 @@
     'order' => 1,
     'pointer' => 'People and orgs ' . $entity['name'] . ' has donated to',
     'order_by_amount' => true
+  ),
+  'Office/Staff' => array(
+    'more_action' => 'office',
+    'category_ids' => array(RelationshipTable::POSITION_CATEGORY),
+    'extensions' => array('Person'),
+    'order' => 2,
+    'pointer' => 'People who have worked for ' . $entity['name'] . ' directly'
+  ),
+  'Political Fundraising Committees' => array(
+    'more_action' => 'fundraising',
+    'category_ids' => array(RelationshipTable::DONATION_CATEGORY),
+    'extensions' => array('PoliticalFundraising'),
+    'order' => 2,
+    'pointer' => 'Orgs that have raised political donations for ' . $entity['name']
   ),
   'Lobbied By' => array(
     'more_action' => 'lobbiedBy',
@@ -178,20 +179,11 @@
 
 
 <?php $sections = array(
-  'Leadership & Staff' => array(
-    'more_action' => 'leadership',
-    'category_ids' => array(RelationshipTable::POSITION_CATEGORY),
-    'order' => 2,
-    'pointer' => 'People with official positions in ' . $entity['name'],
-    'actions' => array(
-      'board & execs &raquo;' => EntityTable::getInternalUrl($entity, 'board')
-    )
-  ),
-  'Members' => array(
-    'more_action' => 'members',
-    'category_ids' => array(RelationshipTable::MEMBERSHIP_CATEGORY),
-    'order' => 2,
-    'pointer' => 'Members of ' . $entity['name'] . ' without official positions'
+  'Holdings' => array(
+    'more_action' => 'holdings',
+    'category_ids' => array(RelationshipTable::OWNERSHIP_CATEGORY),
+    'order' => 1,
+    'pointers' => 'Orgs that ' . $entity['name'] . ' owns at least a piece of'
   ),
   'Memberships' => array(
     'more_action' => 'memberships',
@@ -205,11 +197,26 @@
     'order' => 2,
     'pointers' => 'People and orgs with ownership in ' . $entity['name']
   ),
-  'Holdings' => array(
-    'more_action' => 'holdings',
-    'category_ids' => array(RelationshipTable::OWNERSHIP_CATEGORY),
+  'Leadership & Staff' => array(
+    'more_action' => 'leadership',
+    'category_ids' => array(RelationshipTable::POSITION_CATEGORY),
+    'order' => 2,
+    'pointer' => 'People with official positions in ' . $entity['name'],
+    'actions' => array(
+      'board & execs &raquo;' => EntityTable::getInternalUrl($entity, 'board')
+    )
+  ),
+  'Recipients' => array(
+    'more_action' => 'recipients',
+    'category_ids' => array(RelationshipTable::DONATION_CATEGORY),
     'order' => 1,
-    'pointers' => 'Orgs that ' . $entity['name'] . ' owns at least a piece of'
+    'pointer' => $entity['name'] . ' has donated to:'
+  ),
+  'Members' => array(
+    'more_action' => 'members',
+    'category_ids' => array(RelationshipTable::MEMBERSHIP_CATEGORY),
+    'order' => 2,
+    'pointer' => 'Members of ' . $entity['name'] . ' without official positions'
   ),
   'Services/Transactions' => array(
     'more_action' => 'transactions',
@@ -224,13 +231,7 @@
     'pointer' => $entity['name'] . ' has received donations from:',
     'order_by_amount' => true
   ),
-  'Recipients' => array(
-    'more_action' => 'recipients',
-    'category_ids' => array(RelationshipTable::DONATION_CATEGORY),
-    'order' => 1,
-    'pointer' => $entity['name'] . ' has donated to:'
-  ),
-    'Students' => array(
+  'Students' => array(
     'more_action' => 'students',
     'category_ids' => array(RelationshipTable::EDUCATION_CATEGORY),
     'order' => 2,
