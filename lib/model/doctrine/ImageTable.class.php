@@ -93,7 +93,7 @@ class ImageTable extends Doctrine_Table
 
       if (!fclose($localImage))
       {
-        throw new Exception("Couldn't close file: " . $filename);
+        throw new Exception("Couldn't close file: " . $filePath);
       }
       
       if (strtolower(substr($originalFilePath, -3, 3)) == "svg" )
