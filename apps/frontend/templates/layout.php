@@ -134,15 +134,10 @@
       <a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/us/"><img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by-sa/3.0/us/80x15.png" /></a>      
     </div>
 
-    A project of the <?php echo link_to('Public Accountability Initiative', 'http://public-accountability.org') ?>. 
-    More <?php echo link_to('about LittleSis', '@about') ?>.
-    Read the <?php echo link_to('disclaimer', '@disclaimer') ?>.
+    <?php echo __("A project of the") ?> <?php echo link_to('Public Accountability Initiative', 'http://public-accountability.org') ?>. 
+    <?php echo __("More") ?> <?php echo link_to($sf_context->getI18N()->__('about LittleSis'), '@about') ?>.
+    <?php echo __("Read the") ?> <?php echo link_to($sf_context->getI18N()->__('disclaimer'), '@disclaimer') ?>.
 
-<!--
-    <br />
-    <br />
-    <?php echo link_to(image_tag('system' . DIRECTORY_SEPARATOR . 'pai-logo-300.png', 'width=230 border=0'), 'http://public-accountability.org') ?> &nbsp; &nbsp;
--->
   </div>
 </div>
 

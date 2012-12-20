@@ -5,27 +5,26 @@
 <?php end_slot() ?>
 
 <span class="about-text">
-LittleSis features interlinked profiles of powerful individuals and organizations in the public and private sectors. Profiles detail a wealth of information vital to any investigation of the ways power and money guide the formulation of public policy, from board memberships to campaign contributions, old school ties to government contracts.
+<?php echo __("LittleSis features interlinked profiles of powerful individuals and organizations in the public and private sectors. Profiles detail a wealth of information vital to any investigation of the ways power and money guide the formulation of public policy, from board memberships to campaign contributions, old school ties to government contracts.") ?>
 
 <br />
 <br />
 
-The site currently offers profiles of <strong><?php echo $person_num ?> people</strong> and <strong><?php echo $org_num ?> organizations</strong> in varying stages of completion. These include, but are not limited to:
+<?php printf(__("The site currently offers profiles of <strong>%s people</strong> and <strong>%s organizations</strong> in varying stages of completion. These include, but are not limited to:"), $person_num, $org_num) ?>
 
 <ul>
-  <li><strong>Politicians:</strong> members of Congress since 1979, governors since 1974, Bush and Obama administration officials.</li>
-  <li><strong>Business people:</strong> Fortune 1000 executives and directors, members of the Forbes 400. 
-  <li><strong>Lobbyists</strong> who have lobbied on behalf of Fortune 1000 companies.</li>
-  <li><strong>Government bodies:</strong> US House & Senate; agencies ranging from the Department of 
-Defense to the IRS.</li>
-  <li><strong>Businesses:</strong> Fortune 1000 companies, lobbying firms, top law firms, and other private companies.</li>
-  <li><strong>Non-profits</strong> such as foundations, think tanks, and political organizations.</li>
+  <li><strong><?php echo __("Politicians") ?>:</strong> <?php echo __("members of Congress since 1979, governors since 1974, Bush and Obama administration officials.") ?></li>
+  <li><strong><?php echo __("Business people") ?>:</strong> <?php echo __("Fortune 1000 executives and directors, members of the Forbes 400.") ?></li>
+  <li><strong><?php echo __("Lobbyists") ?></strong> <?php echo __("who have lobbied on behalf of Fortune 1000 companies.") ?></li>
+  <li><strong><?php echo __("Government bodies") ?>:</strong> <?php echo __("US House & Senate; agencies ranging from the Department of Defense to the IRS.") ?></li>
+  <li><strong><?php echo __("Businesses") ?>:</strong> <?php echo __("Fortune 1000 companies, lobbying firms, top law firms, and other private companies.") ?></li>
+  <li><strong><?php echo __("Non-profits") ?></strong> <?php echo __("such as foundations, think tanks, and political organizations.") ?></li>
 </ul>
 
 <br />
 
 <a name="relationships"></a>
-<h3>Relationships</h3>
+<h3><?php echo __("Relationships") ?></h3>
 
 LittleSis offers some data about these people and organizations themselves, but it's focus is on the relationships between them. There are currently <strong><?php echo $relationship_num ?> relationships</strong> linking entities profiled in the database. The word "relationship" is broadly defined, and can include: 
 

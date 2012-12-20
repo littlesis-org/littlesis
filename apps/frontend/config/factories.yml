@@ -74,21 +74,23 @@ all:
 #  view_cache:
 #    class: LsRedisCache
 
-#  i18n:
-#    class: sfI18N
-#    param:
-#      source:               XLIFF
-#      debug:                off
-#      untranslated_prefix:  "[T]"
-#      untranslated_suffix:  "[/T]"
-#      cache:
-#        class: sfFileCache
-#        param:
-#          automatic_cleaning_factor: 0
-#          cache_dir:                 %SF_I18N_CACHE_DIR%
-#          lifetime:                  86400
-#          prefix:                    %SF_APP_DIR%
-#
+  i18n:
+    class: sfI18N
+    param:
+      source:               XLIFF
+      debug:                off
+      untranslated_prefix:  "[T]"
+      untranslated_suffix:  "[/T]"
+      cache:
+        class: LsMemcacheCache
+        param:
+          lifetime:                  864000
+          automatic_cleaning_factor: 10
+          cache_dir:                 %SF_TEMPLATE_CACHE_DIR%
+          prefix:                    %SF_APP_DIR%-i18n
+          storeCacheInfo:            true
+          persistent:                false
+
   routing:
     class: sfPatternRouting
     param:

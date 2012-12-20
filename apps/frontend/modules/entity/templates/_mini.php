@@ -17,14 +17,14 @@
 
     <span style="font-size: 6px;"><br /></span>
   
-    <span class="entity-mini-count"><?php echo $relationship_count ?> relationships:</span>
+    <span class="entity-mini-count"><?php echo $relationship_count ?> <?pho echo __("relationships") ?>:</span>
    
     <?php $related_links = array() ?>
     <?php foreach ($sample_relateds as $related) : ?>
       <?php $related_links[] = entity_link($related, 'entity-mini-related', false, excerpt($related['name'], 40)) ?>
     <?php endforeach; ?>
     <?php if (count($relateds) > 3) : ?>
-      <?php $related_links[] = '<nobr>' . entity_link($entity, 'entity-mini-related', false, 'More &raquo;') . '</nobr>' ?>
+      <?php $related_links[] = '<nobr>' . entity_link($entity, 'entity-mini-related', false, __('More') . ' &raquo;') . '</nobr>' ?>
     <?php endif; ?>
     
     <?php echo implode(" &bull; ", $related_links) ?>

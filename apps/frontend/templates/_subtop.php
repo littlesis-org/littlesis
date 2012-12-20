@@ -2,10 +2,11 @@
 <div id="topsearch">
   <form action="<?php echo url_for('search/simple') ?>">
   <?php $existing = $sf_request->getParameter('q') && ($sf_request->getParameter('action') == 'simple') ?>
+  <?php $default_search = __("search for a name") ?>
   <input type="text" id="simple_search_terms" style="background-image: url('<?php echo image_path("system/search-16.png"); ?>');" class="<?php echo $existing ? '' : 'search_placeholder' ?>" name="q" 
-    value="<?php echo $existing ? $sf_request->getParameter('q') : 'search for a name' ?>" 
-    onfocus="if (this.value == 'search for a name') { this.className = ''; this.value = ''; }" 
-    onblur="if (this.value == '') { this.className = 'search_placeholder'; this.value = 'search for a name'; }" 
+    value="<?php echo $existing ? $sf_request->getParameter('q') : $default_search ?>" 
+    onfocus="if (this.value == '<?php echo $default_search ?>') { this.className = ''; this.value = ''; }" 
+    onblur="if (this.value == '') { this.className = 'search_placeholder'; this.value = '<?php echo $default_search ?>'; }" 
     size="25" />
   </form>
 </div>

@@ -2,9 +2,9 @@
 
 
 <?php $primary = $entity['primary_ext'] ?>
-<?php $title = ($primary == 'Person') ? 'People in Common Orgs' : 'Orgs with Common People' ?>
-<?php $commonStr = ($primary == 'Person') ? 'Common Orgs' : 'Common People' ?>
-<?php $pointer = ($primary == 'Person') ? 'People with positions in the same orgs as ' . $entity['name'] : 'Leadership and staff of ' . $entity['name'] . ' also have positions in these orgs' ?>
+<?php $title = ($primary == 'Person') ? __('People in Common Orgs') : __('Orgs with Common People') ?>
+<?php $commonStr = ($primary == 'Person') ? __('Common Orgs') : __('Common People') ?>
+<?php $pointer = ($primary == 'Person') ? __('People with positions in the same orgs as') . " " . $entity['name'] : sprintf(__("Leadership and staff of %s also have positions in these orgs"), $entity['name']) ?>
 
 <?php include_partial('global/section', array(
   'title' => $title,

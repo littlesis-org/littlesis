@@ -2,7 +2,7 @@
 
 <div class="inner-box double_padded">
 
-<?php include_partial('global/section', array('title' => 'Data Summary')) ?>
+<?php include_partial('global/section', array('title' => __('Data Summary'))) ?>
 
 <br />
 

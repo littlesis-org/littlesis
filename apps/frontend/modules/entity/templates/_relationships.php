@@ -32,7 +32,6 @@
     'category_ids' => array(RelationshipTable::EDUCATION_CATEGORY),
     'pointer' => 'Schools ' . $entity['name'] . ' has attended',
   ),
-
   'Holdings' => array(
     'more_action' => 'holdings',
     'category_ids' => array(RelationshipTable::OWNERSHIP_CATEGORY),
@@ -179,6 +178,12 @@
 
 
 <?php $sections = array(
+  'Owners' => array(
+    'more_action' => 'owners',
+    'category_ids' => array(RelationshipTable::OWNERSHIP_CATEGORY),
+    'order' => 2,
+    'pointers' => 'People and orgs with ownership in ' . $entity['name']
+  ),
   'Holdings' => array(
     'more_action' => 'holdings',
     'category_ids' => array(RelationshipTable::OWNERSHIP_CATEGORY),
@@ -190,12 +195,6 @@
     'category_ids' => array(RelationshipTable::MEMBERSHIP_CATEGORY),
     'order' => 1,
     'pointer' => $entity['name'] . ' belongs to these umbrella groups'
-  ),
-  'Owners' => array(
-    'more_action' => 'owners',
-    'category_ids' => array(RelationshipTable::OWNERSHIP_CATEGORY),
-    'order' => 2,
-    'pointers' => 'People and orgs with ownership in ' . $entity['name']
   ),
   'Leadership & Staff' => array(
     'more_action' => 'leadership',
