@@ -19,7 +19,6 @@ lib/model/doctrine/lsGovtrackPlugin/
 log/
 plugins/.*
 plugins/lsGovtrackPlugin/
-plugins/lsOpenSecretsPlugin
 tmp/
 web/.htaccess
 web/crossdomain.xml
