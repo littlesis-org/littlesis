@@ -1221,7 +1221,7 @@ Phone:
       notnull: true
     type:
       type: enum
-      values: ['phone', 'fax']
+      values: ['work', 'home', 'mobile', 'work fax', 'home fax', 'other', 'phone', 'fax']
   relations:
     Entity:
       local: entity_id

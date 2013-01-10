@@ -10,7 +10,7 @@ abstract class BasePhone extends sfDoctrineRecord
     $this->setTableName('phone');
     $this->hasColumn('entity_id', 'integer', null, array('type' => 'integer', 'notnull' => true));
     $this->hasColumn('number', 'string', 20, array('type' => 'string', 'notnull' => true, 'length' => '20'));
-    $this->hasColumn('type', 'enum', null, array('type' => 'enum', 'values' => PhoneTable::$types));
+    $this->hasColumn('type', 'enum', null, array('type' => 'enum', 'values' => array(0 => 'work', 1 => 'home', 2 => 'mobile', 3 => 'work fax', 4 => 'home fax', 5 => 'other', 6 => 'phone', 7 => 'fax')));
 
     $this->option('collate', 'utf8_unicode_ci');
     $this->option('charset', 'utf8');
