@@ -21,8 +21,8 @@ abstract class BaseOsCommittee extends sfDoctrineRecord
     $this->hasColumn('party', 'string', 1, array('type' => 'string', 'length' => '1'));
     $this->hasColumn('industry_id', 'string', 5, array('type' => 'string', 'length' => '5'));
     $this->hasColumn('source', 'string', 5, array('type' => 'string', 'length' => '5'));
-    $this->hasColumn('sensitive', 'string', 1, array('type' => 'string', 'length' => '1'));
-    $this->hasColumn('foreign', 'boolean', null, array('type' => 'boolean', 'notnull' => true));
+    $this->hasColumn('is_sensitive', 'string', 1, array('type' => 'string', 'length' => '1'));
+    $this->hasColumn('is_foreign', 'boolean', null, array('type' => 'boolean', 'notnull' => true));
     $this->hasColumn('active', 'boolean', null, array('type' => 'boolean', 'notnull' => true));
 
     $this->option('collate', 'utf8_unicode_ci');

@@ -26,5 +26,8 @@ abstract class BaseOsCategory extends sfDoctrineRecord
     $this->hasMany('Entity', array('refClass' => 'OsEntityCategory',
                                    'local' => 'category_id',
                                    'foreign' => 'entity_id'));
+
+    $this->hasMany('OsEntityCategory', array('local' => 'category_id',
+                                             'foreign' => 'category_id'));
   }
 }

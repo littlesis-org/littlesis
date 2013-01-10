@@ -26,9 +26,9 @@ abstract class BaseOsEntityCategory extends sfDoctrineRecord
                                   'onUpdate' => 'CASCADE'));
 
     $this->hasOne('OsCategory', array('local' => 'category_id',
-                                  'foreign' => 'category_id',
-                                  'onDelete' => 'CASCADE',
-                                  'onUpdate' => 'CASCADE'));
+                                      'foreign' => 'category_id',
+                                      'onDelete' => 'CASCADE',
+                                      'onUpdate' => 'CASCADE'));
 
     $timestampable0 = new Doctrine_Template_Timestampable();
     $this->actAs($timestampable0);
