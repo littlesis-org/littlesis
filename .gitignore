@@ -16,7 +16,6 @@ data/sfWebBrowserPlugin/
 data/sphinx*
 data/sql/
 lib/model/doctrine/lsGovtrackPlugin/
-log/
 plugins/.*
 plugins/lsGovtrackPlugin/
 tmp/
