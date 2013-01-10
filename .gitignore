@@ -16,12 +16,10 @@ data/sfWebBrowserPlugin/
 data/sphinx*
 data/sql/
 lib/model/doctrine/lsGovtrackPlugin/
-lib/model/doctrine/lsOpenSecretsPlugin/
 log/
 plugins/.*
 plugins/lsGovtrackPlugin/
 plugins/lsOpenSecretsPlugin
-plugins/lsOpenSecretsPlugin/
 tmp/
 web/.htaccess
 web/crossdomain.xml
