@@ -558,7 +558,7 @@ class homeActions extends sfActions
         $files = $request->getFiles('image');
 
         //set filename and path based on upload type
-        if (isset($files['size']['file']) && $files['size']['file'])
+        if (isset($files['file']['size']) && $files['file']['size'])
         {
           $path = $request->getFilePath('image');
           $path = $path['file'];
