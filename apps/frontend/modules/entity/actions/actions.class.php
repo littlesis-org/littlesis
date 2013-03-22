@@ -4169,9 +4169,12 @@ class entityActions extends sfActions
               {
               	foreach($names as &$name)
               	{
-              		$name['summary'] = str_replace(array('Õ',"'"),"\'",$name['summary']);
-              		$name['summary'] = str_replace(array('Ò','Ó','"'),'\"',$name['summary']);
-              		
+			$name['summary'] = str_replace(array('?',"'"),"'",$name['summary']);
+              		$name['summary'] = str_replace(array('?','?','"'),'"',$name['summary']);
+              		if(isset($name['title']))
+              		{
+              			$name['description1'] = $name['title'];
+              		}              		
               	}
               	unset($name);
               }
@@ -4457,6 +4460,13 @@ class entityActions extends sfActions
         if ($entity_id = $request->getParameter('entity_' . $i))
         {
           $selected_entity_id = null;
+	  $relParams = $request->getParameter("relationship_" . $i);
+          if ($relParams['ref_name'])
+	  {
+		$ref['source'] = $relParams['ref_source'];
+		$ref['name'] = $relParams['ref_name'];
+	  }
+
           if ($entity_id == 'new')
           {
             $name = $request->getParameter('new_name_' . $i);
@@ -4473,8 +4483,9 @@ class entityActions extends sfActions
             $new_entity->save();
             $new_entity->blurb = $request->getParameter('new_blurb_' . $i);
             $new_entity->summary = $request->getParameter('new_summary_' . $i);
-  
-            $new_entity->addReference($default_ref->source, null, null, $default_ref->name);
+  				
+  	    if (!$ref) $ref = $default_ref;
+            $new_entity->addReference($ref['source'], null, null, $ref['name']);
             
             if ($types = $request->getParameter('new_extensions_' . $i))
 						{
@@ -4495,11 +4506,9 @@ class entityActions extends sfActions
           }
           if ($selected_entity_id)
           {
-            $relParams = $request->getParameter("relationship_" . $i);
             $startDate = $relParams['start_date'];
             $endDate = $relParams['end_date'];
-            unset($relParams['start_date'], $relParams['end_date']);
-            
+            unset($relParams['start_date'], $relParams['end_date'], $relParams['ref_name'],$relParams['ref_url']);            
             $rel = new Relationship;
             $rel->setCategory($relationship_category);
             if ($order == '1')

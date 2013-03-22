@@ -108,12 +108,13 @@ The following search returns <strong>Entity X</strong>s with the most <strong>En
   <?php include_partial('global/section', array(
     'title' => 'Search Results'
   )) ?>
-  
+  <div style="width: 70%">
   <?php include_partial('global/table', array(
     'columns' => array('Indirect Link', 'Linked Through'),
     'pager' => $entity_pager,
     'row_partial' => 'entity/networksearchrow',
     'base_object' => $entity
   )) ?>
+</div>
 <?php endif; ?>
 
