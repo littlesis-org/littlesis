@@ -26,6 +26,7 @@ class ImageUploadForm extends sfForm
 
 
     $this->widgetSchema->setLabels(array(
+      'file' => 'File',
       'url' => 'Remote URL',
       'is_featured' => 'Featured'
     ));
