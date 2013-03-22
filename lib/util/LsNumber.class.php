@@ -70,7 +70,7 @@ class LsNumber
     }
     else
     {
-      $ret .= $num;
+      $ret .= number_format($num,0, '.', ',');
     }
     
     if ($ret)

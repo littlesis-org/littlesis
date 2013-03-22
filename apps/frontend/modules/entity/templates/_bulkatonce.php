@@ -100,7 +100,8 @@
             <?php echo $field ?><br />
             
           <?php endforeach; ?>
-         
+          <?php echo '<input type="hidden" name="relationship_' . $count . '[ref_source]" value="' . $match['reference_link'] . '" />' ?>
+          <?php echo '<input type="hidden" name="relationship_' . $count . '[ref_name]" value="' . $match['reference_name'] . '" />' ?>
         </td> 
         </td>  
         <td>
