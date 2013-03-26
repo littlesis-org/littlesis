@@ -175,6 +175,11 @@ class LsCacheFilter extends sfCacheFilter
   
   public function skipCaching()
   {
+    if ($this->getContext()->getRequest()->getMethodName() == "HEAD")
+    {
+      return true;
+    }
+
     return false; //$this->getContext()->getUser()->isAuthenticated();
   }
 
