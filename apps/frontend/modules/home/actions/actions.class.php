@@ -72,11 +72,13 @@ class homeActions extends sfActions
     $this->relationship_num = $stmt->fetch(PDO::FETCH_COLUMN);
     
 
-    //get mapped entities
-    $this->top_left_id = 1164;
-    $this->bottom_left_id = 20;
-    $this->top_right_id = 14730;
-    $this->bottom_right_id = 14597;
+    //get carousel entities
+    $carousel_list_id = sfConfig::get('app_carousel_list_id');
+    $sql = 'SELECT entity_id FROM ls_list_entity WHERE list_id = ?';
+    $stmt = $db->execute($sql, array($carousel_list_id));
+    $this->carousel_ids = $stmt->fetchAll(PDO::FETCH_COLUMN);
+    //shuffle($this->carousel_ids);
+    //$this->carousel_ids = array(1164, 20, 14730, 14597);
 
     //get top users    
     $this->analysts = LsDoctrineQuery::create()

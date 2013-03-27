@@ -1,5 +1,6 @@
 <?php use_helper('Number') ?>
-
+<?php $sf_response->addJavascript('http://ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js', 'first'); ?>
+<?php $sf_response->addJavascript('jquery.tinycarousel.js'); ?>
 
 <!-- SPLASH -->
 
@@ -68,37 +69,39 @@ We're a grassroots watchdog network connecting the dots between the world's most
 </div>
 
 
+<!-- CAROUSEL PART -->
 
-<!-- SECOND PART -->
+<br />
+<br />
 
-<div id="homepage-subsplash">
+<div id="homepage-carousel">
+    <a class="buttons prev" href="#"><?php echo image_tag("system/carousel-left-semi.png"); ?></a>
+    <div class="viewport">
+        <ul class="overview">
+        <?php foreach ($carousel_ids as $id) : ?>
+          <li><?php include_component('entity', 'carousel', array('id' => $id)) ?></li>
+        <?php endforeach; ?>
+        </ul>
+    </div>
+    <a class="buttons next" href="#"><?php echo image_tag("system/carousel-right-semi.png"); ?></a>
+</div>
+
+
+<!-- BOTTOM PART -->
+
+<br />
+<br />
+<br />
 
 <div id="homepage-subsplash-header">
 A unique resource for investigating cronyism, corruption, and conflicts of interest.
 </div>
 
-<table style="width: 100%; margin-left: 0px;">
-  <tr>
-    <td style="border: 0px solid #eee; padding-top: 1em; width: 350px;">
-      <?php echo image_tag('system/rubin-summers.png', 'width=340 style="border: 0px solid #ccc;"') ?>
-    </td>
-    <td style="width: 300px;">
-      <?php include_component('entity', 'mini', array('id' => $top_left_id, 'border' => '0px solid #fff')) ?>
-      <?php include_component('entity', 'mini', array('id' => $bottom_left_id, 'border' => '0px solid #fff')) ?>
-    </td>
-    <td style="width: 300px; padding-left: 15px;">
-      <?php include_component('entity', 'mini', array('id' => $top_right_id, 'border' => '0px solid #fff')) ?>
-      <?php include_component('entity', 'mini', array('id' => $bottom_right_id, 'border' => '0px solid #fff')) ?>
-    </td>
-  </tr>
-</table>
+<div id="homepage-subsplash">
 
+<div id="homepage-about">
 <a name="about"></a>
-<br />
-<span style="font-size: 14px; line-height: 22px;">
-
 <div style="float: right; margin-left: 2em;">
-<br />
 <?php include_component('home', 'stats', array('filter' => true))?>
 </div>
 
@@ -132,7 +135,7 @@ We're bringing together a community of citizens who believe in transparency and 
 
 LittleSis is a project of Public Accountability Initiative, a 501(c)3 organization focused on corporate and government accountability. We receive financial support from the <?php echo link_to('Sunlight Foundation', 'http://sunlightfoundation.com') ?>, <?php echo link_to('Harnisch Foundation', 'http://thehf.org') ?>, and Elbaz Family Foundation, and benefit from free software written by the open source community. <nobr><strong><?php echo link_to('Our Team &raquo;', '@team') ?></strong></nobr>
 
-</span>
+</div>
 
 <div style="clear: both;">&nbsp;</div>
 </div>
@@ -140,3 +143,11 @@ LittleSis is a project of Public Accountability Initiative, a 501(c)3 organizati
 <div style="text-align: right; color: #ccc; font-size: 10px; font-style: italic; position: relative; top: 10px; padding-right: 10px;">
 background art by Mark Lombardi
 </div>
+
+<script type="text/javascript">         
+    $(document).ready(function(){               
+                
+        $('#homepage-carousel').tinycarousel({ pager: true, start: 1, interval: false, intervaltime: 5000, rewind: true, animation: true });
+        
+    });
+</script> 

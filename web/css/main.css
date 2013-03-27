@@ -435,7 +435,7 @@ img.screenshot
 
 .homepage-subheader
 {
-  font-size: 18px;
+  font-size: 22px;
   margin-top: 1.7em;
   margin-bottom: 0.4em;
 }
@@ -720,16 +720,26 @@ body
 #homepage-subsplash
 {
   padding: 1.5em; 
+  padding-top: 0.5em;
   margin-top: 3.5em; 
   background-color: #fff; 
   box-shadow: 1px 3px 6px rgba(0, 0, 0, 0.5);
 }
 
+#homepage-about
+{
+  padding: 1.5em;
+  padding-top: 0;
+  font-size: 16px;
+}
+
 #homepage-subsplash-header
 {
-  font-size: 25px; 
+  font-size: 40px; 
   text-align: center; 
   margin-bottom: 1em;
+  color: white;
+  font-weight: bold;
 }
 
 #topcontent
@@ -1932,6 +1942,67 @@ div.note_form textarea
 }
 
 
+/* entity/carousel */
+
+.entity-carousel
+{
+  clear: both;
+  border-bottom: 0px solid #ddd;
+  margin-top: 0em;
+  margin-bottom: 0em;
+  height: 300px;
+}
+
+.entity-carousel-image
+{
+  float: left;
+  height: 300px;
+  width: 300px;
+  background-size: cover;
+  background-position: center center;
+}
+
+.entity-carousel .entity-carousel-image img
+{
+  max-width: 160px;
+  border: 0;
+}
+
+.entity-carousel-text
+{
+  float: right;
+  width: 543px;
+  font-size: 18px;
+  line-height: 26px;
+  padding: 1.5em;
+  padding-bottom: 1em;
+}
+
+.entity-carousel-name
+{
+  font-size: 36px;
+  line-height: 40px;
+}
+
+.entity-carousel-description
+{
+  font-style: italic;
+  font-size: 18px;
+  color: #666;
+}
+
+.entity-carousel-count
+{
+  clear: both;
+  font-weight: bold;
+}
+
+.entity-carousel ul
+{
+  margin: 0;
+}
+
+
 /* home/blogFeed */
 
 #featured_profiles
@@ -2098,3 +2169,23 @@ input#simple_search_terms
   text-align: center;
   padding: 0.4em;
 }
+
+#homepage-carousel { height: 300px; overflow:hidden; }
+#homepage-carousel .viewport { 
+  float: left; 
+  width: 908px; 
+  height: 300px; 
+  overflow: hidden; 
+  position: relative; 
+  background-color: #fff;
+}
+#homepage-carousel .buttons { display: block; margin: 125px 0px 0 0; float: left; }
+#homepage-carousel .next { margin: 125px 0 0 0px; }
+#homepage-carousel .disable { /* visibility: hidden; */ }
+#homepage-carousel .overview { list-style: none; padding: 0; margin: 0;  position: absolute; left: 0; top: 0; }
+#homepage-carousel .overview li{ float: left; margin: 0 20px 0 0; padding: 0px; height: 295px; width: 904px;}
+
+#homepage-carousel .pager { overflow:hidden; list-style: none; clear: both; margin: 0 0 0 45px; }
+#homepage-carousel .pager li { float: left; }
+#homepage-carousel .pagenum { background-color: #fff; text-decoration: none; text-align: center; padding: 5px; color: #555555; font-size: 14px; font-weight: bold; display: block; }
+#homepage-carousel .active { color: #fff; background-color:  #555555; }

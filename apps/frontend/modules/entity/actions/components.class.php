@@ -2,24 +2,26 @@
 
 class entityComponents extends sfComponents
 {
-  public function executeMini()
+  public function getEntityAndImage($db)
   {
-    $db = Doctrine_Manager::connection();
-
-    //get entity and image
     $select = 'e.*, i.filename AS image_path';
     $from = 'e LEFT JOIN image i ON (i.entity_id = e.id and i.is_featured = 1)';
     $where = 'e.id = ? AND e.is_deleted = 0';
     $sql = 'SELECT ' . $select . ' FROM entity ' . $from . ' WHERE ' . $where;
     $stmt = $db->execute($sql, array($this->id));
-    $this->entity = $stmt->fetch(PDO::FETCH_ASSOC);
+    $this->entity = $stmt->fetch(PDO::FETCH_ASSOC);  
+  }
 
-    //get related entities and relationship count
+  public function getRelatedsAndCount($db, $primary_ext=null)
+  {
+    $params = array($this->id);
     $select = LsApi::generateSelectQuery(array('e' => 'Entity')) . ', COUNT(l.id) AS num';
     $from = 'link l LEFT JOIN entity e ON (l.entity2_id = e.id)';
     $where = 'l.entity1_id = ?';
+
+    if ($primary_ext) { $where .= ' AND e.primary_ext = ?'; array_push($params, $primary_ext); }
+
     $sql = 'SELECT ' . $select . ' FROM ' . $from . ' WHERE ' . $where . ' GROUP BY l.entity2_id ORDER BY num DESC';
-    $params = array($this->id);
     $stmt = $db->execute($sql, $params);
 
     $this->relationship_count = 0;
@@ -29,11 +31,73 @@ class entityComponents extends sfComponents
     {
       $this->relationship_count += $row['num'];
       $this->relateds[] = $row;
+    }  
+  }
+
+  public function getConnections($db, $num=5, $primary_ext=null)
+  {
+    $params = array($this->id);
+    $select = LsApi::generateSelectQuery(array('e' => 'Entity')) . ', COUNT(l.id) AS num';
+    $from = 'link l LEFT JOIN entity e ON (l.entity2_id = e.id)';
+    $where = 'l.entity1_id = ?';
+
+    if ($primary_ext) 
+    { 
+      $where .= ' AND e.primary_ext = ?'; 
+      array_push($params, $primary_ext); 
     }
+
+    $sql = 'SELECT ' . $select . ' FROM ' . $from . ' WHERE ' . $where . ' GROUP BY l.entity2_id ORDER BY num DESC LIMIT ' . $num;
+    $stmt = $db->execute($sql, $params);
+    $this->connections = $stmt->fetchAll(PDO::FETCH_ASSOC);
+  }
+
+  public function getInterlocks($db, $num=10)
+  {
+    $order1 = ($this->entity['primary_ext'] == 'Person') ? 1 : 2;
+    $order2 = ($this->entity['primary_ext'] == 'Person') ? 2 : 1;
+
+    $options = array(
+      'cat1_ids' => RelationshipTable::POSITION_CATEGORY . ',' . RelationshipTable::MEMBERSHIP_CATEGORY,
+      'order1' => $order1,
+      'cat2_ids' => RelationshipTable::POSITION_CATEGORY . ',' . RelationshipTable::MEMBERSHIP_CATEGORY,
+      'order2' => $order2,
+      'page' => 1,
+      'num' => $num
+    );
+    
+    $this->interlocks = EntityApi::getSecondDegreeNetwork($this->entity['id'], $options);      
+  }
+
+  public function executeMini()
+  {
+    $db = Doctrine_Manager::connection();
+
+    //get entity and image
+    $this->getEntityAndImage($db);
+
+    //get related entities and relationship count
+    $this->getRelatedsAndCount($db);
           
     $this->sample_relateds = array_slice($this->relateds, 0, 3);
   }
 
+
+  public function executeCarousel()
+  {
+    $db = Doctrine_Manager::connection();
+
+    //get entity and image
+    $this->getEntityAndImage($db);
+
+    //get direct connections
+    $primary_ext = $this->entity['primary_ext'] == 'Person' ? 'Org' : 'Person';
+    $this->getConnections($db, 5, $primary_ext);
+        
+    //get interlocks
+    $this->getInterlocks($db, 5);          
+  }
+  
 
   public function executeSimilarEntities()
   {
