@@ -1,5 +1,5 @@
 <?php use_helper('Number') ?>
-<?php $sf_response->addJavascript('http://ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js', 'first'); ?>
+<?php $sf_response->addJavascript('jquery/1.8/jquery.min.js', 'first'); ?>
 <?php $sf_response->addJavascript('jquery.tinycarousel.js'); ?>
 
 <!-- SPLASH -->
