@@ -94,7 +94,7 @@ We're a grassroots watchdog network connecting the dots between the world's most
 <br />
 
 <div id="homepage-subsplash-header">
-A unique resource for investigating cronyism, corruption, and conflicts of interest.
+A unique resource for investigating cronyism, conflicts of interest, and systemic corruption.
 </div>
 
 <div id="homepage-subsplash">
@@ -103,7 +103,7 @@ A unique resource for investigating cronyism, corruption, and conflicts of inter
 
 <div id="homepage-about">
 
-<h3 class="homepage-subheader" style="margin-top: 0;">The one percent</h3> 
+<h3 class="homepage-subheader" style="margin-top: 0;">An involuntary facebook of the 1%</h3> 
 
 We bring transparency to influential social networks by tracking the key relationships of politicians, business leaders, lobbyists, financiers, and their affiliated institutions. We help answer questions such as:<br />
 
@@ -119,13 +119,13 @@ All of this information is public, but scattered. We bring it together in one pl
 
 <h3 class="homepage-subheader">Nams behind the news</h3> 
 
-Who are the movers and shakers behind the bailouts, government contracts, and new policies? We’re working around the clock to stock LittleSis with information about bigwigs who make the news, and their connections to those who don’t. For updates and analysis visit our blog, <nobr><strong><?php echo link_to('Eyes on the Ties &raquo;', 'http://blog.littlesis.org') ?></strong></nobr>
+Who are the movers and shakers behind the bailouts, government contracts, and austerity policies? We’re working around the clock to stock LittleSis with information about bigwigs who make the news, and their connections to those who don’t. For updates and analysis visit our blog, <nobr><strong><?php echo link_to('Eyes on the Ties &raquo;', 'http://blog.littlesis.org') ?></strong></nobr>
 
 <br />
 
 <h3 class="homepage-subheader">Made for watchdogs</h3> 
 
-We're bringing together a community of citizens who believe in transparency and accountability where it matters most. We're looking for researchers, programmers, artists and organizers to lend a hand. <nobr><strong><?php echo link_to('Get Involved &raquo;', '@join') ?></strong></nobr>
+We're bringing together a community of watchdogs who believe in transparency and accountability where it matters most. We're looking for journalists, researchers, programmers, artists and organizers to lend a hand. <nobr><strong><?php echo link_to('Get Involved &raquo;', '@join') ?></strong></nobr>
 
 <br />
 
@@ -142,7 +142,7 @@ LittleSis is a project of Public Accountability Initiative, a 501(c)3 organizati
 </div>
 
 <div style="text-align: right; color: #ccc; font-size: 10px; font-style: italic; position: relative; top: 10px; padding-right: 10px;">
-background art by Mark Lombardi
+background art by <a href="http://www.google.com/search?q=mark+lombardi">Mark Lombardi</a>
 </div>
 
 <script type="text/javascript">         
