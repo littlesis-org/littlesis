@@ -761,7 +761,8 @@ body
 {
   padding: 1.5em;
   padding-top: 0;
-  width: 480px;
+  padding-left: 0;
+  width: 500px;
   float: left;
 }
 
