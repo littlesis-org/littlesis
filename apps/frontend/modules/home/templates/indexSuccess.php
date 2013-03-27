@@ -142,7 +142,7 @@ LittleSis is a project of Public Accountability Initiative, a 501(c)3 organizati
 </div>
 
 <div style="text-align: right; color: #ccc; font-size: 10px; font-style: italic; position: relative; top: 10px; padding-right: 10px;">
-background art by <a href="http://www.google.com/search?q=mark+lombardi">Mark Lombardi</a>
+background art by <a style="color: white;" href="http://www.google.com/search?q=mark+lombardi">Mark Lombardi</a>
 </div>
 
 <script type="text/javascript">         
