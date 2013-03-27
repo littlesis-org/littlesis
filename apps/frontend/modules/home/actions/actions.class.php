@@ -77,7 +77,7 @@ class homeActions extends sfActions
     $sql = 'SELECT entity_id FROM ls_list_entity WHERE list_id = ?';
     $stmt = $db->execute($sql, array($carousel_list_id));
     $this->carousel_ids = $stmt->fetchAll(PDO::FETCH_COLUMN);
-    shuffle($this->carousel_ids);
+    //shuffle($this->carousel_ids);
 
     //get top users    
     $this->analysts = LsDoctrineQuery::create()

@@ -1,6 +1,7 @@
 <?php use_helper('Number') ?>
 <?php $sf_response->addJavascript('jquery.min.js', 'first'); ?>
 <?php $sf_response->addJavascript('jquery.tinycarousel.js'); ?>
+<?php $sf_response->addJavascript('jquery.shuffle.js'); ?>
 
 <!-- SPLASH -->
 
@@ -147,8 +148,16 @@ background art by <a style="color: white;" href="http://www.google.com/search?q=
 
 <script type="text/javascript">         
     $(document).ready(function(){               
-                
-        $('#homepage-carousel').tinycarousel({ pager: true, start: 1, interval: true, intervaltime: 5000, rewind: true, animation: true });
+
+        $("#homepage-carousel li").shuffle();              
+        $('#homepage-carousel').tinycarousel({ 
+          pager: true, 
+          start: 1, 
+          interval: true, 
+          intervaltime: 5000, 
+          rewind: true, 
+          animation: true 
+        });
         
     });
 </script> 
