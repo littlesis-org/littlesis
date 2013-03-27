@@ -99,42 +99,43 @@ A unique resource for investigating cronyism, corruption, and conflicts of inter
 
 <div id="homepage-subsplash">
 
-<div id="homepage-about">
 <a name="about"></a>
-<div style="float: right; margin-left: 2em;">
-<?php include_component('home', 'stats', array('filter' => true))?>
-</div>
 
-<h3 class="homepage-subheader">Find out how the "One Percent" consolidates money and power.</h3> 
+<div id="homepage-about">
+
+<h3 class="homepage-subheader" style="margin-top: 0;">The one percent</h3> 
 
 We bring transparency to influential social networks by tracking the key relationships of politicians, business leaders, lobbyists, financiers, and their affiliated institutions. We help answer questions such as:<br />
 
-<ul>
+<ul id="homepage-about-questions">
 	<li>Who do the wealthiest Americans donate their money to?</li>
 	<li>Where did White House officials work before they were appointed?</li>
-	<li>Which lobbyists are married to politicians, and who do they lobby for?</li>
+	<li>Which lobbyists are married to politicians? Who do they lobby for?</li>
 </ul>
 
 All of this information is public, but scattered. We bring it together in one place. Our data derives from government filings, news articles, and other reputable sources. Some data sets are updated automatically; the rest is filled in by our user community. <nobr><strong><?php echo link_to('More Features &raquo;', '@features') ?></strong></nobr>
 
 <br />
 
-<h3 class="homepage-subheader">See past the news headlines and tired debates.</h3> 
+<h3 class="homepage-subheader">Nams behind the news</h3> 
 
 Who are the movers and shakers behind the bailouts, government contracts, and new policies? We’re working around the clock to stock LittleSis with information about bigwigs who make the news, and their connections to those who don’t. For updates and analysis visit our blog, <nobr><strong><?php echo link_to('Eyes on the Ties &raquo;', 'http://blog.littlesis.org') ?></strong></nobr>
 
 <br />
 
-<h3 class="homepage-subheader">We support journalists, watchdogs, and grassroots activists.</h3> 
+<h3 class="homepage-subheader">Made for watchdogs</h3> 
 
 We're bringing together a community of citizens who believe in transparency and accountability where it matters most. We're looking for researchers, programmers, artists and organizers to lend a hand. <nobr><strong><?php echo link_to('Get Involved &raquo;', '@join') ?></strong></nobr>
 
 <br />
 
-<h3 class="homepage-subheader">LittleSis is made by a nonprofit think-and-do tank.</h3> 
+<h3 class="homepage-subheader">Think-and-do tank</h3> 
 
-LittleSis is a project of Public Accountability Initiative, a 501(c)3 organization focused on corporate and government accountability. We receive financial support from the <?php echo link_to('Sunlight Foundation', 'http://sunlightfoundation.com') ?>, <?php echo link_to('Harnisch Foundation', 'http://thehf.org') ?>, and Elbaz Family Foundation, and benefit from free software written by the open source community. <nobr><strong><?php echo link_to('Our Team &raquo;', '@team') ?></strong></nobr>
+LittleSis is a project of Public Accountability Initiative, a 501(c)3 organization focused on corporate and government accountability. We receive financial support from the <?php echo link_to('Sunlight Foundation', 'http://sunlightfoundation.com') ?>, <?php echo link_to('Harnisch Foundation', 'http://thehf.org') ?>, and Elbaz Family Foundation, and benefit from free software written by the open source community.
+</div>
 
+<div id="homepage-data-summary">
+<?php include_component('home', 'stats', array('filter' => true))?>
 </div>
 
 <div style="clear: both;">&nbsp;</div>
