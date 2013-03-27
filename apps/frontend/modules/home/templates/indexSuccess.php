@@ -147,7 +147,7 @@ background art by Mark Lombardi
 <script type="text/javascript">         
     $(document).ready(function(){               
                 
-        $('#homepage-carousel').tinycarousel({ pager: true, start: 1, interval: false, intervaltime: 5000, rewind: true, animation: true });
+        $('#homepage-carousel').tinycarousel({ pager: true, start: 1, interval: true, intervaltime: 5000, rewind: true, animation: true });
         
     });
 </script> 
