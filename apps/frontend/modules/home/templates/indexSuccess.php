@@ -74,6 +74,7 @@ We're a grassroots watchdog network connecting the dots between the world's most
 
 <br />
 <br />
+<br />
 
 <div id="homepage-carousel">
     <a class="buttons prev" href="#"><?php echo image_tag("system/carousel-left-semi.png"); ?></a>
