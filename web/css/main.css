@@ -2011,23 +2011,23 @@ div.note_form textarea
 .entity-carousel-text
 {
   float: right;
-  width: 543px;
-  font-size: 18px;
-  line-height: 26px;
+  width: 550px;
+  font-size: 17px;
+  line-height: 25px;
   padding: 1.5em;
-  padding-bottom: 1em;
+  padding-bottom: 0.5em;
 }
 
 .entity-carousel-name
 {
-  font-size: 36px;
-  line-height: 40px;
+  font-size: 34px;
+  line-height: 38px;
 }
 
 .entity-carousel-description
 {
   font-style: italic;
-  font-size: 18px;
+  font-size: 17px;
   color: #666;
 }
 
