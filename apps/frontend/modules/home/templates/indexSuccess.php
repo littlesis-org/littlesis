@@ -113,19 +113,19 @@ We bring transparency to influential social networks by tracking the key relatio
 	<li>Which lobbyists are married to politicians? Who do they lobby for?</li>
 </ul>
 
-All of this information is public, but scattered. We bring it together in one place. Our data derives from government filings, news articles, and other reputable sources. Some data sets are updated automatically; the rest is filled in by our user community. <nobr><strong><?php echo link_to('More Features &raquo;', '@features') ?></strong></nobr>
+All of this information is public, but scattered. We bring it together in one place. Our data derives from government filings, news articles, and other reputable sources. Some data sets are updated automatically; the rest is filled in by our user community. <nobr><?php echo link_to('More Features', '@features') ?></nobr>
 
 <br />
 
 <h3 class="homepage-subheader">Nams behind the news</h3> 
 
-Who are the movers and shakers behind the bailouts, government contracts, and austerity policies? We’re working around the clock to stock LittleSis with information about bigwigs who make the news, and their connections to those who don’t. For updates and analysis visit our blog, <nobr><strong><?php echo link_to('Eyes on the Ties &raquo;', 'http://blog.littlesis.org') ?></strong></nobr>
+Who are the movers and shakers behind the bailouts, government contracts, and austerity policies? We’re working around the clock to stock LittleSis with information about bigwigs who make the news, and their connections to those who don’t. For updates and analysis visit our blog, <nobr><?php echo link_to('Eyes on the Ties', 'http://blog.littlesis.org') ?></nobr>
 
 <br />
 
 <h3 class="homepage-subheader">Made for watchdogs</h3> 
 
-We're bringing together a community of watchdogs who believe in transparency and accountability where it matters most. We're looking for journalists, researchers, programmers, artists and organizers to lend a hand. <nobr><strong><?php echo link_to('Get Involved &raquo;', '@join') ?></strong></nobr>
+We're bringing together a community of watchdogs who believe in transparency and accountability where it matters most. We're looking for journalists, researchers, programmers, artists and organizers to lend a hand. <nobr><?php echo link_to('Get Involved', '@join') ?></nobr>
 
 <br />
 
