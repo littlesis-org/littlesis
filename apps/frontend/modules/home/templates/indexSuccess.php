@@ -119,7 +119,7 @@ All of this information is public, but scattered. We bring it together in one pl
 
 <br />
 
-<h3 class="homepage-subheader">Nams behind the news</h3> 
+<h3 class="homepage-subheader">Names behind the news</h3> 
 
 Who are the movers and shakers behind the bailouts, government contracts, and austerity policies? We’re working around the clock to stock LittleSis with information about bigwigs who make the news, and their connections to those who don’t. For updates and analysis visit our blog, <nobr><?php echo link_to('Eyes on the Ties', 'http://blog.littlesis.org') ?></nobr>
 
