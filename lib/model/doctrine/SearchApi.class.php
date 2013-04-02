@@ -98,7 +98,7 @@ class SearchApi
     $db = Doctrine_Manager::connection();
     $select = LsApi::generateSelectQuery(array('r' => 'Relationship'));
     $from = 'relationship r';
-    $where = '((r.entity1_id = ? AND r.entity2_id = ?) OR (r.entity1_id = ? AND r.entity2_id = ?))';
+    $where = '((r.entity1_id = ? AND r.entity2_id = ?) OR (r.entity1_id = ? AND r.entity2_id = ?)) AND r.is_deleted = 0';
     $params = array($id1, $id2, $id2, $id1);
     
 
