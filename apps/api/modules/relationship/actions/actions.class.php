@@ -40,8 +40,8 @@ class relationshipActions extends LsApiActions
         $this->relationship['category_id']
       )
     );
-    $this->relationship['Entity1'] = EntityApi::get($this->relationship['entity1_id']);
-    $this->relationship['Entity2'] = EntityApi::get($this->relationship['entity2_id']);  
+    $this->entity1 = EntityApi::get($this->relationship['entity1_id']);
+    $this->entity2 = EntityApi::get($this->relationship['entity2_id']);  
     return 'Xml';
   }  
 
