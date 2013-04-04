@@ -42,7 +42,12 @@
     'url' => EntityTable::getInternalUrl($entity, 'giving'),
     'href' => $baseHref . 'giving',
     'actions' => array('giving')
-  )
+  ),
+  'Political' => array(
+    'url' => EntityTable::getInternalUrl($entity, 'political'),
+    'href' => $baseHref . 'political',
+    'actions' => array('political')
+  )  
 ) ?>
 
 
