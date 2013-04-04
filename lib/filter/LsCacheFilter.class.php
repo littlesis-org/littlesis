@@ -86,6 +86,7 @@ class LsCacheFilter extends sfCacheFilter
       'schools'                   => self::MONTH_LIFETIME,
       'giving'                    => self::MONTH_LIFETIME,
       'funding'                   => self::MONTH_LIFETIME,
+      'political'                 => self::MONTH_LIFETIME,
       'references'                => self::MONTH_LIFETIME,
       'modifications'             => self::MONTH_LIFETIME,
       'imageModifications'        => self::MONTH_LIFETIME,

@@ -17,7 +17,7 @@ class LsListApi
     $db = Doctrine_Manager::connection();
     $select = LsApi::generateSelectQuery(array('e' => 'Entity')) . ', le.rank';
     $from = 'entity e LEFT JOIN ls_list_entity le ON (le.entity_id = e.id)';
-    $where = 'le.list_id = ?';
+    $where = 'le.list_id = ? AND le.is_deleted = 0 AND e.is_deleted = 0';
 
     $sql = 'SELECT ' . $select . ' FROM ' . $from . ' WHERE ' . $where . ' ORDER BY rank, id';
     $stmt = $db->execute($sql, array($id));

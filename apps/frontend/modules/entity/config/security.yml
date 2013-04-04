@@ -165,10 +165,6 @@ removeCustomField:
 addList:
   is_secure: on
   credentials: editor
-
-political:
-  is_secure: on
-  credentials: admin
   
 editCategories:
   is_secure: on
