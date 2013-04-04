@@ -54,7 +54,8 @@ class listActions extends LsApiActions
     $this->entities = LsApi::sliceArrayFromOptions($results, $options, $defaultNum=100);
     $this->getResponse()->setSlot('total', count($results));
 
-    return ($this->format == 'xml') ? 'Xml' : 'Csv';
+    return ($this->format == 'csv') ? 'Csv' : 'Xml';
+    //return ($this->format == 'xml') ? 'Xml' : 'Csv';
   }
   
   
