@@ -33,7 +33,7 @@ We're bringing together a community of citizens who believe in transparency and 
 
 <h3 class="about-header">LittleSis is built and maintained by a nonprofit think-and-do tank.</h3> 
 
-LittleSis is a project of Public Accountability Initiative, a 501(c)3 organization focused on corporate and government accountability. We receive financial support from the <?php echo link_to('Sunlight Foundation', 'http://sunlightfoundation.com') ?>, <?php echo link_to('Harnisch Foundation', 'http://thehf.org') ?>, and Elbaz Family Foundation, and benefit from free software written by the open source community. <nobr><strong><?php echo link_to('Our Team &raquo;', '@team') ?></strong></nobr>
+LittleSis is a project of Public Accountability Initiative, a 501(c)3 organization focused on corporate and government accountability. We receive financial support from <?php echo link_to('foundations', 'http://public-accountability.org/about/funding/') ?> and benefit from free software written by the open source community. <nobr><strong><?php echo link_to('Our Team &raquo;', '@team') ?></strong></nobr>
 
 <br />
 

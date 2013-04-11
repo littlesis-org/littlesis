@@ -133,7 +133,7 @@ We're bringing together a community of watchdogs who believe in transparency and
 
 <h3 class="homepage-subheader">Think-and-do tank</h3> 
 
-LittleSis is a project of Public Accountability Initiative, a 501(c)3 organization focused on corporate and government accountability. We receive financial support from the <?php echo link_to('Sunlight Foundation', 'http://sunlightfoundation.com') ?>, <?php echo link_to('Harnisch Foundation', 'http://thehf.org') ?>, and Elbaz Family Foundation, and benefit from free software written by the open source community.
+LittleSis is a project of Public Accountability Initiative, a 501(c)3 organization focused on corporate and government accountability. We receive financial support from <?php echo link_to('foundations', 'http://public-accountability.org/about/funding/') ?> and benefit from free software written by the open source community.
 </div>
 
 <div id="homepage-data-summary">
