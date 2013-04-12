@@ -97,7 +97,7 @@ class Donation extends BaseDonation
     
     $result = $stmt->fetch(PDO::FETCH_ASSOC);
     
-    if (!$result['filings'])
+    if ($result['filings'] == 0)
     {    
       return false;
     }
@@ -123,12 +123,10 @@ class Donation extends BaseDonation
     
     if (!$total['filings'])
     {    
-      //if no filings, soft-delete the relationship
-      LsDoctrineQuery::create()
-        ->delete()
-        ->from('FecFiling f')
-        ->where('f.id = ?', $id)
-        ->execute();
+      $sql = "UPDATE relationship SET is_deleted = 1 WHERE id = ?";
+      $stmt = $db->execute($sql, array($id));
+      
+      return false;
     }
 
     $sql = 'UPDATE relationship SET amount = ?, filings = ?, start_date = ?, end_date = ? WHERE id = ?';
@@ -136,7 +134,10 @@ class Donation extends BaseDonation
       $total['amount'], 
       $total['filings'],
       substr($total['start_date'], 0, 4) . '-00-00',
-      substr($total['end_date'], 0, 4) . '-00-00'
-    ));    
+      substr($total['end_date'], 0, 4) . '-00-00',
+      $id
+    ));  
+    
+    return true;  
   }
 }

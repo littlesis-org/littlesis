@@ -9,7 +9,6 @@ class OsProcessMatchesTask extends LsTask
     $rawDb = null,
     $browser = null,
     $matches = array('new' => array(), 'old' => array()),
-    $testMode = null,
     $debugMode = null,
     $startTime = null,
     $databaseManager = null,
@@ -28,7 +27,6 @@ class OsProcessMatchesTask extends LsTask
     $this->addArgument('application', null, 'The application', 'frontend');
     $this->addOption('env', null, sfCommandOption::PARAMETER_REQUIRED, 'The environment', 'prod');
     $this->addOption('debug_mode', null, sfCommandOption::PARAMETER_REQUIRED, 'Show debugging info', false);
-    $this->addOption('test_mode', null, sfCommandOption::PARAMETER_REQUIRED, 'Run task without saving data', false);
     $this->addOption('limit', null, sfCommandOption::PARAMETER_REQUIRED, 'Number of matches to process', 100);
   }
 
@@ -77,7 +75,6 @@ class OsProcessMatchesTask extends LsTask
     sfContext::createInstance($configuration);
 
     $this->debugMode = $options['debug_mode'];
-    $this->testMode = $options['test_mode'];
     $this->browser = new sfWebBrowser;
   }
   
@@ -390,7 +387,7 @@ class OsProcessMatchesTask extends LsTask
         {
           if ($this->debugMode)
           {
-            print("- Deleting FEC filing: " . $donation['fec_id'] . " (" . $donation['amount'] . ")\n");
+            print("- Deleting FEC filing: {$donation['fec_id']}, {$donation['cycle']}, {$donation['row_id']} ({$donation['amount']})\n");
           }
   
           $sql = 'DELETE FROM fec_filing WHERE relationship_id = ? AND crp_cycle = ? AND crp_id = ?';
@@ -446,6 +443,9 @@ class OsProcessMatchesTask extends LsTask
     //update os_entity_transaction
     $sql = 'UPDATE os_entity_transaction SET is_processed = is_verified, is_synced = 1 WHERE entity_id = ?';
     $stmt = $this->db->execute($sql, array($id));      
+
+    //make sure that all removed matches result in deleted fec filings and updated relationships for this entity
+    $this->cleanupFecFilings($id, $oldDonations);
 
     //update opensecrets categories based on matched donations
     $this->printDebug("Updating industry categories based on matched donations...");
@@ -888,7 +888,6 @@ class OsProcessMatchesTask extends LsTask
         }        
       }
       
-      
       //create aliases if necessary
       $this->addAliasesToEntityById($entity['id'], $aliases);
     }            
@@ -956,5 +955,50 @@ class OsProcessMatchesTask extends LsTask
     }
 
     return true;    
+  }
+  
+  public function cleanupFecFilings($entity_id, $old_donations)
+  {
+    foreach ($old_donations as $donation)
+    {
+      $rel_ids = array();
+      $filing_ids = array();
+
+      //get relevant relationships to update and fec filings to delete
+      $sql = "SELECT r.id rel_id, f.id filing_id FROM fec_filing f LEFT JOIN relationship r ON (f.relationship_id = r.id) " .
+             "WHERE f.crp_id = ? AND f.crp_cycle = ? AND r.is_deleted = 0 AND (r.entity1_id = ? OR r.entity2_id = ?)";
+      $params = array($donation["row_id"], $donation["cycle"], $entity_id, $entity_id);
+      $stmt = $this->db->execute($sql, $params);
+      $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+      foreach ($rows as $row)
+      {
+        $rel_ids[] = $row["rel_id"];
+        $filing_ids[] = $row["filing_id"];
+      }
+      
+      $rel_ids = array_unique($rel_ids);
+      $filing_ids = array_unique($filing_ids);
+
+      //delete fec filings if there are any
+      if (count($filing_ids) > 0)
+      {
+        $sql = "DELETE FROM fec_filing WHERE id IN (" . implode(",", $filing_ids) . ")";
+        $this->db->execute($sql);
+      }
+      
+      //upate relationships
+      foreach ($rel_ids as $rel_id)
+      {
+        if (Donation::updateRelationshipFromFecFilings($rel_id))
+        {
+          $this->printDebug("Updated relationship after removing fec filings: " . $rel_id);
+        } 
+        else 
+        {
+          $this->printDebug("- Deleted relationship after removing fec filings: " . $rel_id);
+        }
+      }
+    }  
   }
 }

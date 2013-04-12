@@ -17,7 +17,7 @@ class OsImportCandidatesTask extends sfBaseTask
     $this->addOption('env', null, sfCommandOption::PARAMETER_REQUIRED, 'The environment', 'dev');
     $this->addOption('limit', null, sfCommandOption::PARAMETER_REQUIRED, 'Maximum number of OpenSecrets rows to process', 1000);
     $this->addOption('debug_mode', null, sfCommandOption::PARAMETER_REQUIRED, 'Show debugging info', false);
-    $this->addOption('cycles', null, sfCommandOption::PARAMETER_REQUIRED, 'Funding cycles to import', '2010,2008,2006,2004,2002,2000,1998,1996,1994,1992,1990');
+    $this->addOption('cycles', null, sfCommandOption::PARAMETER_REQUIRED, 'Funding cycles to import', '2012,2010,2008,2006,2004,2002,2000,1998,1996,1994,1992,1990');
   }
 
   protected function execute($arguments = array(), $options = array())

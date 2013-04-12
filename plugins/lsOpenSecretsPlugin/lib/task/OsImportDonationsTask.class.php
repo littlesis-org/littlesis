@@ -18,7 +18,7 @@ class OsImportDonationsTask extends sfBaseTask
     $this->addOption('limit', null, sfCommandOption::PARAMETER_REQUIRED, 'Maximum number of OpenSecrets rows to process', 1000);
     $this->addOption('offset', null, sfCommandOption::PARAMETER_REQUIRED, 'Number of lines of input data to skip before processing', 0);
     $this->addOption('debug_mode', null, sfCommandOption::PARAMETER_REQUIRED, 'Show debugging info', false);
-    $this->addOption('cycle', null, sfCommandOption::PARAMETER_REQUIRED, 'Funding cycle to import', '2010');
+    $this->addOption('cycle', null, sfCommandOption::PARAMETER_REQUIRED, 'Funding cycle to import', '2012');
     $this->addOption('check_dups', null, sfCommandOption::PARAMETER_REQUIRED, 'Check for duplicates before inserting new donations', false);
   }
 
@@ -55,7 +55,7 @@ class OsImportDonationsTask extends sfBaseTask
     //skip to offset line
     while ($line < $offset)
     {
-      $data = fgetcsv($file, 1000);
+      $data = fgetcsv($file, 1000, ",", "|");
       $line++;
     }
 
@@ -86,6 +86,12 @@ class OsImportDonationsTask extends sfBaseTask
         }
       }
 
+      if (count($data) == 23)
+      {
+        $old = $data;
+        array_splice($data, 19, 0, "");
+      }
+
       if (count($data) != 24)
       {
         $data = array_slice($data, 0, 2);
@@ -102,6 +108,13 @@ class OsImportDonationsTask extends sfBaseTask
       }
       
       $data = array_merge($data, self::parseDonorName($data));
+
+      //trim strings and replace blank strings with NULL
+      $func = function($value) {
+        $value = trim($value);
+        return $value ? $value : NULL;
+      };
+      $data = array_map($func, $data);
       $this->insertData($data);
       
       if ($options['debug_mode'])
@@ -148,7 +161,6 @@ class OsImportDonationsTask extends sfBaseTask
   protected function isDonationDuplicate($cycle, $rowId)
   {
     $this->selectStmt->execute(array($cycle, $rowId));
-    
     return ($this->selectStmt->fetch(PDO::FETCH_COLUMN) > 0);
   }
 
@@ -174,7 +186,6 @@ class OsImportDonationsTask extends sfBaseTask
     else
     {
       $this->insertIgnoreStmt->execute($data);
-
       $rowCount = $this->insertIgnoreStmt->rowCount();
 
       if ($rowCount == 1)
