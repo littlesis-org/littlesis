@@ -21,6 +21,7 @@ class OsPreprocessMatchesTask extends sfTask
     $this->addOption('env', null, sfCommandOption::PARAMETER_REQUIRED, 'The environment', 'prod');
     $this->addOption('debug_mode', null, sfCommandOption::PARAMETER_REQUIRED, 'Show debugging info', false);
     $this->addOption('limit', null, sfCommandOption::PARAMETER_REQUIRED, 'Number of unprocessed entities to match', 100);
+    $this->addOption('offset', null, sfCommandOption::PARAMETER_REQUIRED, 'Number of unprocessed entities to skip', 0);
     $this->addOption('cycles', null, sfCommandOption::PARAMETER_REQUIRED, 'Comma-delimited list of election cycles to search', '2012,2010,2008,2006,2004,2002,2000,1998,1996,1994,1992,1990');
     $this->addOption('mode', null, sfCommandOption::PARAMETER_REQUIRED, '\'all\' will try all entities; \'recent\' will only try ones created in the past hour, \'all-update\' will preprocess entities that have already been preprocessed', 'recent');
     $this->addOption('period', null, sfCommandOption::PARAMETER_REQUIRED, 'Time period to look for new entities in, if mode is \'recent\'', '-1 hour');
@@ -42,7 +43,7 @@ class OsPreprocessMatchesTask extends sfTask
     $update = ($this->mode == 'all-update');
 
     //get entities not in the preprocess log
-    $entities = $this->getEntitiesToPreprocess($options['limit'], $options['period']);
+    $entities = $this->getEntitiesToPreprocess($options['limit'], $options['offset'], $options['period']);
 
     foreach ($entities as $entity)
     {
@@ -90,7 +91,7 @@ class OsPreprocessMatchesTask extends sfTask
   }
   
 
-  public function getEntitiesToPreprocess($limit, $period)
+  public function getEntitiesToPreprocess($limit, $offset, $period)
   {
     if ($this->mode == 'all' || $this->mode == 'all-update')
     {
