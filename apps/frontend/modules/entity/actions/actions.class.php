@@ -3465,6 +3465,12 @@ class entityActions extends sfActions
       $donorId = str_replace(' ', '_', $row['donor_id']);
       $donorId = str_replace('@', '-', $donorId);
 
+      //generate employer_raw from occupation and employer fields if null
+      if (!$row['employer_raw'] && $row['title_raw'])
+      {
+        $row['employer_raw'] = trim($row['org_raw'] . "/" . $row['title_raw'], "/");
+      }
+
       if (isset($this->donors[$donorId]))
       {
         $this->donors[$donorId]['names'][$row['donor_name']] = true;
