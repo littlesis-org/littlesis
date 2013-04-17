@@ -49,7 +49,7 @@ class CreateSquareS3ImagesTask extends LsTask
         $this->recordSquare($image['id']);
       }
 
-      unlink(sfConfig::get('sf_temp_dir') . DIRECTORY_SEPARATOR . $filename);
+      unlink(sfConfig::get('sf_temp_dir') . DIRECTORY_SEPARATOR . $image['filename']);
       
       $count--;
       print($count . " images remaining...\n");
