@@ -1,5 +1,11 @@
 # default values
 all:
+  carousel:
+    list_id: LIST_ID_FOR_HOMEPAGE_CAROUSEL
+
+  imagemagick:
+    binary_path: PATH_TO_IMAGEMAGICK_CONVERT
+
   login_enabled: on
 
   sf_guard_plugin:

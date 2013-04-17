@@ -222,7 +222,7 @@ class ImageTable extends Doctrine_Table
   
   static function imageMagickInstalled()
   {
-    return (bool) (trim(shell_exec('which convert')) || trim(shell_exec("/usr/local/bin/convert")));
+    return (bool) (trim(shell_exec('which convert')) || trim(shell_exec(sfConfig::get('app_imagemagick_binary_path'))));
   }
   
   static function areClean($vars)
