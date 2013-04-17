@@ -62,6 +62,56 @@ class ImageTable extends Doctrine_Table
     return $thumbnail;
   }
 
+  static function createSquareFile($filename, $readPath, $writePath, $writeSize=300, $upload=true)
+  {
+    # make sure all inputs are clean
+    if (!self::areClean(array($filename, $readPath, $writePath, $writeSize)))
+    {
+      return false;
+    }
+
+    if (!self::imageMagickInstalled())
+    {
+      return false;
+    }
+
+    if (!$size = getimagesize($readPath))
+    {
+      return false;
+    }   
+
+    $savePath = sfConfig::get('sf_image_dir') . DIRECTORY_SEPARATOR . $writePath . DIRECTORY_SEPARATOR . $filename; 
+
+    if (($size[0] > $size[1] * 2) || ($size[1] > $size[0] * 2))
+    {
+      # pad to square if one dimension is more than twice the other dimension
+      exec("/usr/local/bin/convert {$readPath} -virtual-pixel background -background white -set option:distort:viewport \"%[fx:max(w,h)]x%[fx:max(w,h)]-%[fx:max((h-w)/2,0)]-%[fx:max((w-h)/2,0)]\" -filter point -distort SRT 0 +repage {$savePath}");
+    }
+    else
+    {
+      # otherwise, crop to square  
+      exec("/usr/local/bin/convert {$readPath} -virtual-pixel edge -set option:distort:viewport \"%[fx:min(w,h)]x%[fx:min(w,h)]+%[fx:max((w-h)/2,0)]+%[fx:max((h-w)/2,0)]\" -filter point -distort SRT 0 +repage {$savePath}");
+    }
+
+    # resize
+    exec("/usr/local/bin/convert {$savePath} -resize {$writeSize}x{$writeSize} {$savePath}");
+        
+    # if s3 enabled, save to s3
+    if ($upload && sfConfig::get('app_amazon_enable_s3'))
+    {
+      $s3 = new S3(sfConfig::get('app_amazon_access_key'), sfConfig::get('app_amazon_secret_key'));
+      $input = $s3->inputResource($f = fopen($savePath, "rb"), $s = filesize($savePath));
+      $uri = self::generateS3path($writePath, $filename);
+
+      if (!S3::putObject($input, sfConfig::get('app_amazon_s3_bucket'), $uri, S3::ACL_PUBLIC_READ)) 
+      {
+        return false;
+      }
+    }
+    
+    return $savePath;
+  }
+
   static function createFiles($filePath, $originalFilename='')
   {
     //generate filename
@@ -97,10 +147,8 @@ class ImageTable extends Doctrine_Table
       }
       
       if (strtolower(substr($originalFilePath, -3, 3)) == "svg" )
-      {
-        $convert = trim(shell_exec('which convert'));
-        
-        if ($convert)
+      {        
+        if (self::imageMagickInstalled())
         {
           $svgFilepath = sfConfig::get('sf_temp_dir') . DIRECTORY_SEPARATOR . substr($filename, 0 -3) . ".svg";
           $pngFilepath = sfConfig::get('sf_temp_dir') . DIRECTORY_SEPARATOR . $filename;
@@ -132,6 +180,14 @@ class ImageTable extends Doctrine_Table
       unlink(sfConfig::get('sf_image_dir') . DIRECTORY_SEPARATOR . 'profile' . DIRECTORY_SEPARATOR . $filename);
       return false;
     }    
+
+    if (!self::createSquareFile($filename, $filePath, 'square', 300))
+    {
+      unlink(sfConfig::get('sf_image_dir') . DIRECTORY_SEPARATOR . 'large' . DIRECTORY_SEPARATOR . $filename);
+      unlink(sfConfig::get('sf_image_dir') . DIRECTORY_SEPARATOR . 'profile' . DIRECTORY_SEPARATOR . $filename);
+      unlink(sfConfig::get('sf_image_dir') . DIRECTORY_SEPARATOR . 'small' . DIRECTORY_SEPARATOR . $filename);
+      return false;    
+    }
     
     //remove temporary file
     if (isset($url))
@@ -162,5 +218,23 @@ class ImageTable extends Doctrine_Table
     }
     
     return 'entity/image?id=' . $id;  
+  }
+  
+  static function imageMagickInstalled()
+  {
+    return (bool) (trim(shell_exec('which convert')) || trim(shell_exec("/usr/local/bin/convert")));
+  }
+  
+  static function areClean($vars)
+  {
+    foreach ($vars as $var)
+    {
+      if (preg_match('/^[\w\.\/]+$/', $var) !== 1)
+      {
+        return false;
+      }
+    }
+    
+    return true;  
   }
 }

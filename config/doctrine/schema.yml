@@ -1092,6 +1092,10 @@ Image:
     url: string(200)
     width: integer
     height: integer
+    has_square:
+      type: boolean
+      notnull: true
+      default: false
   relations:
     Entity:
       local: entity_id

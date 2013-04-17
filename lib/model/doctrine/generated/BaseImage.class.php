@@ -17,7 +17,8 @@ abstract class BaseImage extends sfDoctrineRecord
     $this->hasColumn('url', 'string', 200, array('type' => 'string', 'length' => '200'));
     $this->hasColumn('width', 'integer', null, array('type' => 'integer'));
     $this->hasColumn('height', 'integer', null, array('type' => 'integer'));
-
+    $this->hasColumn('has_square', 'boolean', null, array('type' => 'boolean', 'notnull' => true, 'default' => false));
+    
     $this->option('collate', 'utf8_unicode_ci');
     $this->option('charset', 'utf8');
   }
