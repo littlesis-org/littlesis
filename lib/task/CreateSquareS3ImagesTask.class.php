@@ -39,8 +39,10 @@ class CreateSquareS3ImagesTask extends LsTask
     {
       $this->downloadLarge($image['filename']);
       $this->createSquare($image['filename'], $options['size']);
-      $this->uploadFile($image['filename'], $options['check_first'], $options['debug_mode']);      
-      $this->recordSquare($image['id']);
+      if ($this->uploadFile($image['filename'], $options['check_first'], $options['debug_mode']))
+      {
+        $this->recordSquare($image['id']);
+      }
       
       $count--;
       print($count . " images remaining...\n");
@@ -89,12 +91,13 @@ class CreateSquareS3ImagesTask extends LsTask
 
     if ($check_first && $this->s3->getObjectInfo(sfConfig::get('app_amazon_s3_bucket'), $uri) !== false)
     {
-      return;
+      return true;
     }
 
     if (S3::putObject($input, sfConfig::get('app_amazon_s3_bucket'), $uri, S3::ACL_PUBLIC_READ)) 
     {
       print("UPLOADED: " . $uri . "\n");
+      return true;
     }
     else
     {
@@ -102,6 +105,8 @@ class CreateSquareS3ImagesTask extends LsTask
       {
         print("Couldn't upload image to S3: " . $uri . "\n");
       }
+      
+      return false;
     }
   }
   
