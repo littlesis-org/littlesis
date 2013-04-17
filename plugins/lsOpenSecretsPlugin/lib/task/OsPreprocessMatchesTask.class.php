@@ -100,7 +100,7 @@ class OsPreprocessMatchesTask extends sfTask
              'FROM entity e LEFT JOIN os_entity_preprocess ep ON (e.id = ep.entity_id) ' .
              'LEFT JOIN person p ON (p.entity_id = e.id) ' .
              'WHERE e.primary_ext = ? AND e.is_deleted = 0 AND p.name_last IS NOT NULL AND p.name_first IS NOT NULL ' .
-             'GROUP BY e.id LIMIT ' . $limit;
+             'GROUP BY e.id LIMIT ' . $limit . ' OFFSET ' . $offset;
       $params = array('Person');
     }
     else
