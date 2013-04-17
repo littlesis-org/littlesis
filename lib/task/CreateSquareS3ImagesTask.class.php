@@ -13,6 +13,7 @@ class CreateSquareS3ImagesTask extends LsTask
     $this->addOption('env', null, sfCommandOption::PARAMETER_REQUIRED, 'The environment', 'dev');
     $this->addOption('debug_mode', null, sfCommandOption::PARAMETER_REQUIRED, 'Show debugging info', false);
     $this->addOption('limit', null, sfCommandOption::PARAMETER_REQUIRED, 'Maximum number of images to upload', 50000);
+    $this->addOption('list_id', null, sfCommandOption::PARAMETER_REQUIRED, 'Limit to entities on this list', null);
     $this->addOption('size', null, sfCommandOption::PARAMETER_REQUIRED, 'Size of image in pixels', 300);
     $this->addOption('check_first', null, sfCommandOption::PARAMETER_REQUIRED, "Don't upload if file already exists", false);
   }
@@ -23,6 +24,7 @@ class CreateSquareS3ImagesTask extends LsTask
     $databaseManager = new sfDatabaseManager($configuration);
     $databaseManager->initialize($configuration);      
 
+    $this->debugMode = $options['debug_mode'];
     $this->db = Doctrine_Manager::connection();
     $this->s3 = new S3(sfConfig::get('app_amazon_access_key'), sfConfig::get('app_amazon_secret_key'));
 
@@ -30,26 +32,52 @@ class CreateSquareS3ImagesTask extends LsTask
     error_reporting(E_ERROR | E_WARNING | E_PARSE | E_NOTICE);
     
     //get array of active entity image filenames
-    $sql = "SELECT i.id, i.filename FROM image i WHERE is_deleted = 0 AND has_square = 0 ORDER BY id DESC LIMIT " . $options['limit'];
-    $stmt = $this->db->execute($sql);    
+    if ($options['list_id'])
+    {
+      $sql = "SELECT i.id, i.filename " . 
+             "FROM ls_list_entity le LEFT JOIN image i ON (i.entity_id = le.entity_id) " .
+             "WHERE le.list_id = ? AND le.is_deleted = 0 " .
+             "AND i.is_deleted = 0 AND i.has_square = 0 " .
+             "ORDER BY id DESC LIMIT " . $options['limit'];
+      $params = array($options['list_id']);
+    }
+    else
+    {
+      $sql = "SELECT i.id, i.filename FROM image i " .
+             "WHERE is_deleted = 0 AND has_square = 0 " . 
+             "ORDER BY id DESC LIMIT " . $options['limit'];
+      $params = array();
+    }
+    $stmt = $this->db->execute($sql, $params);    
     $images = $stmt->fetchAll(PDO::FETCH_ASSOC);
     $count = count($images);
 
     foreach ($images as $image)
     {
-      $this->downloadLarge($image['filename']);
+      if (!$this->downloadLarge($image['filename']))
+      {
+        $s3Path = ImageTable::generateS3Url(ImageTable::getPath($image['filename'], 'large'));
+        $this->printDebug("Couldn't download large image from S3: " . $s3Path);
+        $count--;
+        continue;
+      }
 
-      if (!$this->createSquare($image['filename'], $options['size']))
+      if ($this->createSquare($image['filename'], $options['size']))
+      {
+        unlink(sfConfig::get('sf_temp_dir') . DIRECTORY_SEPARATOR . $image['filename']);      
+      }
+      else
       {
         $this->printDebug("Coudln't create square image: {$image['filename']}");
+        unlink(sfConfig::get('sf_temp_dir') . DIRECTORY_SEPARATOR . $image['filename']);      
+        $count--;
+        continue;
       }
 
       if ($this->uploadFile($image['filename'], $options['check_first'], $options['debug_mode']))
       {
         $this->recordSquare($image['id']);
       }
-
-      unlink(sfConfig::get('sf_temp_dir') . DIRECTORY_SEPARATOR . $image['filename']);
       
       $count--;
       print($count . " images remaining...\n");
@@ -81,7 +109,9 @@ class CreateSquareS3ImagesTask extends LsTask
     if (!fclose($localImage))
     {
       throw new Exception("Couldn't close file: " . $filePath);
-    }    
+    }
+    
+    return true;
   }
   
   function createSquare($filename, $size)
