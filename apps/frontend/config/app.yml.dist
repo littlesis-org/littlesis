@@ -3,6 +3,10 @@ all:
   carousel:
     list_id: LIST_ID_FOR_HOMEPAGE_CAROUSEL
 
+  images:
+    file_type: png
+    mime_type: png
+
   imagemagick:
     binary_path: PATH_TO_IMAGEMAGICK_CONVERT
 

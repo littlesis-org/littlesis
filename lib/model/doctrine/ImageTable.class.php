@@ -6,11 +6,16 @@ class ImageTable extends Doctrine_Table
 {
   static function generateFilename($originalFilename='')
   {
-    return sha1(md5($originalFilename . date('U') . rand(1000, 9999))) . '_' . date('U') . '.png';
+    return sha1(md5($originalFilename . date('U') . rand(1000, 9999))) . '_' . date('U') . '.' . sfConfig::get('app_images_file_type');
   }
 
   static function generateS3path($type, $filename)
   {
+    if ($type == 'square')
+    {
+      $filename = preg_replace("/\.\w+$/", ".jpg", $filename);
+    }
+    
     return sfConfig::get('app_amazon_s3_folder') . DIRECTORY_SEPARATOR . $type . DIRECTORY_SEPARATOR . $filename;
   }
 
@@ -44,7 +49,7 @@ class ImageTable extends Doctrine_Table
     $thumbnail = new LsThumbnail($maxWidth, $maxHeight, true, true, 100);
     $thumbnail->loadFile($readPath);
     $savePath = sfConfig::get('sf_image_dir') . DIRECTORY_SEPARATOR . $writePath . DIRECTORY_SEPARATOR . $filename; 
-    $thumbnail->save($savePath, 'image/png');
+    $thumbnail->save($savePath, 'image/' . sfConfig::get('app_images_mime_type'));
     
     # if s3 enabled, save to s3
     if (sfConfig::get('app_amazon_enable_s3'))
@@ -151,10 +156,10 @@ class ImageTable extends Doctrine_Table
         if (self::imageMagickInstalled())
         {
           $svgFilepath = sfConfig::get('sf_temp_dir') . DIRECTORY_SEPARATOR . substr($filename, 0 -3) . ".svg";
-          $pngFilepath = sfConfig::get('sf_temp_dir') . DIRECTORY_SEPARATOR . $filename;
+          $origFilepath = sfConfig::get('sf_temp_dir') . DIRECTORY_SEPARATOR . $filename;
   
-          rename($pngFilepath, $svgFilepath);        
-          exec("$convert $svgFilepath $pngFilepath");
+          rename($origFilepath, $svgFilepath);        
+          exec("$convert $svgFilepath $origFilepath");
         }
       }
       
@@ -181,6 +186,7 @@ class ImageTable extends Doctrine_Table
       return false;
     }    
 
+    /*
     if (!self::createSquareFile($filename, $filePath, 'square', 300))
     {
       unlink(sfConfig::get('sf_image_dir') . DIRECTORY_SEPARATOR . 'large' . DIRECTORY_SEPARATOR . $filename);
@@ -188,6 +194,7 @@ class ImageTable extends Doctrine_Table
       unlink(sfConfig::get('sf_image_dir') . DIRECTORY_SEPARATOR . 'small' . DIRECTORY_SEPARATOR . $filename);
       return false;    
     }
+    */
     
     //remove temporary file
     if (isset($url))
@@ -204,6 +211,11 @@ class ImageTable extends Doctrine_Table
     if (is_string($image) || !$filename = @$image['filename'])
     {
       $filename = $image;
+    }
+
+    if ($type == 'square')
+    {
+      $filename = preg_replace("/\.\w+$/", ".jpg", $filename);
     }
 
     return $type . DIRECTORY_SEPARATOR . $filename;

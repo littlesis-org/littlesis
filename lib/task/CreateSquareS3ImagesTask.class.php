@@ -62,14 +62,9 @@ class CreateSquareS3ImagesTask extends LsTask
         continue;
       }
 
-      if ($this->createSquare($image['filename'], $options['size']))
-      {
-        unlink(sfConfig::get('sf_temp_dir') . DIRECTORY_SEPARATOR . $image['filename']);      
-      }
-      else
+      if (!$this->createSquare($image['filename'], $options['size']))
       {
         $this->printDebug("Coudln't create square image: {$image['filename']}");
-        unlink(sfConfig::get('sf_temp_dir') . DIRECTORY_SEPARATOR . $image['filename']);      
         $count--;
         continue;
       }
@@ -114,17 +109,48 @@ class CreateSquareS3ImagesTask extends LsTask
     return true;
   }
   
-  function createSquare($filename, $size)
+  function createSquare($filename, $writeSize)
   {
     $tmpPath = sfConfig::get('sf_temp_dir') . DIRECTORY_SEPARATOR . $filename;
-    return ImageTable::createSquareFile($filename, $tmpPath, 'square', $size, $upload = false);
+    $newFilename = $this->newFilename($filename);
+
+    if (!self::imageMagickInstalled())
+    {
+      return false;
+    }
+
+    if (!$size = getimagesize($tmpPath))
+    {
+      return false;
+    }   
+
+    $savePath = sfConfig::get('sf_image_dir') . DIRECTORY_SEPARATOR . "square" . DIRECTORY_SEPARATOR . $newFilename; 
+
+    if (($size[0] > $size[1] * 2) || ($size[1] > $size[0] * 2))
+    {
+      # pad to square if one dimension is more than twice the other dimension
+      exec(sfConfig::get('app_imagemagick_binary_path') . " {$tmpPath} -virtual-pixel background -background white -set option:distort:viewport \"%[fx:max(w,h)]x%[fx:max(w,h)]-%[fx:max((h-w)/2,0)]-%[fx:max((w-h)/2,0)]\" -filter point -distort SRT 0 +repage {$savePath}");
+    }
+    else
+    {
+      # otherwise, crop to square  
+      exec(sfConfig::get('app_imagemagick_binary_path') . " {$tmpPath} -virtual-pixel edge -set option:distort:viewport \"%[fx:min(w,h)]x%[fx:min(w,h)]+%[fx:max((w-h)/2,0)]+%[fx:max((h-w)/2,0)]\" -filter point -distort SRT 0 +repage {$savePath}");
+    }
+
+    # resize
+    exec(sfConfig::get('app_imagemagick_binary_path') . " {$savePath} -resize {$writeSize}x{$writeSize} {$savePath}");
+
+    unlink($tmpPath);
+
+    return $savePath;    
   }
   
   function uploadFile($filename, $check_first = true, $debug = false)
   {
-    $localPath = sfConfig::get('sf_image_dir') . DIRECTORY_SEPARATOR . 'square' . DIRECTORY_SEPARATOR . $filename;
+    $newFilename = $this->newFilename($filename);
+    $localPath = sfConfig::get('sf_image_dir') . DIRECTORY_SEPARATOR . 'square' . DIRECTORY_SEPARATOR . $newFilename;
     $input = $this->s3->inputResource($f = fopen($localPath, "rb"), filesize($s = $localPath));
-    $uri = ImageTable::generateS3path('square', $filename);
+    $uri = ImageTable::generateS3path('square', $newFilename);
 
     if ($check_first && $this->s3->getObjectInfo(sfConfig::get('app_amazon_s3_bucket'), $uri) !== false)
     {
@@ -151,5 +177,24 @@ class CreateSquareS3ImagesTask extends LsTask
   {
     $sql = "UPDATE image SET has_square = 1 WHERE id = ?";
     $stmt = $this->db->execute($sql, array($id));
+  }
+  
+  function imageMagickInstalled()
+  {
+    return (bool) (trim(shell_exec('which convert')) || trim(shell_exec(sfConfig::get('app_imagemagick_binary_path'))));
+  }
+  
+  function newFilename($filename)
+  {
+    $fileType = sfConfig::get('app_images_square_file_type');
+
+    if ($fileType != 'png')
+    {
+      return preg_replace("/png$/i", $fileType, $filename);
+    }
+    else
+    {
+      return $filename;
+    }    
   }
 }
