@@ -85,16 +85,16 @@ class ImageTable extends Doctrine_Table
     if (($size[0] > $size[1] * 2) || ($size[1] > $size[0] * 2))
     {
       # pad to square if one dimension is more than twice the other dimension
-      exec("{sfConfig::get('app_imagemagick_binary_path')} {$readPath} -virtual-pixel background -background white -set option:distort:viewport \"%[fx:max(w,h)]x%[fx:max(w,h)]-%[fx:max((h-w)/2,0)]-%[fx:max((w-h)/2,0)]\" -filter point -distort SRT 0 +repage {$savePath}");
+      exec(sfConfig::get('app_imagemagick_binary_path') . " {$readPath} -virtual-pixel background -background white -set option:distort:viewport \"%[fx:max(w,h)]x%[fx:max(w,h)]-%[fx:max((h-w)/2,0)]-%[fx:max((w-h)/2,0)]\" -filter point -distort SRT 0 +repage {$savePath}");
     }
     else
     {
       # otherwise, crop to square  
-      exec("{sfConfig::get('app_imagemagick_binary_path')} {$readPath} -virtual-pixel edge -set option:distort:viewport \"%[fx:min(w,h)]x%[fx:min(w,h)]+%[fx:max((w-h)/2,0)]+%[fx:max((h-w)/2,0)]\" -filter point -distort SRT 0 +repage {$savePath}");
+      exec(sfConfig::get('app_imagemagick_binary_path') . " {$readPath} -virtual-pixel edge -set option:distort:viewport \"%[fx:min(w,h)]x%[fx:min(w,h)]+%[fx:max((w-h)/2,0)]+%[fx:max((h-w)/2,0)]\" -filter point -distort SRT 0 +repage {$savePath}");
     }
 
     # resize
-    exec("{sfConfig::get('app_imagemagick_binary_path')} {$savePath} -resize {$writeSize}x{$writeSize} {$savePath}");
+    exec(sfConfig::get('app_imagemagick_binary_path') . " {$savePath} -resize {$writeSize}x{$writeSize} {$savePath}");
         
     # if s3 enabled, save to s3
     if ($upload && sfConfig::get('app_amazon_enable_s3'))

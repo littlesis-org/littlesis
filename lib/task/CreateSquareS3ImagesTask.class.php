@@ -38,7 +38,13 @@ class CreateSquareS3ImagesTask extends LsTask
     foreach ($images as $image)
     {
       $this->downloadLarge($image['filename']);
-      $this->createSquare($image['filename'], $options['size']);
+
+      if (!$this->createSquare($image['filename'], $options['size']))
+      {
+        $this->printDebug("Coudln't create square image: {$image['filename']}");
+        break;
+      }
+
       if ($this->uploadFile($image['filename'], $options['check_first'], $options['debug_mode']))
       {
         $this->recordSquare($image['id']);
@@ -80,7 +86,7 @@ class CreateSquareS3ImagesTask extends LsTask
   function createSquare($filename, $size)
   {
     $tmpPath = sfConfig::get('sf_temp_dir') . DIRECTORY_SEPARATOR . $filename;
-    ImageTable::createSquareFile($filename, $tmpPath, 'square', $size, $upload = false);
+    return ImageTable::createSquareFile($filename, $tmpPath, 'square', $size, $upload = false);
   }
   
   function uploadFile($filename, $check_first = true, $debug = false)
