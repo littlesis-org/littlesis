@@ -227,39 +227,4 @@ class UnMergeEntitiesTask extends LsTask
     }
   }
   
-  
-
-  
-
-  static function unMerge(Entity $e1)
-  {
-  
-    //look for last merge for entity
-    
-    
-    
-    //EXTERNAL KEYS
-    //DONATION MATCHES
-    //NOTES
-    //TEMPLATES
-    //Lobbyfiling
-    //transaction contact
-    //bundled donation
-    //overseen position // position boss id
-    //business industry
-    //party member
-    //parent child
-    //aliases
-    //images
-    //lists
-    //relationships
-    //addresses
-    //emails
-    //phones
-    //entities/extensions
-    
-    //mergebasic
-    //
-  }
-  
 }
