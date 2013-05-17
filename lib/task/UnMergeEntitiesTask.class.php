@@ -21,7 +21,7 @@ class UnMergeEntitiesTask extends LsTask
   {
     $this->namespace        = 'cleanup';
     $this->name             = 'unmerge';
-    $this->briefDescription = 'Automates donation matching process for entities that have been donor-matched in the past, but for which the preprocess script has found additional matches';
+    $this->briefDescription = 'reverts accidental merges -- finicky, test before using!';
     $this->detailedDescription = '';
 		
     $this->addArgument('application', null, 'The application', 'frontend');
@@ -36,6 +36,8 @@ class UnMergeEntitiesTask extends LsTask
   {
     
     $this->init($arguments, $options);
+    
+    if ($this->testMode) echo "TESTING -- no changes will be saved\n";
 
     $merge_modification = $this->getLastMerge();
     
@@ -78,7 +80,7 @@ class UnMergeEntitiesTask extends LsTask
     
     foreach($ent_mods as $ent_mod)
     {
-      $this->printDebug("\tchange " . $ent_mod['new_value'] . " back to " . $ent_mod['old_value'] . "?");
+      $this->printDebug("\tchange " . $ent_mod['field_name'] . ": " . $ent_mod['new_value'] . " back to " . $ent_mod['old_value'] . "");
     }
     
     //UNDELETE ENTITY 2
@@ -157,10 +159,9 @@ class UnMergeEntitiesTask extends LsTask
     $references = $stmt->fetchAll(PDO::FETCH_ASSOC);
     foreach($references as $ref)
     {
-      $ref['object_id'] = $this->entity2_id;
       if (!$this->testMode)
       {
-        $ref->save();
+        $ref['object_id'] = $this->entity2_id;
       }
       $this->printDebug("Reference " . $ref['id'] . " changed");
     }
