@@ -2,10 +2,7 @@
 
 <?php if ($entity) : ?>
 <div class="entity-carousel">
-  <div class="entity-carousel-image" style="background-image: url(<?php echo image_path('large' . DIRECTORY_SEPARATOR . $entity['image_path']) ?>);">
-    <?php //$anonFile = ($entity['primary_ext'] == 'Person') ? 'anon.png' : 'anons.png' ?>
-    <?php //$image_path = $entity['image_path'] ? 'profile' . DIRECTORY_SEPARATOR . $entity['image_path'] : 'system' . DIRECTORY_SEPARATOR . $anonFile ?>
-    <?php //echo link_to(image_tag($image_path, array('alt' => '')), EntityTable::generateRoute($entity), array('title' => $entity['name'])) ?>
+  <div class="entity-carousel-image" style="background-image: url(<?php echo image_path('square' . DIRECTORY_SEPARATOR . $entity['image_path']) ?>);">
   </div>
 
   <div class="entity-carousel-text">

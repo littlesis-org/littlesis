@@ -74,7 +74,7 @@ class homeActions extends sfActions
 
     //get carousel entities
     $carousel_list_id = sfConfig::get('app_carousel_list_id');
-    $sql = 'SELECT entity_id FROM ls_list_entity WHERE list_id = ?';
+    $sql = 'SELECT entity_id FROM ls_list_entity WHERE list_id = ? AND is_deleted = 0';
     $stmt = $db->execute($sql, array($carousel_list_id));
     $this->carousel_ids = $stmt->fetchAll(PDO::FETCH_COLUMN);
     //shuffle($this->carousel_ids);
