@@ -11,6 +11,7 @@ class GovernmentBodyForm extends BaseGovernmentBodyForm
 {
   public function configure()
   {
+    /*
     $this->setWidgets(array(
       'is_federal' => new LsWidgetFormSelectRadio(array('is_ternary' => true)),
       'state_id'   => new sfWidgetFormDoctrineSelect(array('model' => 'AddressState', 'add_empty' => true)),
@@ -30,7 +31,11 @@ class GovernmentBodyForm extends BaseGovernmentBodyForm
       'state_id' => 'State Jurisdiction',
       'county' => 'County Jurisdiction',
       'city' => 'Municipal Jurisdiction'
-    ));
+    ));*/
+    $this->setWidgets(array());
+    $this->setValidators(array());
+    $this->widgetSchema->setLabels(array());
+    
 
     $this->widgetSchema->setNameFormat('entity[%s]');
   }

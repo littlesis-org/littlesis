@@ -11,6 +11,7 @@ class ElectedRepresentativeForm extends BaseElectedRepresentativeForm
 {
   public function configure()
   {
+  /*
     $this->setWidgets(array(
       'bioguide_id'                  => new sfWidgetFormInput(array(), array('size' => 10)),
       'govtrack_id'                  => new sfWidgetFormInput(array(), array('size' => 10)),
@@ -33,7 +34,10 @@ class ElectedRepresentativeForm extends BaseElectedRepresentativeForm
       'crp_id' => 'CRP ID',
       'pvs_id' => 'Project VoteSmart ID',
       'watchdog_id' => 'Watchdog.net ID'
-    ));
+    ));*/
+    $this->setWidgets(array());
+    $this->setValidators(array());
+    $this->widgetSchema->setLabels(array());
 
     $this->widgetSchema->setNameFormat('entity[%s]');    
   }

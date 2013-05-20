@@ -11,6 +11,7 @@ class PoliticalFundraisingForm extends BasePoliticalFundraisingForm
 {
   public function configure()
   {
+    /*
     $this->setWidgets(array(
       'fec_id'    => new sfWidgetFormInput(),
       'type_id'   => new sfWidgetFormDoctrineSelect(array('model' => 'PoliticalFundraisingType', 'add_empty' => true)),
@@ -28,7 +29,10 @@ class PoliticalFundraisingForm extends BasePoliticalFundraisingForm
       'type_id' => 'Fundraising Committee Type',
       'state_id' => 'Fundraising Committee State'
     ));
-    
+    */
     $this->widgetSchema->setNameFormat('entity[%s]');
+    $this->setWidgets(array());
+    $this->setValidators(array());
+    $this->widgetSchema->setLabels(array());
   }
 }

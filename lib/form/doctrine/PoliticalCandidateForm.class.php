@@ -11,6 +11,7 @@ class PoliticalCandidateForm extends BasePoliticalCandidateForm
 {
   public function configure()
   {
+    /*
     $this->setWidgets(array(
       'is_federal'    => new LsWidgetFormSelectRadio(array('is_ternary' => true)),
       'is_state'      => new LsWidgetFormSelectRadio(array('is_ternary' => true)),
@@ -43,7 +44,12 @@ class PoliticalCandidateForm extends BasePoliticalCandidateForm
       'senate_fec_id' => 'Senate FEC ID',
       'house_fec_id' => 'House FEC ID'
     ));
-
+    */
+    
+    $this->setWidgets(array());
+    $this->setValidators(array());
+    $this->widgetSchema->setLabels(array());
+    
     $this->widgetSchema->setNameFormat('entity[%s]');
   }
 }

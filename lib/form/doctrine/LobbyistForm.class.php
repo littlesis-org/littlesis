@@ -11,6 +11,7 @@ class LobbyistForm extends BaseLobbyistForm
 {
   public function configure()
   {
+    /*
     $this->setWidgets(array(
       'lda_registrant_id'      => new sfWidgetFormInput(),
     ));
@@ -21,7 +22,11 @@ class LobbyistForm extends BaseLobbyistForm
 
     $this->widgetSchema->setLabels(array(
       'lda_registrant_id' => 'LDA Registrant ID'
-    ));
+    ));*/
+    
+    $this->setWidgets(array());
+    $this->setValidators(array());
+    $this->widgetSchema->setLabels(array());
 
     $this->widgetSchema->setNameFormat('entity[%s]');
   }
