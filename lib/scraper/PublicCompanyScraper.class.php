@@ -7,8 +7,8 @@ class PublicCompanyScraper extends Scraper
   protected $recent_filing_date;
   protected $filing_name;
   protected $filing_url = null;
-  protected $years = array('2009','2010');
-  protected $ownership_start_year = '2008';
+  protected $years = array('2012','2013');
+  protected $ownership_start_year = '2010';
   protected $limit = 10;
   protected $start_id = 1;
   protected $search_depth = 50;
@@ -21,7 +21,8 @@ class PublicCompanyScraper extends Scraper
   protected $old_exec_entity_ids = array();
   protected $annual_filing_types = array(
     's-' => 'Registration Statement',
-    'def 14a' => 'Proxy Statement'  
+    'def 14a' => 'Proxy Statement',
+    '10-k' => 'Annual Report'
   );
   protected $repeat_mode = false;
   protected $empty = false;
@@ -79,9 +80,9 @@ class PublicCompanyScraper extends Scraper
       $this->entity = $company;
       $this->empty = false;
       $this->importRoster();
-      
+      /*
       if (!$this->is_already_scraped)
-        $this->logCompany($company, $this->empty);
+        $this->logCompany($company, $this->empty);*/
     }
       
   } 
@@ -163,7 +164,7 @@ class PublicCompanyScraper extends Scraper
     $this->old_exec_entity_ids = array_unique($stmt->fetchAll(PDO::FETCH_COLUMN, 1));
 
 
-
+    
     //compile roster of company directors and executives using recent Form 4s
     $form4_urls = $this->getForm4Urls();
     $roster = array();
@@ -295,7 +296,10 @@ class PublicCompanyScraper extends Scraper
             $p = $matches[0];
             $p->addExtension('BusinessPerson');
             $p->sec_cik = $r['personCik'];    
-            $p->save();
+            if (!$this->testMode)
+            {
+              $p->save();
+            }
 
             $this->printDebug("Found existing person with same name in same company: " . $p['name'] . " (" . $p['id'] . ")");
           }
@@ -365,18 +369,22 @@ class PublicCompanyScraper extends Scraper
                 $rel->start_date = preg_replace('/-\d\d$/', '-00', $date);
               }
 
-              $rel->save();
+              if (!$this->testMode)
+              {
+
+                $rel->save();
   
               //save source
-              $rel->addReference(
-                $r['xmlUrl'], 
-                null, 
-                null, 
-                $this->entity->name . ' ' . $r['formName'], 
-                null, 
-                $r['date']
-              );
-        
+                $rel->addReference(
+                  $r['xmlUrl'], 
+                  null, 
+                  null, 
+                  $this->entity->name . ' ' . $r['formName'], 
+                  null, 
+                  $r['date']
+                );
+              }
+              
               $this->printDebug("+ Ownership relationship created: " . $rel->id);
             }
           }
@@ -387,48 +395,67 @@ class PublicCompanyScraper extends Scraper
         $this->printDebug("Not a board, executive, or ownership position; skipping...");
       }
     }
+    
+    $sql = 'SELECT r.id, r.entity1_id FROM relationship r LEFT JOIN   position p ON (p.relationship_id = r.id) ' .
+           'WHERE r.entity2_id = ? AND r.category_id = ? AND p.is_board = 1';
+    $stmt = $this->db->execute($sql, array($this->entity->id, RelationshipTable::POSITION_CATEGORY));
+    
+    $board_rel_ids = $stmt->fetchAll(PDO::FETCH_COLUMN);
+    $stmt = $this->db->execute($sql, array($this->entity->id, RelationshipTable::POSITION_CATEGORY));
 
-
-    if (count($this->old_board_rel_ids))
+    if (count($board_rel_ids))
     {
       //update old board relationships
-      $old_board_rels = LsDoctrineQuery::create()
+      $board_rels = LsDoctrineQuery::create()
         ->from('Relationship r')
         ->leftJoin('r.Entity1 e1')
         ->leftJoin('e1.Person p')
-        ->whereIn('r.id', $this->old_board_rel_ids)
+        ->whereIn('r.id', $board_rel_ids)
         ->execute();
   
-      foreach ($old_board_rels as $rel)
+      $board_checked = $this->checkBoardPage($board_rels);
+      if ($board_checked == -1)
       {
-        //only update if old board relationship is current but board member isn't on current roster
-        if ($rel->is_board && $rel->is_current && !$rel->is_executive && !in_array($rel->entity1_id, $current_board_ids))
+        $this->printDebug("PROBLEMS ACCESSING GOOGLE"); 
+        die;
+      }
+      else if ($board_checked == 0)
+      {
+        $this->printDebug("GOOD BOARD PAGE NOT FOUND"); 
+        foreach ($board_rels as $rel)
         {
-          //maybe the board member has no recent Form 4s, so check the recent filings
-          $matched = false;
-          
-          foreach ($this->filings as $filing)
+          //only update if old board relationship is current but board member isn't on current roster
+          if ($rel->is_board && $rel->is_current && !$rel->is_executive)// && !in_array($rel->entity1_id, $current_board_ids))
           {
-            if (preg_match_all($rel->Entity1->Person->getNameRegex(), $filing['doc']->text, $matches, PREG_SET_ORDER | PREG_OFFSET_CAPTURE))
+            //maybe the board member has no recent Form 4s, so check the recent filings
+            $matched = false;
+            
+            foreach ($this->filings as $filing)
             {
-              $matched = true;
-              break;
-            }        
-          }
+              if (preg_match_all($rel->Entity1->Person->getNameRegex(), $filing['doc']->text, $matches, PREG_SET_ORDER | PREG_OFFSET_CAPTURE))
+              {
+                $matched = true;
+                break;
+              }        
+            }
+            
+            if (!$matched)
+            {
+              $this->printDebug("~ Previously existing board relationship no longer current: " . $rel);
+              $rel->is_current = false; 
+              if (!$this->testMode)
+              {
+                $rel->save();
+              }
+            }
+          }   
           
-          if (!$matched)
-          {
-            $this->printDebug("~ Previously existing board relationship no longer current: " . $rel);
-            $rel->is_current = false;
-            $rel->save();
-          }
+          /* 
+            executive relationships can't have their is_current field updated because
+            not all executives from Form 4s appear on the annual filings!
+          */
         }   
-        
-        /* 
-          executive relationships can't have their is_current field updated because
-          not all executives from Form 4s appear on the annual filings!
-        */
-      }   
+      } 
     }
     
     
@@ -436,17 +463,24 @@ class PublicCompanyScraper extends Scraper
     foreach ($this->filings as $filing)
     {
       //save source
-      $this->entity->addReference(
-        $filing['url'], 
-        null, 
-        null, 
-        $filing['name'], 
-        null, 
-        $filing['date']
-      );   
+      if (!$this->testMode)
+      {
+        $this->entity->addReference(
+          $filing['url'], 
+          null, 
+          null, 
+          $filing['name'], 
+          null, 
+          $filing['date']
+        );   
+      }
     }
     $url = "http://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=" . $this->entity->sec_cik . "&dateb=&owner=exclude&count=40";
-    $this->entity->addReference($url,null,null,'SEC EDGAR filings',null,null);
+    if (!$this->testMode)
+    {
+      $this->entity->addReference($url,null,null,$this->entity->name . ' SEC EDGAR filings',null,null);
+    }
+    
   }
   
   public function isAlreadyScraped($company)
@@ -490,7 +524,10 @@ class PublicCompanyScraper extends Scraper
     $meta->namespace = $namespace;
     $meta->predicate = $company->id;
     $meta->value = $year;
-    $meta->save();
+    if (!$this->testMode)
+    {
+      $meta->save();
+    }
 
     $this->printDebug("Logged complete scrape of " . $this->entity->name);
   }
@@ -673,7 +710,7 @@ class PublicCompanyScraper extends Scraper
 		$results['personName'] = preg_replace('/\/\p{L}+\/?$/','',$results['personName']);
 
     //if Inc, LLC, or Trust appears in owner name, it's an org
-    if (preg_match('#(^| )(inc|llc|llp|trust|corp|group|holdings|company|limited|ltd|fund)($| |\.|,|/)#i', $results['personName']))
+    if (preg_match('#(^| )(inc|llc|llp|trust|corp|group|holdings|company|limited|ltd|fund|l\.p\.)($| |\.|,|/)#i', $results['personName']))
     {
       $results['primaryExt'] = 'Org';
       $org = new Entity;
@@ -919,29 +956,36 @@ class PublicCompanyScraper extends Scraper
   {
     $p = $person_arr['person'];
     $p->addExtension('BusinessPerson');
-    $p->sec_cik = $person_arr['personCik'];    
-    $p->save();
+    $p->sec_cik = $person_arr['personCik'];   
+    if (!$this->testMode)
+    {
+      $p->save();
     
-    //save source info
-    $p->addReference(
-      $person_arr['xmlUrl'], 
-      null, 
-      null,
-      $this->entity->name . ' ' . $person_arr['formName'],  
-      null, 
-      $person_arr['date']
-    );
+    
+      //save source info
+      $p->addReference(
+        $person_arr['xmlUrl'], 
+        null, 
+        null,
+        $this->entity->name . ' ' . $person_arr['formName'],  
+        null, 
+        $person_arr['date']
+      );
+    }
     
     if (isset($this->filing_url) && isset($this->filing_name))
     {
-      $p->addReference(
-        $this->filing_url, 
-        null, 
-        null,
-        $this->entity->name . " " . $this->filing_name, 
-        null,
-        $this->filing_date
-      );
+      if(!$this->testMode)
+      {
+        $p->addReference(
+          $this->filing_url, 
+          null, 
+          null,
+          $this->entity->name . " " . $this->filing_name, 
+          null,
+          $this->filing_date
+        );
+      }
     }
     
     $this->printDebug("+ Created new person with SEC CIK " . $person_arr['personCik'] . ": " . $person_arr['parsedName']);
@@ -968,20 +1012,22 @@ class PublicCompanyScraper extends Scraper
 
     $a->postal = $address_arr['postal'];
     
-    if ($person->addAddress($a))
+    if (!$this->testMode)
     {
-      $person->save();
-      $a->addReference(
-        $person_arr['xmlUrl'], 
-        null, 
-        null, 
-        $this->entity->name . ' ' . $person_arr['formName'],  
-        null, 
-        $person_arr['date']
-      );
+      if ($person->addAddress($a))
+      {
+        $person->save();
+        $a->addReference(
+          $person_arr['xmlUrl'], 
+          null, 
+          null, 
+          $this->entity->name . ' ' . $person_arr['formName'],  
+          null, 
+          $person_arr['date']
+        );
+      }
     }
   }
-
 
   private function importBoardRelationship($entityId, $person_arr, $title=null, $current=null)
   {
@@ -1009,30 +1055,32 @@ class PublicCompanyScraper extends Scraper
         $rel->description1 = $title;
       }
       
-      $rel->save();
-
-      //save sources
-      $rel->addReference(
-        $person_arr['xmlUrl'], 
-        null,
-        null, 
-        $this->entity->name . ' ' . $person_arr['formName'], 
-        null, 
-        $person_arr['date']
-      );
-      
-      if (isset($this->filing_url) && isset($this->filing_name))
-      {      
+      if (!$this->testMode)
+      {
+        $rel->save();
+  
+        //save sources
         $rel->addReference(
-          $this->filing_url, 
+          $person_arr['xmlUrl'], 
+          null,
           null, 
+          $this->entity->name . ' ' . $person_arr['formName'], 
           null, 
-          $this->entity->name . " " . $this->filing_name, 
-          null, 
-          $this->filing_date
+          $person_arr['date']
         );
+        
+        if (isset($this->filing_url) && isset($this->filing_name))
+        {      
+          $rel->addReference(
+            $this->filing_url, 
+            null, 
+            null, 
+            $this->entity->name . " " . $this->filing_name, 
+            null, 
+            $this->filing_date
+          );
+        }
       }
-
       $this->printDebug("+ Relationship created: " . $rel->id . " (Board Member)");      
     }
   }
@@ -1059,30 +1107,32 @@ class PublicCompanyScraper extends Scraper
         $rel->start_date = preg_replace('/-\d\d$/', '-00', $date);
       }
 
-      $rel->save();
-
-      //save sources
-      $rel->addReference(
-        $person_arr['xmlUrl'], 
-        null,
-        null, 
-        $this->entity->name . ' ' . $person_arr['formName'], 
-        null, 
-        $person_arr['date']
-      );
-      
-      if (isset($this->filing_url) && isset($this->filing_name))
-      {      
+      if (!$this->testMode)
+      {
+        $rel->save();
+  
+        //save sources
         $rel->addReference(
-          $this->filing_url, 
+          $person_arr['xmlUrl'], 
+          null,
           null, 
+          $this->entity->name . ' ' . $person_arr['formName'], 
           null, 
-          $this->entity->name . " " . $this->filing_name, 
-          null, 
-          $this->filing_date
+          $person_arr['date']
         );
+        
+        if (isset($this->filing_url) && isset($this->filing_name))
+        {      
+          $rel->addReference(
+            $this->filing_url, 
+            null, 
+            null, 
+            $this->entity->name . " " . $this->filing_name, 
+            null, 
+            $this->filing_date
+          );
+        }
       }
-
       $this->printDebug("+ Relationship created: " . $rel->id . " (" . $rel->description1 . ")");      
     }
   }
@@ -1138,31 +1188,33 @@ class PublicCompanyScraper extends Scraper
         $rel->is_executive = 1;
         $rel->is_board = 0;
       }
-
-      $rel->save();
-
-      //save sources
-      $rel->addReference(
-        $person_arr['xmlUrl'], 
-        null,
-        null, 
-        $this->entity->name . ' ' . $person_arr['formName'], 
-        null, 
-        $person_arr['date']
-      );
       
-      if (isset($this->filing_url) && isset($this->filing_name))
-      {      
+      if (!$this->testMode)
+      {
+        $rel->save();
+  
+        //save sources
         $rel->addReference(
-          $this->filing_url, 
+          $person_arr['xmlUrl'], 
+          null,
           null, 
+          $this->entity->name . ' ' . $person_arr['formName'], 
           null, 
-          $this->entity->name . " " . $this->filing_name, 
-          null, 
-          $this->filing_date
+          $person_arr['date']
         );
+        
+        if (isset($this->filing_url) && isset($this->filing_name))
+        {      
+          $rel->addReference(
+            $this->filing_url, 
+            null, 
+            null, 
+            $this->entity->name . " " . $this->filing_name, 
+            null, 
+            $this->filing_date
+          );
+        }
       }
-
       $this->printDebug("+ Relationship created: " . $rel->id . " (" . ($rel->is_board ? "Board Member" : $rel->description1) . ")");
     }    
     elseif ($count == 1)
@@ -1177,8 +1229,10 @@ class PublicCompanyScraper extends Scraper
         if ($current == false && $rel->is_current)
         {
           $rel->is_current = false;
-          $rel->save();
-          
+          if (!$this->testMode)
+          {
+            $rel->save();
+          }        
           $this->printDebug("Existing relationship no longer current: " . $rel);
         }
       }
@@ -1423,6 +1477,82 @@ class PublicCompanyScraper extends Scraper
   	}
 
   	return $descriptions;  
+  }
+  
+  //this function googles a company's name plus the word "board",
+  //grabs the first result, and looks for director names in the text
+  public function checkBoardPage($board_rels)
+  {
+    $goog = new LsGoogle();
+    $goog->setQuery($this->entity->name . " board");
+    $results = $goog->execute();
+    $results = $goog->parseSearchResults($results);
+    if (count($results))
+    {
+      $url = $results[0]['unescapedUrl'];
+      if (stripos($url,"yahoo.com"))
+      {
+        $url = $results[1]['unescapedUrl'];
+      }
+      $this->printDebug($url);
+      if (!$this->browser->get($url)->responseIsError())
+      {
+        $text = $this->browser->getResponseText();
+        $text = LsHtml::replaceEntities($text);
+        $status_arr = array();
+        $unique_arr = array();
+        foreach($board_rels as $br)
+        {
+          $found = 0;
+          //$this->printDebug($br->Entity1->getNameRegex());
+          
+          $regexes = $br->Entity1->getNameRegexes();
+          foreach($regexes as $regex)
+          {
+            if (preg_match_all($regex,$text,$matches,PREG_SET_ORDER | PREG_OFFSET_CAPTURE)) 
+            {
+              //var_dump($matches);
+              $found = 1;
+              if(!in_array($br->entity1_id,$unique_arr)) $unique_arr[] = $br->entity1_id;
+              break;
+            } 
+          }
+          $status_arr[] = $found;
+          $this->printDebug($br->Entity1->name . " > " . $found);
+        }
+        if(count($unique_arr) > 1)
+        {
+          $this->printDebug("\tenough board member names found to mark as current or not");
+          for($i = 0; $i<count($status_arr); $i++)
+          {
+            $br = $board_rels[$i];
+            if($status_arr[$i] == 1)
+            {
+              $br->is_current = 1;
+            }
+            else
+            {
+              $br->is_current =0;
+            }
+            if (!$this->testMode)
+            {
+              $br->save();
+              $br->addReference(
+                $url, 
+                null, 
+                null, 
+                $this->entity->name . ' board', 
+                null, 
+                null
+              );
+            }
+          }
+          return 1;
+        }
+        else return 0;
+      }
+    }
+    else return -1;
   }
 
 }

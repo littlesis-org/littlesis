@@ -62,6 +62,17 @@ class Person extends BasePerson
     return $last_re;
   }
   
+  public function getNameRegexes()
+  {
+    $regexes = array(self::getNameRegex());
+    foreach ($this->Entity->Alias as $alias)
+    {
+      $p = PersonTable::parseFlatName($alias->name);
+      $regexes[] = $p->getNameRegex(); 
+    }
+    return $regexes;
+  }
+  
   public function getNameRegex($first_required = false)
   {
     $last_re = $this->getLastNameRegex();

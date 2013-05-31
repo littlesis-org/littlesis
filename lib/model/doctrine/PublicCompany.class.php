@@ -31,6 +31,20 @@ class PublicCompany extends BasePublicCompany
   			return true;
   		}
   	}
+  	
+  	$url2 = 'http://www.sec.gov/cgi-bin/browse-edgar?company=&match=&CIK=' . urlencode($this->ticker) . '&filenum=&State=&Country=&SIC=&owner=exclude&Find=Find+Companies&action=getcompany';
+  	if (!$browser->get($url2)->responseIsError())
+  	{
+  	  $text = $browser->getResponseText();
+  	  preg_match('/CIK\=(\d+)[^\d]/', $text, $matches);
+
+  		if ($matches)
+  		{
+  			$this->sec_cik = $matches[1];
+  			$this->save();
+  			return true;
+  		}
+  	}
 
   	return false;  		
   }

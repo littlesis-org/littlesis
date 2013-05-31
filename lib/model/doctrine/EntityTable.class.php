@@ -277,8 +277,6 @@ class EntityTable extends Doctrine_Table
     return $e1;
   }
 
-
-
   static function mergeAll(Entity $e1, Entity $e2)
   {
     $db = Doctrine_Manager::connection();
@@ -512,7 +510,7 @@ class EntityTable extends Doctrine_Table
       sfLoader::loadHelpers('Url');
       $notes = LsDoctrineQuery::create()
         ->from('Note n')
-        ->where('n.entity_ids LIKE ?', ',' . $e2->id . ',')
+        ->where('n.entity_ids LIKE ?', '%,' . $e2->id . ',%')
         ->execute();
         
       foreach ($notes as $note)
@@ -630,8 +628,7 @@ class EntityTable extends Doctrine_Table
 
     return $e1;
   } 
-
-
+  
   static function mergeField($fieldName, $existingValue, $newValue)
   {
     if ($newValue === null)
@@ -1741,4 +1738,5 @@ class EntityTable extends Doctrine_Table
 
     return $stmt->fetch(PDO::FETCH_COLUMN);
   }
+  
 }
