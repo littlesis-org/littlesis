@@ -1509,61 +1509,68 @@ class PublicCompanyScraper extends Scraper
         $url = $results[1]['unescapedUrl'];
       }
       $this->printDebug($url);
-      if (!$this->browser->get($url)->responseIsError())
+      try
       {
-        $text = $this->browser->getResponseText();
-        $text = LsHtml::replaceEntities($text);
-        $status_arr = array();
-        $unique_arr = array();
-        foreach($board_rels as $br)
+        if (!$this->browser->get($url)->responseIsError())
         {
-          $found = 0;
-          //$this->printDebug($br->Entity1->getNameRegex());
-          
-          $regexes = $br->Entity1->getNameRegexes();
-          foreach($regexes as $regex)
+          $text = $this->browser->getResponseText();
+          $text = LsHtml::replaceEntities($text);
+          $status_arr = array();
+          $unique_arr = array();
+          foreach($board_rels as $br)
           {
-            if (preg_match_all($regex,$text,$matches,PREG_SET_ORDER | PREG_OFFSET_CAPTURE)) 
+            $found = 0;
+            //$this->printDebug($br->Entity1->getNameRegex());
+            
+            $regexes = $br->Entity1->getNameRegexes();
+            foreach($regexes as $regex)
             {
-              //var_dump($matches);
-              $found = 1;
-              if(!in_array($br->entity1_id,$unique_arr)) $unique_arr[] = $br->entity1_id;
-              break;
-            } 
+              if (preg_match_all($regex,$text,$matches,PREG_SET_ORDER | PREG_OFFSET_CAPTURE)) 
+              {
+                //var_dump($matches);
+                $found = 1;
+                if(!in_array($br->entity1_id,$unique_arr)) $unique_arr[] = $br->entity1_id;
+                break;
+              } 
+            }
+            $status_arr[] = $found;
+            $this->printDebug($br->Entity1->name . " > " . $found);
           }
-          $status_arr[] = $found;
-          $this->printDebug($br->Entity1->name . " > " . $found);
-        }
-        if(count($unique_arr) > 1)
-        {
-          $this->printDebug("\tenough board member names found to mark as current or not");
-          for($i = 0; $i<count($status_arr); $i++)
+          if(count($unique_arr) > 1)
           {
-            $br = $board_rels[$i];
-            if($status_arr[$i] == 1)
+            $this->printDebug("\tenough board member names found to mark as current or not");
+            for($i = 0; $i<count($status_arr); $i++)
             {
-              $br->is_current = 1;
+              $br = $board_rels[$i];
+              if($status_arr[$i] == 1)
+              {
+                $br->is_current = 1;
+              }
+              else
+              {
+                $br->is_current =0;
+              }
+              if (!$this->testMode)
+              {
+                $br->save();
+                $br->addReference(
+                  $url, 
+                  null, 
+                  null, 
+                  $this->entity->name . ' board', 
+                  null, 
+                  null
+                );
+              }
             }
-            else
-            {
-              $br->is_current =0;
-            }
-            if (!$this->testMode)
-            {
-              $br->save();
-              $br->addReference(
-                $url, 
-                null, 
-                null, 
-                $this->entity->name . ' board', 
-                null, 
-                null
-              );
-            }
+            return 1;
           }
-          return 1;
+          else return 0;
         }
-        else return 0;
+      }
+      catch (Exception $e)
+      {
+        return 0;
       }
     }
     else return -1;
