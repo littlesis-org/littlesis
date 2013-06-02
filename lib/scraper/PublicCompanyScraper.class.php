@@ -80,9 +80,11 @@ class PublicCompanyScraper extends Scraper
       $this->entity = $company;
       $this->empty = false;
       $this->importRoster();
-      /*
+      
       if (!$this->is_already_scraped)
-        $this->logCompany($company, $this->empty);*/
+      {
+        $this->logCompany($company, $this->empty);
+      }
     }
       
   } 
