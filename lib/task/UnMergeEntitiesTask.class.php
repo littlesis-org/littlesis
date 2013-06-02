@@ -209,7 +209,7 @@ class UnMergeEntitiesTask extends LsTask
   
   protected function getLastMerge()
   {
-    $sql = 'SELECT * FROM MODIFICATION WHERE ' .
+    $sql = 'SELECT * FROM modification WHERE ' .
           'object_model = ? AND merge_object_id = ? AND is_merge = ?';
     $stmt = $this->db->execute($sql,array('Entity',$this->entity1_id,1));
     $modifications = $stmt->fetchAll(PDO::FETCH_ASSOC);    

@@ -25,7 +25,9 @@ EOF;
     $this->addOption('years', null, sfCommandOption::PARAMETER_REQUIRED, 'Filing years to look at', '2009,2010');
     $this->addOption('repeat_mode', null, sfCommandOption::PARAMETER_REQUIRED, 'Repeat scrape for already-scraped company', false);
     $this->addOption('list_id',null,sfCommandOption::PARAMETER_OPTIONAL, 'ID of list from which to get companies to scrape', null);
+    $this->addOption('session',null,sfCommandOption::PARAMETER_OPTIONAL, 'name of session', null);
   }
+  
 
   protected function execute($arguments = array(), $options = array())
   {
@@ -47,6 +49,7 @@ EOF;
     $years = explode(',',$options['years']);
     $scraper->setYears($years);
     $scraper->setLimit($options['limit']);
+    $scraper->setSession($options['session']);
 
     if ($options['repeat_mode'])
     {

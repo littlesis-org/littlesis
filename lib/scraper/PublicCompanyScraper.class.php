@@ -27,7 +27,12 @@ class PublicCompanyScraper extends Scraper
   protected $repeat_mode = false;
   protected $empty = false;
   protected $list_id = null;
+  protected $session = null;
 
+  public function setSession($session)
+  {
+    $this->session = $session;
+  }
   
   public function setStartId($id)
   {
@@ -80,7 +85,7 @@ class PublicCompanyScraper extends Scraper
       $this->entity = $company;
       $this->empty = false;
       $this->importRoster();
-      
+      $this->saveMeta($this->session,'last_processed',$company->id);
       if (!$this->is_already_scraped)
       {
         $this->logCompany($company, $this->empty);
@@ -119,6 +124,13 @@ class PublicCompanyScraper extends Scraper
         ->andWhere('e.primary_ext = ?', 'Org')
         ->andWhere('(pc.ticker IS NOT NULL OR pc.sec_cik IS NOT NULL)')  //need ticker or CIK to get directors
         ->limit($this->limit);
+        
+      if ($this->session && $this->hasMeta($this->session,'last_processed'))
+      {
+        $val = $this->getMeta($this->session,'last_processed');
+        $q->andWhere('e.id > ?',$val);
+      }
+      
     }
       
     return $companies = $q->execute();  
