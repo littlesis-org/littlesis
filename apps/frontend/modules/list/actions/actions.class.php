@@ -1064,4 +1064,16 @@ class listActions extends sfActions
 		else $this->redirect(EntityTable::getInternalUrl($this->entity));
     
   }
+  
+  public function executeCarousel($request)
+  {
+    $this->checkList($request);
+
+		$db = Doctrine_Manager::connection();    
+    $sql = 'SELECT entity_id FROM ls_list_entity WHERE list_id = ? AND is_deleted = 0';
+    $stmt = $db->execute($sql, array($this->list['id']));
+    $this->entity_ids = $stmt->fetchAll(PDO::FETCH_COLUMN);    
+
+    $this->setLayout(false);
+  }
 }

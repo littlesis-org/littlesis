@@ -76,16 +76,16 @@ We're a grassroots watchdog network connecting the dots between the world's most
 <br />
 <br />
 
-<div id="homepage-carousel">
-    <a class="buttons prev" href="#"><?php echo image_tag("system/carousel-left-semi.png"); ?></a>
-    <div class="viewport">
-        <ul class="overview">
-        <?php foreach ($carousel_ids as $id) : ?>
-          <li><?php include_component('entity', 'carousel', array('id' => $id)) ?></li>
-        <?php endforeach; ?>
-        </ul>
-    </div>
-    <a class="buttons next" href="#"><?php echo image_tag("system/carousel-right-semi.png"); ?></a>
+<div class="littlesis-carousel">
+  <a class="buttons prev" href="#"><?php echo image_tag("system/carousel-left-semi.png"); ?></a>
+  <div class="viewport">
+      <ul class="overview">
+      <?php foreach ($carousel_ids as $id) : ?>
+        <li><?php include_component('entity', 'carousel', array('id' => $id)) ?></li>
+      <?php endforeach; ?>
+      </ul>
+  </div>
+  <a class="buttons next" href="#"><?php echo image_tag("system/carousel-right-semi.png"); ?></a>
 </div>
 
 
@@ -150,8 +150,8 @@ background art by <a style="color: white;" href="http://www.google.com/search?q=
 <script type="text/javascript">         
     $(document).ready(function(){               
 
-        $("#homepage-carousel li").shuffle();              
-        $('#homepage-carousel').tinycarousel({ 
+        $(".littlesis-carousel li").shuffle();              
+        $(".littlesis-carousel").tinycarousel({ 
           pager: true, 
           start: 1, 
           interval: true, 

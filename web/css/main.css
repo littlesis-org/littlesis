@@ -2210,8 +2210,8 @@ input#simple_search_terms
   padding: 0.4em;
 }
 
-#homepage-carousel { height: 300px; overflow:hidden; }
-#homepage-carousel .viewport { 
+.littlesis-carousel { height: 300px; overflow:hidden; }
+.littlesis-carousel .viewport { 
   float: left; 
   width: 908px; 
   height: 300px; 
@@ -2219,13 +2219,13 @@ input#simple_search_terms
   position: relative; 
   background-color: #fff;
 }
-#homepage-carousel .buttons { display: block; margin: 125px 0px 0 0; float: left; }
-#homepage-carousel .next { margin: 125px 0 0 0px; }
-#homepage-carousel .disable { /* visibility: hidden; */ }
-#homepage-carousel .overview { list-style: none; padding: 0; margin: 0;  position: absolute; left: 0; top: 0; }
-#homepage-carousel .overview li{ float: left; margin: 0 20px 0 0; padding: 0px; height: 295px; width: 904px;}
+.littlesis-carousel .buttons { display: block; margin: 125px 0px 0 0; float: left; }
+.littlesis-carousel .next { margin: 125px 0 0 0px; }
+.littlesis-carousel .disable { /* visibility: hidden; */ }
+.littlesis-carousel .overview { list-style: none; padding: 0; margin: 0;  position: absolute; left: 0; top: 0; }
+.littlesis-carousel .overview li{ float: left; margin: 0 20px 0 0; padding: 0px; height: 295px; width: 904px;}
 
-#homepage-carousel .pager { overflow:hidden; list-style: none; clear: both; margin: 0 0 0 45px; }
-#homepage-carousel .pager li { float: left; }
-#homepage-carousel .pagenum { background-color: #fff; text-decoration: none; text-align: center; padding: 5px; color: #555555; font-size: 14px; font-weight: bold; display: block; }
-#homepage-carousel .active { color: #fff; background-color:  #555555; }
+.littlesis-carousel .pager { overflow:hidden; list-style: none; clear: both; margin: 0 0 0 45px; }
+.littlesis-carousel .pager li { float: left; }
+.littlesis-carousel .pagenum { background-color: #fff; text-decoration: none; text-align: center; padding: 5px; color: #555555; font-size: 14px; font-weight: bold; display: block; }
+.littlesis-carousel .active { color: #fff; background-color:  #555555; }

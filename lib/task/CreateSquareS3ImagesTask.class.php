@@ -34,8 +34,10 @@ class CreateSquareS3ImagesTask extends LsTask
     //get array of active entity image filenames
     if ($options['list_id'])
     {
-      $sql = "SELECT i.id, i.filename " . 
-             "FROM ls_list_entity le LEFT JOIN image i ON (i.entity_id = le.entity_id) " .
+      $sql = "SELECT i.id, i.filename, i.url, i.entity_id, e.name, e.primary_ext " .
+             "FROM ls_list_entity le " . 
+             "LEFT JOIN image i ON (i.entity_id = le.entity_id) " .
+             "LEFT JOIN entity e ON (e.id = le.entity_id) " .
              "WHERE le.list_id = ? AND le.is_deleted = 0 " .
              "AND i.is_deleted = 0 AND i.has_square = 0 " .
              "ORDER BY id DESC LIMIT " . $options['limit'];
@@ -54,12 +56,44 @@ class CreateSquareS3ImagesTask extends LsTask
 
     foreach ($images as $image)
     {
-      if (!$this->downloadLarge($image['filename']))
+      $this->printDebug("Processing image {$image['id']} belonging to entity {$image['entity_id']}...");
+
+      if ($this->downloadLarge($image['filename']))
+      {
+        $this->printDebug("Downloaded large image from S3: " . $s3Path);      
+      }
+      else
       {
         $s3Path = ImageTable::generateS3Url(ImageTable::getPath($image['filename'], 'large'));
         $this->printDebug("Couldn't download large image from S3: " . $s3Path);
-        $count--;
-        continue;
+
+        if ($image['url'])
+        {
+          if ($this->downloadToTmp($image['url'], $image['filename']))
+          {
+            $this->printDebug("Downloaded original image: " . $image['url']);        
+          }
+          else
+          {
+            $this->printDebug("Couldn't download original image: " . $image['url']);        
+
+            if ($this->downloadFromGoogle($image['name']))
+            {
+              $this->printDebug("Downloaded new image of {$image['name']} from google");        
+            
+            }
+            else
+            {
+              $count--;
+              continue;
+            }
+          }
+        }
+        else
+        {
+          $count--;
+          continue;        
+        }
       }
 
       if (!$this->createSquare($image['filename'], $options['size']))
@@ -85,12 +119,18 @@ class CreateSquareS3ImagesTask extends LsTask
   function downloadLarge($filename)
   {
     $url = ImageTable::generateS3Url(ImageTable::getPath($filename, 'large'));
+
+    return $this->downloadToTmp($url, $filename);
+  }
+  
+  function downloadToTmp($url, $filename)
+  {
     $defaultHeaders = array(
       'User-Agent' => 'Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.8.1.1) Gecko/20061205 Iceweasel/2.0.0.1 (Debian-2.0.0.1+dfsg-2)'
     );
-    $b = new sfWebBrowser($defaultHeaders, 'sfCurlAdapter', array('cookies' => true));
+    $b = new LsWebBrowser($defaultHeaders, 'sfCurlAdapter', array('cookies' => true), $followRedirects = false);
 
-    if ($b->get($url)->responseIsError())
+    if ($b->get($url)->responseIsError() || in_array($b->getResponseCode(), array(301, 302, 303, 307)))
     {
       return false;
     }
@@ -106,7 +146,12 @@ class CreateSquareS3ImagesTask extends LsTask
       throw new Exception("Couldn't close file: " . $filePath);
     }
     
-    return true;
+    return true;  
+  }
+  
+  function downloadFromGoogle($name)
+  {
+    return false;
   }
   
   function createSquare($filename, $writeSize)

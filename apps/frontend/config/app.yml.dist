@@ -67,6 +67,8 @@ all:
     secret_key:           AMAZON_SECRET_KEY
 
   google:
+    search_key:           GOOGLE_CUSTOM_SEARCH_KEY
+    search_engine_id:     GOOGLE_CUSTOM_SEARCH_ENGINE_ID
     maps_key:             GOOGLE_MAPS_KEY
 
   nytimes:

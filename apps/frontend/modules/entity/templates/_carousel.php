@@ -2,7 +2,7 @@
 
 <?php if ($entity) : ?>
 <div class="entity-carousel">
-  <div class="entity-carousel-image" style="background-image: url(<?php echo image_path('square' . DIRECTORY_SEPARATOR . $entity['image_path']) ?>);">
+  <div class="entity-carousel-image" style="background-image: url(<?php echo image_path(ImageTable::getPath($entity['image_path'], 'square')) ?>);">
   </div>
 
   <div class="entity-carousel-text">

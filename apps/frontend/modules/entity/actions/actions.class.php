@@ -4627,6 +4627,7 @@ class entityActions extends sfActions
 
     $this->tab_name = 'political';
 
+    $this->getResponse()->addJavaScript('d3');
     $this->setTemplate('view');
   }
   
