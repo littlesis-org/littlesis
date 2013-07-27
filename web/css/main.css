@@ -2229,3 +2229,42 @@ input#simple_search_terms
 .littlesis-carousel .pager li { float: left; }
 .littlesis-carousel .pagenum { background-color: #fff; text-decoration: none; text-align: center; padding: 5px; color: #555555; font-size: 14px; font-weight: bold; display: block; }
 .littlesis-carousel .active { color: #fff; background-color:  #555555; }
+
+# D3 stuff
+
+svg {
+  border: 1px solid black;
+}
+
+svg .line {
+  stroke: #ccc;
+}
+
+svg text {
+  fill: black;
+}
+
+svg .node text {
+  font: 12px sans-serif;
+}
+
+/*
+svg .node.center text {
+  font: 16px sans-serif;
+  font-weight: bold;
+}
+*/
+
+svg .link text {
+  font: 10px sans-serif;
+  fill: #888;
+}
+
+/*
+.link text {
+  visibility: hidden;
+}
+
+.link:hover text {
+  visibility: visible;
+}

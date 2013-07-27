@@ -4714,4 +4714,59 @@ class entityActions extends sfActions
     
     $this->redirect(EntityTable::getInternalUrl($this->entity, 'editIndustries'));
   }
+  
+  public function executeMap($request)
+  {
+    $this->checkEntity($request, false, false);
+
+    // get related entity ids
+    $db = Doctrine_Manager::connection();
+    $sql = "SELECT DISTINCT(l.entity2_id), rc.name FROM link l LEFT JOIN relationship_category rc ON (rc.id = l.category_id) WHERE l.entity1_id = ? LIMIT 10";
+    $params = array($this->entity->id);
+    $stmt = $db->execute($sql, $params);
+    $rels = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $stmt = $db->execute($sql, $params);
+    $entity_ids = array_merge($stmt->fetchAll(PDO::FETCH_COLUMN), array($this->entity->id));
+
+    $nodes = array();
+    $links = array();
+    $entity_node_map = array();
+    
+    sfLoader::loadHelpers(array("Asset", "Url"));
+
+    foreach ($entity_ids as $i => $entity_id)
+    {
+      //get entity name and image url
+      $sql = "SELECT e.*, i.filename FROM entity e LEFT JOIN image i ON (i.entity_id = e.id AND i.is_featured = 1 AND i.is_deleted = 0) WHERE e.id = ?";
+      $params = array($entity_id);
+      $stmt = $db->execute($sql, $params);      
+      $entity = $stmt->fetch(PDO::FETCH_ASSOC);      
+
+      if (!$entity["filename"])
+      {
+        $image_path = image_path("system/anon.png");
+      } 
+      else 
+      {      
+        $image_path = image_path(ImageTable::getPath($entity['filename'], 'profile'));
+      }
+
+      $url = url_for(EntityTable::generateRoute($entity, "map"));
+      
+      $nodes[] = array("id" => $entity_id, "name" => $entity["name"], "image" => $image_path, "url" => $url);
+      $entity_node_map[$entity_id] = $i;
+    }
+
+    foreach ($rels as $rel)
+    {
+      $links[] = array(
+        "source" => $entity_node_map[$this->entity->id], 
+        "target" => $entity_node_map[$rel["entity2_id"]], 
+        "value" => 3, 
+        "label" => $rel["name"]
+      );
+    }
+    
+    $this->data = json_encode(array("nodes" => $nodes, "links" => $links));    
+  }
 }
