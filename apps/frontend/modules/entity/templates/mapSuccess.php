@@ -13,9 +13,13 @@
 <?php endif; ?>
 <?php end_slot(); ?>
 
+<!--
 <?php include_partial('global/section', array(
   'title' => 'Network Map'
 )) ?>
+-->
+
+<div id="svg_container"></div>
 
 <script>
 
@@ -24,7 +28,7 @@ var data = <?php echo $data ?>;
 var width = 900,
     height = 500;
 
-var svg = d3.select("#content").append("svg")
+var svg = d3.select("#svg_container").append("svg")
     .attr("id", "svg")
     .attr("width", width)
     .attr("height", height);
@@ -54,47 +58,6 @@ link.append('text')
     .attr("dy", function(d) { return Math.sqrt(d.value) * 10 / 2 - 1; })
     .attr("text-anchor", "middle") 
     .text(function(d) {return d.label;}); 
-
-/*
-var edgepath = svg.selectAll(".edgepath")
-    .data(data.links)
-    .enter()
-    .append('path')
-    .attr({'d': function(d) {return 'M '+d.source.x+' '+d.source.y+' L '+ d.target.x +' '+d.target.y},
-           'class':'edgepath',
-           'id':function(d,i) {return 'edgepath'+i}})
-    .style("pointer-events", "none");
-
-var edgelabel = svg.selectAll(".edgelabel")
-    .data(data.links)
-    .enter()
-    .append('text')
-    .style("pointer-events", "none")
-    .attr({'class':'edgelabel',
-     'id':function(d,i){return 'edgelabel'+i},
-     'dx':80,
-     'dy':0,
-     'font-size':12,
-     'fill':'#aaa'});
-
-edgelabel.append('textPath')
-    .attr('xlink:href',function(d,i) {return '#edgepath'+i})
-    .style("pointer-events", "none")
-    .text(function(d,i){return d.label});
-*/
-
-/*
-link.append("svg:text") 
-    .text(function(d){ return d.text; }); 
-*/
-
-/*
-link.append("text")
-    .attr("x", function(d) { return (d.source.x + d.target.x) / 2; })
-    .attr("y", function(d) { return (d.source.y + d.target.y) / 2; })
-    .attr("text-anchor","middle")
-    .text(function(d) { return d.text });
-*/
 
 var node_drag = d3.behavior.drag()
     .on("dragstart", dragstart)
