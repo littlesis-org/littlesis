@@ -4720,9 +4720,14 @@ class entityActions extends sfActions
     $this->checkEntity($request, false, false);
 
     // get related entity ids
+    $num = 10;
     $db = Doctrine_Manager::connection();
-    $sql = "SELECT DISTINCT(l.entity2_id), rc.name FROM link l LEFT JOIN relationship_category rc ON (rc.id = l.category_id) WHERE l.entity1_id = ? LIMIT 10";
-    $params = array($this->entity->id);
+    $sql = "SELECT l.entity2_id, l.entity1_id, rc.name, COUNT(l.id) AS num " . 
+           "FROM link l LEFT JOIN relationship_category rc ON (rc.id = l.category_id) " . 
+           "WHERE l.entity1_id = ? AND l.entity2_id <> ? AND rc.id <> ?" . 
+           "GROUP BY l.entity2_id " . 
+           "ORDER BY num DESC LIMIT " . $num;
+    $params = array($this->entity->id, $this->entity->id, RelationshipTable::DONATION_CATEGORY);
     $stmt = $db->execute($sql, $params);
     $rels = $stmt->fetchAll(PDO::FETCH_ASSOC);
     $stmt = $db->execute($sql, $params);
@@ -4744,7 +4749,7 @@ class entityActions extends sfActions
 
       if (!$entity["filename"])
       {
-        $image_path = image_path("system/anon.png");
+        $image_path = $entity["primary_ext"] == "Person" ? image_path("system/anon.png") : image_path("system/anons.png");
       } 
       else 
       {      
@@ -4753,20 +4758,29 @@ class entityActions extends sfActions
 
       $url = url_for(EntityTable::generateRoute($entity, "map"));
       
-      $nodes[] = array("id" => $entity_id, "name" => $entity["name"], "image" => $image_path, "url" => $url);
+      $nodes[] = array("id" => $entity_id, "name" => $entity["name"], "image" => $image_path, "url" => $url, "description" => $entity["blurb"]);
       $entity_node_map[$entity_id] = $i;
+      
+      //get all relationships between this entity and the others
+      $sql = "SELECT l.entity2_id, l.entity1_id, GROUP_CONCAT(rc.name SEPARATOR ', ') AS name " . 
+             "FROM link l LEFT JOIN relationship_category rc ON (rc.id = l.category_id) " . 
+             "WHERE l.entity1_id = ? AND l.entity2_id <> ? AND l.entity2_id IN (" . join(", ", $entity_ids) . ") " .
+             "GROUP BY l.entity2_id LIMIT 10";
+      $params = array($entity_id, $entity_id);
+      $stmt = $db->execute($sql, $params);
+      $rels = array_merge($rels, $stmt->fetchAll(PDO::FETCH_ASSOC));      
     }
 
     foreach ($rels as $rel)
     {
-      $links[] = array(
-        "source" => $entity_node_map[$this->entity->id], 
+      $links[$entity_node_map[$rel["entity1_id"]] . ":" . $entity_node_map[$rel["entity2_id"]]] = array(
+        "source" => $entity_node_map[$rel["entity1_id"]], 
         "target" => $entity_node_map[$rel["entity2_id"]], 
-        "value" => 3, 
+        "value" => 1, 
         "label" => $rel["name"]
       );
     }
     
-    $this->data = json_encode(array("nodes" => $nodes, "links" => $links));    
+    $this->data = json_encode(array("nodes" => $nodes, "links" => array_values($links)));    
   }
 }

@@ -2237,7 +2237,7 @@ svg {
 }
 
 svg .line {
-  stroke: #ccc;
+  stroke: #ddd;
 }
 
 svg text {
@@ -2260,6 +2260,21 @@ svg .link text {
   fill: #888;
 }
 
+svg image {
+  fill: white;
+}
+
+svg .image {
+  fill: white;
+  background-color: white;
+}
+
+/*
+svg .link:not(:hover) text {
+  display: none;
+}
+*/
+
 /*
 .link text {
   visibility: hidden;
@@ -2268,3 +2283,4 @@ svg .link text {
 .link:hover text {
   visibility: visible;
 }
+*/
