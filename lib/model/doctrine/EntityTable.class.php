@@ -1739,16 +1739,16 @@ class EntityTable extends Doctrine_Table
     return $stmt->fetch(PDO::FETCH_COLUMN);
   }
 
-  public static function getRelatedEntitiesAndRelsForMap($entity_id, $num=10)
+  public static function getRelatedEntitiesAndRelsForMap($entity_id, $num=10, $exclude_categories=array())
   {
     // get related entity ids    
-    $entities = EntityTable::getEntitiesForMap($entity_id, $num);
+    $entities = EntityTable::getEntitiesForMap($entity_id, $num, $exclude_categories);
     $entity_ids = array_map(function($e) { return $e['id']; }, $entities);
     $entity_index = array_flip(array_map(function($e) { return $e['id']; }, $entities));
 
     // get all rels
     $rels = array();
-    foreach (EntityTable::getAllRelsForMap($entity_ids) as $rel)
+    foreach (EntityTable::getAllRelsForMap($entity_ids, $exclude_categories) as $rel)
     {    
       try 
       {
@@ -1813,12 +1813,12 @@ class EntityTable extends Doctrine_Table
     return $stmt->fetchAll(PDO::FETCH_ASSOC);      
   }
   
-  public static function getEntitiesForMap($entity_id, $num=10)
+  public static function getEntitiesForMap($entity_id, $num=10, $exclude_categories=array())
   {
     $entity_ids = array_merge(array($entity_id), EntityTable::getRelatedEntityIdsForMap(
       $entity_id, 
       $num, 
-      $exclude_categories = array(RelationshipTable::DONATION_CATEGORY)
+      $exclude_categories
     ));
 
     return array_map(function($entity_id) { return EntityTable::getEntityForMap($entity_id); }, $entity_ids);  

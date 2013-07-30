@@ -2233,7 +2233,7 @@ input#simple_search_terms
 /* D3 stuff */
 
 svg {
-  border: 1px solid #ddd;
+  border: 0px solid #ddd;
 }
 
 svg .line {

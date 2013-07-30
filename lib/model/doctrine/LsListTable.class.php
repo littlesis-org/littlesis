@@ -75,10 +75,14 @@ class LsListTable extends Doctrine_Table
   }
   
   
-  static function getEntityIdsById($id)
+  static function getEntityIdsById($id, $num=null)
   {
     $db = Doctrine_Manager::connection();
     $sql = 'SELECT entity_id FROM ls_list_entity le WHERE le.list_id = ? AND le.is_deleted = 0';
+
+    if (!is_null($num))
+      $sql .= ' LIMIT ' . $num;    
+
     $stmt = $db->execute($sql, array($id));
     
     return $stmt->fetchAll(PDO::FETCH_COLUMN);
@@ -186,5 +190,43 @@ class LsListTable extends Doctrine_Table
     {
       return '@localView?name=' . $network['display_name'] . $paramStr;
     }  
+  }
+
+  public static function getEntitiesAndRelsForMap($list_id, $num=20)
+  {
+    // get entities    
+    $entities = self::getEntitiesForMap($list_id, $num);
+    $entity_ids = array_map(function($e) { return $e['id']; }, $entities);
+    $entity_index = array_flip(array_map(function($e) { return $e['id']; }, $entities));
+
+    // get all rels
+    $rels = array();
+    foreach (EntityTable::getAllRelsForMap($entity_ids) as $rel)
+    {    
+      try 
+      {
+        $url = url_for(RelationshipTable::generateRoute($rel));
+      } 
+      catch (Exception $e)
+      {
+        $url = "http://littlesis.org/relationship/view/id/" . $rel['id'];
+      }
+
+      $rels[] = array(
+        "source" => $entity_index[$rel["entity1_id"]], 
+        "target" => $entity_index[$rel["entity2_id"]], 
+        "value" => 1, 
+        "label" => $rel["label"],
+        "url" => $url
+      );
+    }
+    
+    return array("entities" => $entities, "rels" => $rels); 
+  }
+  
+  public static function getEntitiesForMap($list_id, $num=20)
+  {
+    $entity_ids = self::getEntityIdsById($list_id, $num);
+    return array_map(function($entity_id) { return EntityTable::getEntityForMap($entity_id); }, $entity_ids);  
   }
 }

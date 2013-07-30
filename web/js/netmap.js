@@ -63,12 +63,12 @@
       this.entity_background_opacity = 0.6;
       this.entity_background_color = "#fff";
       this.entity_background_corner_radius = 0;
-      this.distance = 250;
+      this.distance = 225;
     }
 
     Netmap.prototype.set_data = function(data, center_entity_id) {
       if (center_entity_id == null) {
-        center_entity_id = nil;
+        center_entity_id = null;
       }
       this.data = data;
       if (center_entity_id != null) {
@@ -113,9 +113,6 @@
       if (this.center_entity_id != null) {
         center_entity_id = this.center_entity_id;
       }
-      if (center_entity_id == null) {
-        return;
-      }
       _ref = this.data["entities"];
       for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
         entity = _ref[i];
@@ -123,7 +120,7 @@
           this.data["entities"][i].x = this.width / 2;
           this.data["entities"][i].y = this.height / 2;
         } else {
-          angle = (2 * Math.PI / (this.data["entities"].length - 1)) * i;
+          angle = (2 * Math.PI / (this.data["entities"].length - (center_entity_id != null ? 1 : 0))) * i;
           this.data["entities"][i].x = this.width / 2 + this.distance * Math.cos(angle);
           this.data["entities"][i].y = this.height / 2 + this.distance * Math.sin(angle);
         }

@@ -4175,9 +4175,10 @@ class entityActions extends sfActions
               {
               	foreach($names as &$name)
               	{
-			$name['summary'] = str_replace(array('?',"'"),"'",$name['summary']);
+			            $name['summary'] = str_replace(array('?',"'"),"'",$name['summary']);
               		$name['summary'] = str_replace(array('?','?','"'),'"',$name['summary']);
-              		if(isset($name['title']))
+
+              		if (isset($name['title']))
               		{
               			$name['description1'] = $name['title'];
               		}              		
@@ -4720,6 +4721,6 @@ class entityActions extends sfActions
     $this->checkEntity($request, false, false);
     $num = $request->getParameter("num", 15);
    
-    $this->data = json_encode(EntityTable::getRelatedEntitiesAndRelsForMap($this->entity->id, $num));
+    $this->data = json_encode(EntityTable::getRelatedEntitiesAndRelsForMap($this->entity->id, $num, array()));
   }
 }

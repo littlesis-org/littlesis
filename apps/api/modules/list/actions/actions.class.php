@@ -71,4 +71,21 @@ class listActions extends LsApiActions
 
     return 'Xml';  
   }
+
+  public function executeMap($request)
+  {
+    $this->setResponseFormat(array('xml', 'json'));    
+    $options = $this->getParams(array('num'));
+  
+    $this->data = LsListTable::getEntitiesAndRelsForMap($this->list['id']);
+
+    if ($request->getParameter('format') == "json")
+    {
+      return $this->renderText(json_encode($this->data));
+    }
+    else
+    {
+      return 'Xml';
+    }
+  }  
 }

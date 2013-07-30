@@ -50,6 +50,11 @@ list_entities:
   param: { module: list, action: entities }
   requirements: { id: \d+ }
 
+list_map:
+  url:   /list/:id/map.:format
+  param: { module: list, action: map }
+  requirements: { id: \d+ }
+
 list_view:
   url:   /list/:id.:format
   param: { module: list, action: view }
@@ -140,14 +145,14 @@ entity_details:
   param: { module: entity, action: details }
   requirements: { id: \d+ }
   
-entity_view:
-  url:   /entity/:id.:format
-  param: { module: entity, action: view }
-  requirements: { id: \d+ }
-
 entity_map:
   url:   /entity/:id/map.:format
   param: { module: entity, action: map }
+  requirements: { id: \d+ }
+
+entity_view:
+  url:   /entity/:id.:format
+  param: { module: entity, action: view }
   requirements: { id: \d+ }
 
 register:

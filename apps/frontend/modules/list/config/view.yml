@@ -3,3 +3,6 @@ all:
 
 addBulkSuccess:
   javascripts:  [%SF_PROTOTYPE_WEB_DIR%/js/prototype, %SF_PROTOTYPE_WEB_DIR%/js/scriptaculous, %SF_PROTOTYPE_WEB_DIR%/js/effects]
+  
+mapSuccess:
+  javascripts:    [d3.v3.min.js, jquery.min.js, netmap.js]
