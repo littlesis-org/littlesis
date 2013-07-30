@@ -1738,5 +1738,128 @@ class EntityTable extends Doctrine_Table
 
     return $stmt->fetch(PDO::FETCH_COLUMN);
   }
+
+  public static function getRelatedEntitiesAndRelsForMap($entity_id, $num=10)
+  {
+    // get related entity ids    
+    $entities = EntityTable::getEntitiesForMap($entity_id, $num);
+    $entity_ids = array_map(function($e) { return $e['id']; }, $entities);
+    $entity_index = array_flip(array_map(function($e) { return $e['id']; }, $entities));
+
+    // get all rels
+    $rels = array();
+    foreach (EntityTable::getAllRelsForMap($entity_ids) as $rel)
+    {    
+      try 
+      {
+        $url = url_for(RelationshipTable::generateRoute($rel));
+      } 
+      catch (Exception $e)
+      {
+        $url = "http://littlesis.org/relationship/view/id/" . $rel['id'];
+      }
+
+      $rels[] = array(
+        "source" => $entity_index[$rel["entity1_id"]], 
+        "target" => $entity_index[$rel["entity2_id"]], 
+        "value" => 1, 
+        "label" => $rel["label"],
+        "url" => $url
+      );
+    }
+    
+    return array("entities" => $entities, "rels" => $rels); 
+  }
+
+  public static function getRelatedEntityIdsForMap($entity_id, $num=10, $exclude_categories=array())
+  {
+    $db = Doctrine_Manager::connection();
+    $sql = "SELECT l.entity2_id, COUNT(l.id) AS num " . 
+           "FROM link l " . 
+           "WHERE l.entity1_id = ? AND l.entity2_id <> ? " . 
+           (count($exclude_categories) ? "AND l.category_id NOT IN (" . join($exclude_categories, ", ") . ") " : "") . 
+           "GROUP BY l.entity2_id " . 
+           "ORDER BY num DESC LIMIT " . $num;
+    $params = array($entity_id, $entity_id);
+    $stmt = $db->execute($sql, $params);
+    return $stmt->fetchAll(PDO::FETCH_COLUMN);  
+  }
+
+  public static function getRelsForMap($entity_id, $num=10, $exclude_categories=array())
+  {
+    $db = Doctrine_Manager::connection();
+    $sql = "SELECT l.entity2_id, l.entity1_id, l.relationship_id AS id, '0' AS is_deleted, GROUP_CONCAT(DISTINCT(rc.name) SEPARATOR ', ') AS label, COUNT(l.id) AS num " . 
+           "FROM link l LEFT JOIN relationship_category rc ON (rc.id = l.category_id) " . 
+           "WHERE l.entity1_id = ? AND l.entity2_id <> ? " . 
+           (count($exclude_categories) ? "AND rc.id NOT IN (" . join(",", $exclude_categories) . ") " : "") . 
+           "GROUP BY l.entity2_id " . 
+           "ORDER BY num DESC LIMIT " . $num;
+    $params = array($entity_id, $entity_id);
+    $stmt = $db->execute($sql, $params);
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+  }  
+
+  public static function getAllRelsForMap($entity_ids, $exclude_categories=array())
+  {
+    $db = Doctrine_Manager::connection();
+    $sql = "SELECT r.id, r.entity1_id, r.entity2_id, GROUP_CONCAT(DISTINCT(rc.name) SEPARATOR ', ') AS label, r.is_deleted " . 
+           "FROM relationship r LEFT JOIN relationship_category rc ON (rc.id = r.category_id) " . 
+           "WHERE r.entity1_id IN (" . join(",", $entity_ids) . ") " . 
+           "AND r.entity2_id IN (" . join(",", $entity_ids) . ") " . 
+           "AND r.is_deleted = 0 " .
+           (count($exclude_categories) ? "AND r.category_id NOT IN (" . join(",", $exclude_categories) . ") " : "") .
+           "GROUP BY r.entity1_id, r.entity2_id";
+    $stmt = $db->execute($sql);
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);      
+  }
   
+  public static function getEntitiesForMap($entity_id, $num=10)
+  {
+    $entity_ids = array_merge(array($entity_id), EntityTable::getRelatedEntityIdsForMap(
+      $entity_id, 
+      $num, 
+      $exclude_categories = array(RelationshipTable::DONATION_CATEGORY)
+    ));
+
+    return array_map(function($entity_id) { return EntityTable::getEntityForMap($entity_id); }, $entity_ids);  
+  }
+  
+  public static function getEntityForMap($entity_id)
+  {
+    sfLoader::loadHelpers(array("Asset", "Url"));
+
+    $db = Doctrine_Manager::connection();
+    $sql = "SELECT e.*, i.filename " . 
+           "FROM entity e LEFT JOIN image i ON (i.entity_id = e.id AND i.is_featured = 1 AND i.is_deleted = 0) " . 
+           "WHERE e.id = ?";
+    $params = array($entity_id);
+    $stmt = $db->execute($sql, $params);      
+    $entity = $stmt->fetch(PDO::FETCH_ASSOC);      
+
+    if (!$entity["filename"])
+    {
+      $image_path = $entity["primary_ext"] == "Person" ? image_path("system/anon.png") : image_path("system/anons.png");
+    } 
+    else 
+    {      
+      $image_path = image_path(ImageTable::getPath($entity['filename'], 'profile'));
+    }
+
+    try 
+    {
+      $url = url_for(EntityTable::generateRoute($entity, "map"));
+    } 
+    catch (Exception $e) 
+    {
+      $url = 'http://littlesis.org/' . strtolower($entity['primary_ext']) . '/' . $entity['id'] . '/' . LsSlug::convertNameToSlug($entity['name']);
+    }
+    
+    return array(
+      "id" => $entity_id, 
+      "name" => $entity["name"], 
+      "image" => $image_path, 
+      "url" => $url, 
+      "description" => $entity["blurb"]
+    );  
+  }
 }

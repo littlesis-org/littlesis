@@ -2232,7 +2232,7 @@ input#simple_search_terms
 
 /* D3 stuff */
 
-#svg_container {
+svg {
   border: 1px solid #ddd;
 }
 
@@ -2244,12 +2244,12 @@ svg text {
   fill: black;
 }
 
-svg .node text {
+svg .entity text {
   font: 12px sans-serif;
 }
 
-svg .link text {
-  font: 10px sans-serif;
+svg .rel text {
+  font: 9px sans-serif;
   fill: #888;
 }
 

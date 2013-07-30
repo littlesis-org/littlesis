@@ -214,4 +214,20 @@ class entityActions extends LsApiActions
       $this->forward404();
     }
   }
+  
+  public function executeMap($request)
+  {
+    $options = $this->getParams(array('num'));
+  
+    $this->data = EntityTable::getRelatedEntitiesAndRelsForMap($this->entity['id']);
+
+    if ($request->getParameter('format') == "json")
+    {
+      return $this->renderText(json_encode($this->data));
+    }
+    else
+    {
+      return 'Xml';
+    }
+  }  
 }

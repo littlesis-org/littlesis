@@ -145,6 +145,11 @@ entity_view:
   param: { module: entity, action: view }
   requirements: { id: \d+ }
 
+entity_map:
+  url:   /entity/:id/map.:format
+  param: { module: entity, action: map }
+  requirements: { id: \d+ }
+
 register:
   url:   /register
   param: { module: home, action: register }

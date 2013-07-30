@@ -4718,69 +4718,8 @@ class entityActions extends sfActions
   public function executeMap($request)
   {
     $this->checkEntity($request, false, false);
-
-    // get related entity ids
-    $num = 10;
-    $db = Doctrine_Manager::connection();
-    $sql = "SELECT l.entity2_id, l.entity1_id, rc.name, COUNT(l.id) AS num " . 
-           "FROM link l LEFT JOIN relationship_category rc ON (rc.id = l.category_id) " . 
-           "WHERE l.entity1_id = ? AND l.entity2_id <> ? AND rc.id <> ?" . 
-           "GROUP BY l.entity2_id " . 
-           "ORDER BY num DESC LIMIT " . $num;
-    $params = array($this->entity->id, $this->entity->id, RelationshipTable::DONATION_CATEGORY);
-    $stmt = $db->execute($sql, $params);
-    $rels = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    $stmt = $db->execute($sql, $params);
-    $entity_ids = array_merge($stmt->fetchAll(PDO::FETCH_COLUMN), array($this->entity->id));
-
-    $nodes = array();
-    $links = array();
-    $entity_node_map = array();
-    
-    sfLoader::loadHelpers(array("Asset", "Url"));
-
-    foreach ($entity_ids as $i => $entity_id)
-    {
-      //get entity name and image url
-      $sql = "SELECT e.*, i.filename FROM entity e LEFT JOIN image i ON (i.entity_id = e.id AND i.is_featured = 1 AND i.is_deleted = 0) WHERE e.id = ?";
-      $params = array($entity_id);
-      $stmt = $db->execute($sql, $params);      
-      $entity = $stmt->fetch(PDO::FETCH_ASSOC);      
-
-      if (!$entity["filename"])
-      {
-        $image_path = $entity["primary_ext"] == "Person" ? image_path("system/anon.png") : image_path("system/anons.png");
-      } 
-      else 
-      {      
-        $image_path = image_path(ImageTable::getPath($entity['filename'], 'profile'));
-      }
-
-      $url = url_for(EntityTable::generateRoute($entity, "map"));
-      
-      $nodes[] = array("id" => $entity_id, "name" => $entity["name"], "image" => $image_path, "url" => $url, "description" => $entity["blurb"]);
-      $entity_node_map[$entity_id] = $i;
-      
-      //get all relationships between this entity and the others
-      $sql = "SELECT l.entity2_id, l.entity1_id, GROUP_CONCAT(rc.name SEPARATOR ', ') AS name " . 
-             "FROM link l LEFT JOIN relationship_category rc ON (rc.id = l.category_id) " . 
-             "WHERE l.entity1_id = ? AND l.entity2_id <> ? AND l.entity2_id IN (" . join(", ", $entity_ids) . ") " .
-             "GROUP BY l.entity2_id LIMIT 10";
-      $params = array($entity_id, $entity_id);
-      $stmt = $db->execute($sql, $params);
-      $rels = array_merge($rels, $stmt->fetchAll(PDO::FETCH_ASSOC));      
-    }
-
-    foreach ($rels as $rel)
-    {
-      $links[$entity_node_map[$rel["entity1_id"]] . ":" . $entity_node_map[$rel["entity2_id"]]] = array(
-        "source" => $entity_node_map[$rel["entity1_id"]], 
-        "target" => $entity_node_map[$rel["entity2_id"]], 
-        "value" => 1, 
-        "label" => $rel["name"]
-      );
-    }
-    
-    $this->data = json_encode(array("nodes" => $nodes, "links" => array_values($links)));    
+    $num = $request->getParameter("num", 15);
+   
+    $this->data = json_encode(EntityTable::getRelatedEntitiesAndRelsForMap($this->entity->id, $num));
   }
 }
