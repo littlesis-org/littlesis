@@ -1489,7 +1489,32 @@ ApiRequest:
       onDelete: CASCADE
       foreignAlias: Request
 
-      
+
+#NETMAP
+
+NetworkMap:
+  actAs:
+    Timestampable: 
+    SoftDelete:
+      name: is_deleted
+  columns:
+    user_id:
+      type: integer
+      notnull: true
+      notblank: true
+    data:
+      type: clob
+      notnull: true
+    entity_ids: string(200)
+    rel_ids: string(200)
+  relations:
+    User:
+      class: sfGuardUser
+      local: user_id
+      foreign: id
+      onUpdate: CASCADE
+    
+          
 #USER PROFILE FOR SFDOCTRINEGUARD
 
 sfGuardUserProfile:
