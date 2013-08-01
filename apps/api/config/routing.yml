@@ -172,6 +172,10 @@ entity_types:
   param: { module: lookup, action: entityTypes }
 
 
+map_entities:
+  url:   /map/entities.:format
+  param: { module: map, action: entities }
+
 # default rules
 homepage:
   url:   /

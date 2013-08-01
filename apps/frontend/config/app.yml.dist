@@ -1,5 +1,8 @@
 # default values
 all:
+  netmap:
+    api_key: LITTLESIS_API_KEY
+    
   carousel:
     list_id: LIST_ID_FOR_HOMEPAGE_CAROUSEL
 

@@ -2232,6 +2232,16 @@ input#simple_search_terms
 
 /* D3 stuff */
 
+#netmap {
+  width: 850px;
+  float: left;
+}
+
+#netmap_controls {
+  width: 110px;
+  float: right;
+}
+
 svg {
   border: 0px solid #ddd;
 }
