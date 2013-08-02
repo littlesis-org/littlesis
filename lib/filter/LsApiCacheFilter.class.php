@@ -23,11 +23,16 @@ class LsApiCacheFilter extends sfFilter
     return sfContext::getInstance()->getViewCacheManager()->getCache();
   }
 
+  protected function isMapModule()
+  {
+    return $this->request->getParameter("module") == "map";
+  }
+
 
 	public function execute($filterChain)
-	{			
-    //skip this if cache is disabled
-    if (!sfConfig::get('sf_cache'))
+	{		
+    //skip this if cache is disabled or if it's the map module
+    if (!sfConfig::get('sf_cache') || $this->isMapModule())
     {
 		  $filterChain->execute();
   		$this->afterExecution();
