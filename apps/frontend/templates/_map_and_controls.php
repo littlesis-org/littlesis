@@ -7,7 +7,10 @@
 <input id="netmap_save" type="button" value="save" /> <a id="network_map_id"><?php echo isset($id) ? $id : "" ?></a><br />
 <input id="netmap_reload" type="button" value="reload" /><br />
 <input id="netmap_prune" type="button" value="prune" /><br />
-force: <input id="netmap_force" type="button" value="off" />
+<input id="netmap_wheel" type="button" value="wheel" /><br />
+<input id="netmap_grid" type="button" value="grid" /><br />
+<input id="netmap_short_force" type="button" value="force" /><br />
+<!-- force: <input id="netmap_force" type="button" value="off" />-->
 
 <script>
 $("#netmap_force").on("click", function() {
@@ -34,6 +37,19 @@ $("#netmap_reload").on("click", function() {
 $("#netmap_prune").on("click", function() {
   netmap.prune();
 });
+
+$("#netmap_wheel").on("click", function() {
+  netmap.wheel();
+});
+
+$("#netmap_grid").on("click", function() {
+  netmap.grid();
+});
+
+$("#netmap_short_force").on("click", function() {
+  netmap.one_time_force();
+});
+
 
 </script>
 </div>

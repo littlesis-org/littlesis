@@ -394,6 +394,27 @@
       return this.update_positions();
     };
 
+    Netmap.prototype.grid = function() {
+      var area, i, j, k, num, per, radius, x_num, y_num, _i, _j, _ref, _ref1;
+
+      num = this._data.entities.length;
+      area = this.width * this.height;
+      per = (area / num) * 0.7;
+      radius = Math.floor(Math.sqrt(per));
+      x_num = Math.ceil(this.width / (radius * 1.25));
+      y_num = Math.ceil(this.height / (radius * 1.25));
+      for (i = _i = 0, _ref = x_num - 1; 0 <= _ref ? _i <= _ref : _i >= _ref; i = 0 <= _ref ? ++_i : --_i) {
+        for (j = _j = 0, _ref1 = y_num - 1; 0 <= _ref1 ? _j <= _ref1 : _j >= _ref1; j = 0 <= _ref1 ? ++_j : --_j) {
+          k = x_num * j + i;
+          if (this._data.entities[k] != null) {
+            this._data.entities[k].x = i * radius + 50;
+            this._data.entities[k].y = j * radius + 30;
+          }
+        }
+      }
+      return this.update_positions();
+    };
+
     Netmap.prototype.has_positions = function() {
       var e, r, _i, _j, _len, _len1, _ref, _ref1;
 
@@ -467,10 +488,16 @@
     };
 
     Netmap.prototype.one_time_force = function() {
+      var t;
+
+      if (this.force_enabled) {
+        this.deny_force();
+      }
       this.use_force();
-      this.force.alpha(0.01);
+      this.force.alpha(0.3);
+      t = this;
       return this.force.on("end", function() {
-        return this.force_enabled = false;
+        return t.force_enabled = false;
       });
     };
 
