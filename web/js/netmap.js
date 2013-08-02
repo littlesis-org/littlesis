@@ -5,7 +5,7 @@
   LittlesisApi = (function() {
     function LittlesisApi(key) {
       this.key = key;
-      this.base_url = "http://api.littlesis.org/";
+      this.base_url = "http://localhost/littlesis/api_dev.php/";
     }
 
     LittlesisApi.prototype.entity_and_rels_url = function(entity_ids) {
@@ -77,10 +77,49 @@
       this.force_enabled = false;
       this.entity_background_opacity = 0.6;
       this.entity_background_color = "#fff";
-      this.entity_background_corner_radius = 0;
+      this.entity_background_corner_radius = 5;
       this.distance = 225;
       this.api = new LittlesisApi(key);
+      this.init_callbacks();
     }
+
+    Netmap.prototype.init_svg = function(parent_selector) {
+      this.svg = d3.select(parent_selector).append("svg").attr("id", "svg").attr("width", this.width).attr("height", this.height);
+      return window.svg = this.svg;
+    };
+
+    Netmap.prototype.init_callbacks = function() {
+      var t;
+
+      t = this;
+      return d3.select(document).on("keydown", function() {
+        var d, rebuild, _i, _j, _len, _len1, _ref, _ref1;
+
+        switch (d3.event.keyCode) {
+          case 8:
+          case 46:
+          case 68:
+          case 100:
+            rebuild = false;
+            _ref = d3.selectAll($(".rel.selected")).data();
+            for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+              d = _ref[_i];
+              t.remove_rel(d.id);
+              rebuild = true;
+            }
+            _ref1 = d3.selectAll($(".entity.selected")).data();
+            for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
+              d = _ref1[_j];
+              t.remove_entity(d.id);
+              rebuild = true;
+            }
+            if (rebuild) {
+              t.build();
+            }
+            return d3.event.preventDefault();
+        }
+      });
+    };
 
     Netmap.prototype.set_data = function(data, center_entity_id) {
       var e, entity_index, i, r, _i, _j, _len, _len1, _ref, _ref1, _results;
@@ -92,9 +131,6 @@
       if (center_entity_id != null) {
         this.set_center_entity_id(center_entity_id);
       }
-      this._entity_ids = this._data["entities"].map(function(e) {
-        return e.id;
-      });
       entity_index = [];
       _ref = this._data.entities;
       for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
@@ -122,7 +158,9 @@
     };
 
     Netmap.prototype.entity_ids = function() {
-      return this._entity_ids;
+      return this._data["entities"].map(function(e) {
+        return e.id;
+      });
     };
 
     Netmap.prototype.rel_ids = function() {
@@ -148,11 +186,14 @@
       }
     };
 
-    Netmap.prototype.api_data_callback = function(callback) {
+    Netmap.prototype.api_data_callback = function(callback, redirect) {
       var t;
 
       if (callback == null) {
         callback = null;
+      }
+      if (redirect == null) {
+        redirect = false;
       }
       t = this;
       return function(data) {
@@ -160,7 +201,10 @@
         t.set_data(data.data);
         t.build();
         if (callback != null) {
-          return callback.call(t, data.id);
+          callback.call(t, data.id);
+        }
+        if (redirect) {
+          return window.location.href = "http://littlesis.org/map/" + t.network_map_id;
         }
       };
     };
@@ -172,7 +216,7 @@
         callback = null;
       }
       t = this;
-      return this.api.create_map(this.user_id, this._data, this.api_data_callback(callback));
+      return this.api.create_map(this.user_id, this._data, this.api_data_callback(callback, true));
     };
 
     Netmap.prototype.load_map = function(id, callback) {
@@ -206,16 +250,102 @@
     };
 
     Netmap.prototype.add_entity = function(id) {
-      var t;
+      var entity_ids, t;
 
-      if (!(this._entity_ids.indexOf(id) > -1)) {
-        this._entity_ids.push(id);
-      }
       t = this;
-      return this.api.entity_and_rels(this._entity_ids, function(data) {
+      entity_ids = this.entity_ids().push(id);
+      return this.api.entity_and_rels(entity_ids, function(data) {
         t.set_data(data, t.center_entity_id);
         t.build();
         return t.wheel();
+      });
+    };
+
+    Netmap.prototype.prune = function() {
+      var e, _i, _len, _ref;
+
+      _ref = this.unconnected_entities();
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        e = _ref[_i];
+        this.remove_entity(e.id);
+      }
+      return this.build();
+    };
+
+    Netmap.prototype.unconnected_entities = function() {
+      var connected_ids, r, _i, _len, _ref;
+
+      connected_ids = [];
+      _ref = this._data.rels;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        r = _ref[_i];
+        connected_ids.push(parseInt(r.entity1_id));
+        connected_ids.push(parseInt(r.entity2_id));
+      }
+      return this._data.entities.filter(function(e) {
+        return connected_ids.indexOf(parseInt(e.id)) === -1;
+      });
+    };
+
+    Netmap.prototype.rel_index = function(id) {
+      var i, r, _i, _len, _ref;
+
+      _ref = this._data.rels;
+      for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
+        r = _ref[i];
+        if (parseInt(r.id) === parseInt(id)) {
+          return i;
+        }
+      }
+    };
+
+    Netmap.prototype.rel_by_id = function(id) {
+      var i, r, _i, _len, _ref;
+
+      _ref = this._data.rels;
+      for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
+        r = _ref[i];
+        if (parseInt(r.id) === parseInt(id)) {
+          return r;
+        }
+      }
+    };
+
+    Netmap.prototype.remove_rel = function(id) {
+      return this._data.rels.splice(this.rel_index(id), 1);
+    };
+
+    Netmap.prototype.entity_index = function(id) {
+      var e, i, _i, _len, _ref;
+
+      _ref = this._data.entities;
+      for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
+        e = _ref[i];
+        if (parseInt(e.id) === parseInt(id)) {
+          return i;
+        }
+      }
+    };
+
+    Netmap.prototype.entity_by_id = function(id) {
+      var e, i, _i, _len, _ref;
+
+      _ref = this._data.entities;
+      for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
+        e = _ref[i];
+        if (parseInt(e.id) === parseInt(id)) {
+          return e;
+        }
+      }
+    };
+
+    Netmap.prototype.remove_entity = function(id) {
+      return this._data.entities.splice(this.entity_index(id), 1);
+    };
+
+    Netmap.prototype.rels_by_entity = function(id) {
+      return this._data.rels.filter(function(r) {
+        return parseInt(r.entity1_id) === parseInt(id) || parseInt(r.entity2_id) === parseInt(id);
       });
     };
 
@@ -236,11 +366,6 @@
         }
       }
       return _results;
-    };
-
-    Netmap.prototype.init_svg = function(parent_selector) {
-      this.svg = d3.select(parent_selector).append("svg").attr("id", "svg").attr("width", this.width).attr("height", this.height);
-      return window.svg = this.svg;
     };
 
     Netmap.prototype.wheel = function(center_entity_id) {
@@ -319,8 +444,13 @@
     };
 
     Netmap.prototype.use_force = function() {
-      var t;
+      var e, i, t, _i, _len, _ref;
 
+      _ref = this._data.entities;
+      for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
+        e = _ref[i];
+        delete this._data.entities[i]["fixed"];
+      }
       this.force_enabled = true;
       this.force = d3.layout.force().gravity(.3).distance(this.distance).charge(-5000).friction(0.7).size([this.width, this.height]).nodes(this._data.entities, function(d) {
         return d.id;
@@ -370,12 +500,15 @@
     };
 
     Netmap.prototype.build_rels = function() {
-      var groups, rels;
+      var groups, rels, t;
 
+      t = this;
       rels = this.svg.selectAll(".rel").data(this._data["rels"], function(d) {
         return d.id;
       });
-      groups = rels.enter().append("g").attr("class", "rel");
+      groups = rels.enter().append("g").attr("class", "rel").attr("id", function(d) {
+        return d.id;
+      });
       groups.append("line").attr("class", "line").attr("opacity", 0.6).style("stroke-width", function(d) {
         return Math.sqrt(d.value) * 12;
       });
@@ -395,9 +528,27 @@
       }).on("click", function(d) {
         return window.location.href = d.url;
       });
-      return this.svg.selectAll(".rel text").data(this._data["rels"], function(d) {
+      this.svg.selectAll(".rel text").data(this._data["rels"], function(d) {
         return d.id;
       });
+      return this.svg.selectAll(".rel").on("click", function(d, i) {
+        return t.toggle_selected_rel(d.id);
+      });
+    };
+
+    Netmap.prototype.toggle_selected_rel = function(id, value) {
+      var klass, rel;
+
+      if (value == null) {
+        value = null;
+      }
+      rel = $("#" + id + ".rel");
+      if (value != null) {
+        klass = value ? "rel selected" : "rel";
+      } else {
+        klass = rel.attr("class") === "rel" ? "rel selected" : "rel";
+      }
+      return rel.attr("class", klass);
     };
 
     Netmap.prototype.build_entities = function() {
@@ -409,14 +560,16 @@
           t.alpha = t.force.alpha();
         }
         if (t.force_enabled) {
-          return t.force.stop();
+          t.force.stop();
         }
+        return t.drag = false;
       }).on("drag", function(d, i) {
         d.px += d3.event.dx;
         d.py += d3.event.dy;
         d.x += d3.event.dx;
         d.y += d3.event.dy;
-        return t.update_positions();
+        t.update_positions();
+        return t.drag = true;
       }).on("dragend", function(d, i) {
         d.fixed = true;
         if (t.force_enabled) {
@@ -426,11 +579,13 @@
       entities = this.svg.selectAll(".entity").data(this._data["entities"], function(d) {
         return d.id;
       });
-      groups = entities.enter().append("g").attr("class", "entity").call(entity_drag);
+      groups = entities.enter().append("g").attr("class", "entity").attr("id", function(d) {
+        return d.id;
+      }).call(entity_drag);
       has_image = function(d) {
         return d.image.indexOf("anon") === -1;
       };
-      groups.append("rect").attr("fill", this.entity_background_color).attr("opacity", 1).attr("rx", this.entity_background_corner_radius).attr("ry", this.entity_background_corner_radius).attr("width", function(d) {
+      groups.append("rect").attr("class", "image_rect").attr("fill", this.entity_background_color).attr("opacity", 1).attr("width", function(d) {
         if (has_image(d)) {
           return 58;
         } else {
@@ -511,44 +666,57 @@
       }).attr("text-anchor", "middle").text(function(d) {
         return t.split_name(d.name)[1];
       });
-      /*
-      # one or two rectangles behind the entity name
-      entities.enter().filter((d) -> d.name.match(/^(.{8,})[\s-]+.+$/) != null)
-        .insert("rect", ":first-child")
-        .attr("fill", @entity_background_color)
-        .attr("opacity", @entity_background_opacity)
-        .attr("rx", @entity_background_corner_radius)
-        .attr("ry", @entity_background_corner_radius)
-        .attr("x", (d) -> 
-          -$(this.parentNode).find("text:nth-child(2)").width()/2 - 3
-        )
-        .attr("y", (d) ->
-          image_offset = $(this.parentNode).find("image").attr("height")/2
-          text_offset = $(this.parentNode).find("text").height()
-          extra_offset = if has_image(d) then 2 else -5
-          image_offset + text_offset + extra_offset
-        )
-        .attr("width", (d) -> $(this.parentNode).find("text:nth-child(2)").width() + 6)
-        .attr("height", (d) -> $(this.parentNode).find("text:nth-child(2)").height() + 4)
-      
-      entities.enter().insert("rect", ":first-child")
-        .attr("fill", @entity_background_color)
-        .attr("opacity", @entity_background_opacity)
-        .attr("rx", @entity_background_corner_radius)
-        .attr("ry", @entity_background_corner_radius)
-        .attr("x", (d) ->
-          -$(this.parentNode).find("text").width()/2 - 3
-        )
-        .attr("y", (d) ->
-          image_offset = $(this.parentNode).find("image").attr("height")/2
-          extra_offset = if has_image(d) then 1 else -6
-          image_offset + extra_offset
-        )
-        .attr("width", (d) -> $(this.parentNode).find("text").width() + 6)
-        .attr("height", (d) -> $(this.parentNode).find("text").height() + 4)
-      */
+      groups.filter(function(d) {
+        return t.split_name(d.name)[0] !== d.name;
+      }).insert("rect", ":first-child").attr("fill", this.entity_background_color).attr("opacity", this.entity_background_opacity).attr("rx", this.entity_background_corner_radius).attr("ry", this.entity_background_corner_radius).attr("x", function(d) {
+        return -$(this.parentNode).find("text:nth-child(2)").width() / 2 - 3;
+      }).attr("y", function(d) {
+        var extra_offset, image_offset, text_offset;
 
-      return entities.exit().remove();
+        image_offset = $(this.parentNode).find("image").attr("height") / 2;
+        text_offset = $(this.parentNode).find("text").height();
+        extra_offset = has_image(d) ? 2 : -5;
+        return image_offset + text_offset + extra_offset;
+      }).attr("width", function(d) {
+        return $(this.parentNode).find("text:nth-child(2)").width() + 6;
+      }).attr("height", function(d) {
+        return $(this.parentNode).find("text:nth-child(2)").height() + 4;
+      });
+      groups.insert("rect", ":first-child").attr("fill", this.entity_background_color).attr("opacity", this.entity_background_opacity).attr("rx", this.entity_background_corner_radius).attr("ry", this.entity_background_corner_radius).attr("x", function(d) {
+        return -$(this.parentNode).find("text").width() / 2 - 3;
+      }).attr("y", function(d) {
+        var extra_offset, image_offset;
+
+        image_offset = $(this.parentNode).find("image").attr("height") / 2;
+        extra_offset = has_image(d) ? 1 : -6;
+        return image_offset + extra_offset;
+      }).attr("width", function(d) {
+        return $(this.parentNode).find("text").width() + 6;
+      }).attr("height", function(d) {
+        return $(this.parentNode).find("text").height() + 4;
+      });
+      entities.exit().remove();
+      return this.svg.selectAll(".entity").on("click", function(d, i) {
+        if (!t.drag) {
+          return t.toggle_selected_entity(d.id);
+        }
+      });
+    };
+
+    Netmap.prototype.toggle_selected_entity = function(id) {
+      var g, klass, r, selected, _i, _len, _ref, _results;
+
+      g = $("#" + id + ".entity");
+      klass = g.attr("class") === "entity" ? "entity selected" : "entity";
+      g.attr("class", klass);
+      selected = g.attr("class") === "entity selected";
+      _ref = this.rels_by_entity(id);
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        r = _ref[_i];
+        _results.push(this.toggle_selected_rel(r.id, selected));
+      }
+      return _results;
     };
 
     Netmap.prototype.entities_on_top = function() {
@@ -564,18 +732,21 @@
       var half, i, parts;
 
       if (min_length == null) {
-        min_length = 14;
+        min_length = 16;
+      }
+      if (name == null) {
+        return ["", ""];
       }
       name = name.trim();
       if (name.length < min_length) {
         return [name, ""];
       }
-      i = name.indexOf(" ", Math.floor(name.chars * 1 / 2));
-      if (i <= Math.floor(name.length * 2 / 3)) {
+      i = name.indexOf(" ", Math.floor(name.length * 1 / 2));
+      if (i > -1 && i <= Math.floor(name.length * 2 / 3)) {
         return [name.substring(0, i), name.substring(i + 1)];
       } else {
-        i = name.indexOf(" ", Math.floor(name.length * 1 / 3));
-        if (i <= Math.floor(name.length * 1 / 2)) {
+        i = name.lastIndexOf(" ", Math.ceil(name.length / 2));
+        if (i >= Math.floor(name.lenth * 1 / 3)) {
           return [name.substring(0, i), name.substring(i + 1)];
         }
       }

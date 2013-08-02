@@ -2250,6 +2250,14 @@ svg .line {
   stroke: #ddd;
 }
 
+svg .rel.selected .line {
+  stroke: #eed;
+}
+
+svg .entity.selected .image_rect {
+  fill: #ffe;
+}
+
 svg text {
   fill: black;
 }
