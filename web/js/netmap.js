@@ -500,7 +500,7 @@
           return 25;
         }
       }).attr("text-anchor", "middle").text(function(d) {
-        return d.name.replace(/^(.{8,}[\s-]+).+$/, "$1").trim();
+        return t.split_name(d.name)[0];
       });
       links.append("text").attr("dx", 0).attr("dy", function(d) {
         if (has_image(d)) {
@@ -509,14 +509,7 @@
           return 40;
         }
       }).attr("text-anchor", "middle").text(function(d) {
-        var second_part;
-
-        second_part = d.name.replace(/^.{8,}[\s-]+(.+)$/, "$1");
-        if (d.name === second_part) {
-          return "";
-        } else {
-          return second_part;
-        }
+        return t.split_name(d.name)[1];
       });
       /*
       # one or two rectangles behind the entity name
@@ -565,6 +558,30 @@
       return $("g.rel").each(function(i, g) {
         return $(g).prependTo(svg);
       });
+    };
+
+    Netmap.prototype.split_name = function(name, min_length) {
+      var half, i, parts;
+
+      if (min_length == null) {
+        min_length = 14;
+      }
+      name = name.trim();
+      if (name.length < min_length) {
+        return [name, ""];
+      }
+      i = name.indexOf(" ", Math.floor(name.chars * 1 / 2));
+      if (i <= Math.floor(name.length * 2 / 3)) {
+        return [name.substring(0, i), name.substring(i + 1)];
+      } else {
+        i = name.indexOf(" ", Math.floor(name.length * 1 / 3));
+        if (i <= Math.floor(name.length * 1 / 2)) {
+          return [name.substring(0, i), name.substring(i + 1)];
+        }
+      }
+      parts = name.split(/\s+/);
+      half = Math.ceil(parts.length / 2);
+      return [parts.slice(0, half).join(" "), parts.slice(half).join(" ")];
     };
 
     return Netmap;
