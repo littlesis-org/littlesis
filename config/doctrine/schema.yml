@@ -1507,6 +1507,8 @@ NetworkMap:
       notnull: true
     entity_ids: string(200)
     rel_ids: string(200)
+    title: string(100)
+    description: clob
   relations:
     User:
       class: sfGuardUser

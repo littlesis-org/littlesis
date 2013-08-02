@@ -12,6 +12,8 @@ abstract class BaseNetworkMap extends sfDoctrineRecord
     $this->hasColumn('data', 'clob', null, array('type' => 'clob', 'notnull' => true));
     $this->hasColumn('entity_ids', 'string', 200, array('type' => 'string', 'length' => '200'));
     $this->hasColumn('rel_ids', 'string', 200, array('type' => 'string', 'length' => '200'));
+    $this->hasColumn('title', 'string', 100, array('type' => 'string', 'length' => '100'));
+    $this->hasColumn('description', 'clob', null, array('type' => 'clob'));
 
     $this->option('collate', 'utf8_unicode_ci');
     $this->option('charset', 'utf8');

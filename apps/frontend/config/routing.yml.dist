@@ -214,6 +214,15 @@ viewMap:
   url: /map/:id
   param: { module: map, action: view }
 
+editMap:
+  url: /map/:id/edit
+  param: { module: map, action: edit }
+  methods: [GET,POST]
+
+listMaps:
+  url: /map/list
+  param: { module: map, action: list }
+
 
 # LOCAL
 local:

@@ -1,5 +1,9 @@
 <div id="netmap"></div>
 <div id="netmap_controls">
+
+<?php if (isset($id)) : ?>
+  <?php echo button_to('Edit', "map/edit?id=" . $id) ?><br />
+<?php endif; ?>
 <input id="netmap_save" type="button" value="save" /> <a id="network_map_id"><?php echo isset($id) ? $id : "" ?></a><br />
 <input id="netmap_reload" type="button" value="reload" /><br />
 <input id="netmap_prune" type="button" value="prune" /><br />

@@ -1,5 +1,9 @@
 <?php decorate_with('layout') ?>
 
+<?php include_partial('map/header', array('map' => $map)) ?>
+
+<div class="map_description"><?php echo $map["description"] ?></div>
+
 <?php include_partial('global/map_and_controls', array('id' => $map["id"])) ?>
 
 <script>
