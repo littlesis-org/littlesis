@@ -5,7 +5,7 @@
   LittlesisApi = (function() {
     function LittlesisApi(key) {
       this.key = key;
-      this.base_url = "http://localhost/littlesis/api_dev.php/";
+      this.base_url = "http://api.littlesis.org/";
     }
 
     LittlesisApi.prototype.entity_and_rels_url = function(entity_ids) {
