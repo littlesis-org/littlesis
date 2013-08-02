@@ -127,7 +127,7 @@
       if (center_entity_id == null) {
         center_entity_id = null;
       }
-      this._data = data;
+      this._original_data = this._data = data;
       if (center_entity_id != null) {
         this.set_center_entity_id(center_entity_id);
       }
@@ -233,6 +233,10 @@
     Netmap.prototype.reload_map = function() {
       if (this.network_map_id != null) {
         return this.load_map(this.network_map_id);
+      } else {
+        this.set_data(this._original_data);
+        this.build();
+        return this.wheel();
       }
     };
 
