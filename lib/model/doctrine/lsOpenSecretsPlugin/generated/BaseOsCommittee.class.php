@@ -14,7 +14,7 @@ abstract class BaseOsCommittee extends sfDoctrineRecord
     $this->hasColumn('committee_id', 'string', 9, array('type' => 'string', 'primary' => true, 'length' => '9'));
     $this->hasColumn('name', 'string', 40, array('type' => 'string', 'length' => '40'));
     $this->hasColumn('affiliate', 'string', 40, array('type' => 'string', 'length' => '40'));
-    $this->hasColumn('parent', 'string', 40, array('type' => 'string', 'length' => '40'));
+    $this->hasColumn('parent', 'string', 50, array('type' => 'string', 'length' => '50'));
     $this->hasColumn('recipient_id', 'string', 9, array('type' => 'string', 'length' => '9'));
     $this->hasColumn('recipient_code', 'string', 2, array('type' => 'string', 'length' => '2'));
     $this->hasColumn('candidate_id', 'string', 9, array('type' => 'string', 'length' => '9'));

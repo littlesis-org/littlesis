@@ -1082,6 +1082,6 @@ class listActions extends sfActions
     $this->checkList($request);
     $num = $request->getParameter('num');
        
-    $this->data = json_encode(LsListTable::getEntitiesAndRelsForMap($this->list['id'], $num));
+    $this->data = json_encode(LsListTable::getEntitiesAndRelsForMap($this->list['id'], $num, array()));
   }
 }

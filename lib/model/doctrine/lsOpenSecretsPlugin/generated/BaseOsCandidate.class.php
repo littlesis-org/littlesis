@@ -13,7 +13,7 @@ abstract class BaseOsCandidate extends sfDoctrineRecord
     $this->hasColumn('cycle', 'string', 4, array('type' => 'string', 'notnull' => true, 'length' => '4'));
     $this->hasColumn('fec_id', 'string', 9, array('type' => 'string', 'notnull' => true, 'length' => '9'));
     $this->hasColumn('candidate_id', 'string', 9, array('type' => 'string', 'primary' => true, 'length' => '9'));
-    $this->hasColumn('name', 'string', 40, array('type' => 'string', 'length' => '40'));
+    $this->hasColumn('name', 'string', 50, array('type' => 'string', 'length' => '50'));
     $this->hasColumn('party', 'string', 1, array('type' => 'string', 'length' => '1'));
     $this->hasColumn('district', 'string', 4, array('type' => 'string', 'length' => '4'));
     $this->hasColumn('district_current', 'string', 4, array('type' => 'string', 'length' => '4'));

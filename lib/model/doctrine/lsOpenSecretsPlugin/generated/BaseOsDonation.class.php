@@ -11,17 +11,17 @@ abstract class BaseOsDonation extends sfDoctrineRecord
   {
     $this->setTableName('os_donation');
     $this->hasColumn('cycle', 'string', 4, array('type' => 'string', 'primary' => true, 'length' => '4'));
-    $this->hasColumn('row_id', 'string', 7, array('type' => 'string', 'primary' => true, 'length' => '7'));
+    $this->hasColumn('row_id', 'string', 30, array('type' => 'string', 'primary' => true, 'length' => '30'));
     $this->hasColumn('donor_id', 'string', 12, array('type' => 'string', 'length' => '12'));
-    $this->hasColumn('donor_name', 'string', 34, array('type' => 'string', 'length' => '34'));
+    $this->hasColumn('donor_name', 'string', 50, array('type' => 'string', 'length' => '50'));
     $this->hasColumn('recipient_id', 'string', 9, array('type' => 'string', 'length' => '9'));
-    $this->hasColumn('employer_name', 'string', 40, array('type' => 'string', 'length' => '40'));
-    $this->hasColumn('parent_name', 'string', 40, array('type' => 'string', 'length' => '40'));
+    $this->hasColumn('employer_name', 'string', 50, array('type' => 'string', 'length' => '50'));
+    $this->hasColumn('parent_name', 'string', 50, array('type' => 'string', 'length' => '50'));
     $this->hasColumn('industry_id', 'string', 5, array('type' => 'string', 'length' => '5'));
     $this->hasColumn('date', 'date', null, array('type' => 'date'));
     $this->hasColumn('amount', 'integer', null, array('type' => 'integer'));
     $this->hasColumn('street', 'string', 40, array('type' => 'string', 'length' => '40'));
-    $this->hasColumn('city', 'string', 18, array('type' => 'string', 'length' => '18'));
+    $this->hasColumn('city', 'string', 30, array('type' => 'string', 'length' => '30'));
     $this->hasColumn('state', 'string', 2, array('type' => 'string', 'length' => '2'));
     $this->hasColumn('zip', 'string', 5, array('type' => 'string', 'length' => '5'));
     $this->hasColumn('recipient_code', 'string', 2, array('type' => 'string', 'length' => '2'));
@@ -31,8 +31,8 @@ abstract class BaseOsDonation extends sfDoctrineRecord
     $this->hasColumn('gender', 'string', 1, array('type' => 'string', 'length' => '1'));
     $this->hasColumn('employer_raw', 'string', 35, array('type' => 'string', 'length' => '35'));
     $this->hasColumn('fec_id', 'string', 11, array('type' => 'string', 'length' => '11'));
-    $this->hasColumn('org_raw', 'string', 38, array('type' => 'string', 'length' => '38'));
     $this->hasColumn('title_raw', 'string', 38, array('type' => 'string', 'length' => '38'));
+    $this->hasColumn('org_raw', 'string', 38, array('type' => 'string', 'length' => '38'));
     $this->hasColumn('source', 'string', 5, array('type' => 'string', 'length' => '5'));
     $this->hasColumn('donor_name_last', 'string', 30, array('type' => 'string', 'length' => '30'));
     $this->hasColumn('donor_name_first', 'string', 20, array('type' => 'string', 'length' => '20'));

@@ -5,7 +5,7 @@
   LittlesisApi = (function() {
     function LittlesisApi(key) {
       this.key = key;
-      this.base_url = "http://api.littlesis.org/";
+      this.base_url = "http://localhost/littlesis/api_dev.php/";
     }
 
     LittlesisApi.prototype.entity_and_rels_url = function(entity_ids) {
@@ -13,12 +13,54 @@
     };
 
     LittlesisApi.prototype.entity_and_rels = function(entity_ids, callback) {
-      var url;
-
-      url = this.entity_and_rels_url(entity_ids);
       return $.ajax({
-        url: url,
+        url: this.entity_and_rels_url(entity_ids),
         success: callback,
+        error: function() {
+          return alert("There was an error retrieving data from the API");
+        },
+        dataType: "json"
+      });
+    };
+
+    LittlesisApi.prototype.create_map = function(user_id, out_data, callback) {
+      return $.ajax({
+        url: this.base_url + "map.json",
+        data: {
+          "user_id": user_id,
+          "data": JSON.stringify(out_data)
+        },
+        success: callback,
+        error: function() {
+          return alert("There was an error sending data to the API");
+        },
+        type: "POST",
+        dataType: "json"
+      });
+    };
+
+    LittlesisApi.prototype.get_map = function(id, callback) {
+      return $.ajax({
+        url: this.base_url + ("map/" + id + ".json"),
+        success: callback,
+        error: function() {
+          return alert("There was an error retrieving data from the API");
+        },
+        dataType: "json"
+      });
+    };
+
+    LittlesisApi.prototype.update_map = function(id, out_data, callback) {
+      return $.ajax({
+        url: this.base_url + ("map/" + id + "/update.json"),
+        data: {
+          "data": JSON.stringify(out_data)
+        },
+        success: callback,
+        error: function() {
+          return alert("There was an error sending data to the API");
+        },
+        type: "POST",
         dataType: "json"
       });
     };
@@ -41,7 +83,7 @@
     }
 
     Netmap.prototype.set_data = function(data, center_entity_id) {
-      var r, _i, _len, _ref, _results;
+      var e, entity_index, i, r, _i, _j, _len, _len1, _ref, _ref1, _results;
 
       if (center_entity_id == null) {
         center_entity_id = null;
@@ -53,12 +95,18 @@
       this._entity_ids = this._data["entities"].map(function(e) {
         return e.id;
       });
-      _ref = this._data["rels"];
+      entity_index = [];
+      _ref = this._data.entities;
+      for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
+        e = _ref[i];
+        entity_index[parseInt(e.id)] = i;
+      }
+      _ref1 = this._data.rels;
       _results = [];
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        r = _ref[_i];
-        r.source = this._data["entities"][r.source];
-        _results.push(r.target = this._data["entities"][r.target]);
+      for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
+        r = _ref1[_j];
+        r.source = this._data["entities"][entity_index[parseInt(r.entity1_id)]];
+        _results.push(r.target = this._data["entities"][entity_index[parseInt(r.entity2_id)]]);
       }
       return _results;
     };
@@ -73,6 +121,82 @@
 
     Netmap.prototype.rel_ids = function() {
       return this._rel_ids;
+    };
+
+    Netmap.prototype.set_user_id = function(user_id) {
+      return this.user_id = user_id;
+    };
+
+    Netmap.prototype.get_network_map_id = function() {
+      return this.network_map_id;
+    };
+
+    Netmap.prototype.save_map = function(callback) {
+      if (callback == null) {
+        callback = null;
+      }
+      if (this.network_map_id != null) {
+        return this.update_map(callback);
+      } else {
+        return this.create_map(callback);
+      }
+    };
+
+    Netmap.prototype.api_data_callback = function(callback) {
+      var t;
+
+      if (callback == null) {
+        callback = null;
+      }
+      t = this;
+      return function(data) {
+        t.network_map_id = data.id;
+        t.set_data(data.data);
+        t.build();
+        if (callback != null) {
+          return callback.call(t, data.id);
+        }
+      };
+    };
+
+    Netmap.prototype.create_map = function(callback) {
+      var t;
+
+      if (callback == null) {
+        callback = null;
+      }
+      t = this;
+      return this.api.create_map(this.user_id, this._data, this.api_data_callback(callback));
+    };
+
+    Netmap.prototype.load_map = function(id, callback) {
+      var t;
+
+      if (callback == null) {
+        callback = null;
+      }
+      this.network_map_id = id;
+      t = this;
+      return this.api.get_map(id, this.api_data_callback(callback));
+    };
+
+    Netmap.prototype.reload_map = function() {
+      if (this.network_map_id != null) {
+        return this.load_map(this.network_map_id);
+      }
+    };
+
+    Netmap.prototype.update_map = function(callback) {
+      var t;
+
+      if (callback == null) {
+        callback = null;
+      }
+      if (this.network_map_id == null) {
+        return;
+      }
+      t = this;
+      return this.api.update_map(this.network_map_id, this._data, this.api_data_callback(callback));
     };
 
     Netmap.prototype.add_entity = function(id) {
@@ -139,6 +263,26 @@
       return this.update_positions();
     };
 
+    Netmap.prototype.has_positions = function() {
+      var e, r, _i, _j, _len, _len1, _ref, _ref1;
+
+      _ref = this._data.entities;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        e = _ref[_i];
+        if (!((e.x != null) && (e.y != null))) {
+          return false;
+        }
+      }
+      _ref1 = this._data.rels;
+      for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
+        r = _ref1[_j];
+        if (!((r.source.x != null) && (r.source.y != null) && (r.target.x != null) && (r.target.y != null))) {
+          return false;
+        }
+      }
+      return true;
+    };
+
     Netmap.prototype.update_positions = function() {
       d3.selectAll(".entity").attr("transform", function(d) {
         return "translate(" + d.x + "," + d.y + ")";
@@ -203,13 +347,18 @@
     Netmap.prototype.build = function() {
       this.build_rels();
       this.build_entities();
-      return this.entities_on_top();
+      this.entities_on_top();
+      if (this.has_positions()) {
+        return this.update_positions();
+      }
     };
 
     Netmap.prototype.build_rels = function() {
       var groups, rels;
 
-      rels = this.svg.selectAll(".rel").data(this._data["rels"]);
+      rels = this.svg.selectAll(".rel").data(this._data["rels"], function(d) {
+        return d.id;
+      });
       groups = rels.enter().append("g").attr("class", "rel");
       groups.append("line").attr("class", "line").attr("opacity", 0.6).style("stroke-width", function(d) {
         return Math.sqrt(d.value) * 12;
@@ -222,11 +371,17 @@
         return d.label;
       });
       rels.exit().remove();
-      this.svg.selectAll(".rel .line").data(this._data["rels"]);
-      this.svg.selectAll(".rel a").data(this._data["rels"]).on("click", function(d) {
+      this.svg.selectAll(".rel .line").data(this._data["rels"], function(d) {
+        return d.id;
+      });
+      this.svg.selectAll(".rel a").data(this._data["rels"], function(d) {
+        return d.id;
+      }).on("click", function(d) {
         return window.location.href = d.url;
       });
-      return this.svg.selectAll(".rel text").data(this._data["rels"]);
+      return this.svg.selectAll(".rel text").data(this._data["rels"], function(d) {
+        return d.id;
+      });
     };
 
     Netmap.prototype.build_entities = function() {
@@ -234,8 +389,12 @@
 
       t = this;
       entity_drag = d3.behavior.drag().on("dragstart", function(d, i) {
-        t.alpha = t.force.alpha();
-        return t.force.stop();
+        if (t.force_enabled) {
+          t.alpha = t.force.alpha();
+        }
+        if (t.force_enabled) {
+          return t.force.stop();
+        }
       }).on("drag", function(d, i) {
         d.px += d3.event.dx;
         d.py += d3.event.dy;
@@ -244,9 +403,13 @@
         return t.update_positions();
       }).on("dragend", function(d, i) {
         d.fixed = true;
-        return t.force.alpha(t.alpha);
+        if (t.force_enabled) {
+          return t.force.alpha(t.alpha);
+        }
       });
-      entities = this.svg.selectAll(".entity").data(this._data["entities"]);
+      entities = this.svg.selectAll(".entity").data(this._data["entities"], function(d) {
+        return d.id;
+      });
       groups = entities.enter().append("g").attr("class", "entity").call(entity_drag);
       has_image = function(d) {
         return d.image.indexOf("anon") === -1;

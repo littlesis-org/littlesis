@@ -49,6 +49,9 @@ abstract class BasesfGuardUser extends sfDoctrineRecord
     $this->hasMany('ChatUser', array('local' => 'id',
                                      'foreign' => 'user_id'));
 
+    $this->hasMany('NetworkMap', array('local' => 'id',
+                                       'foreign' => 'user_id'));
+
     $this->hasOne('sfGuardUserProfile as Profile', array('local' => 'id',
                                                          'foreign' => 'user_id'));
 

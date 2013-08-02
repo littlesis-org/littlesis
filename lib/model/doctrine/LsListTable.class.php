@@ -192,34 +192,14 @@ class LsListTable extends Doctrine_Table
     }  
   }
 
-  public static function getEntitiesAndRelsForMap($list_id, $num=20)
+  public static function getEntitiesAndRelsForMap($list_id, $num=20, $exclude_categories=array())
   {
     // get entities    
     $entities = self::getEntitiesForMap($list_id, $num);
     $entity_ids = array_map(function($e) { return $e['id']; }, $entities);
     $entity_index = array_flip(array_map(function($e) { return $e['id']; }, $entities));
 
-    // get all rels
-    $rels = array();
-    foreach (EntityTable::getAllRelsForMap($entity_ids) as $rel)
-    {    
-      try 
-      {
-        $url = url_for(RelationshipTable::generateRoute($rel));
-      } 
-      catch (Exception $e)
-      {
-        $url = "http://littlesis.org/relationship/view/id/" . $rel['id'];
-      }
-
-      $rels[] = array(
-        "source" => $entity_index[$rel["entity1_id"]], 
-        "target" => $entity_index[$rel["entity2_id"]], 
-        "value" => 1, 
-        "label" => $rel["label"],
-        "url" => $url
-      );
-    }
+    $rels = EntityTable::getRelsForMap($entity_ids, $entity_index, $exclude_categories);
     
     return array("entities" => $entities, "rels" => $rels); 
   }
