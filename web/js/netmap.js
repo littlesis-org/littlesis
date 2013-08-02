@@ -99,6 +99,12 @@
       _ref = this._data.entities;
       for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
         e = _ref[i];
+        if (e.px == null) {
+          e.px = e.x;
+        }
+        if (e.py == null) {
+          e.py = e.y;
+        }
         entity_index[parseInt(e.id)] = i;
       }
       _ref1 = this._data.rels;
@@ -313,8 +319,18 @@
     };
 
     Netmap.prototype.use_force = function() {
+      var t;
+
       this.force_enabled = true;
-      this.force = d3.layout.force().gravity(.3).distance(this.distance).charge(-5000).friction(0.7).size([this.width, this.height]).nodes(this._data["entities"]).links(this._data["rels"]).on("tick", this.update_positions).start();
+      this.force = d3.layout.force().gravity(.3).distance(this.distance).charge(-5000).friction(0.7).size([this.width, this.height]).nodes(this._data.entities, function(d) {
+        return d.id;
+      }).links(this._data.rels, function(d) {
+        return d.id;
+      }).start();
+      t = this;
+      this.force.on("tick", function() {
+        return t.update_positions();
+      });
       if ((this.alpha != null) && this.alpha > 0) {
         return this.force.alpha(this.alpha);
       }

@@ -209,6 +209,12 @@ categoryOrgs:
   param: { module: industry, action: category, type: orgs }
 
 
+# MAPS
+viewMap:
+  url: /map/:id
+  param: { module: map, action: view }
+
+
 # LOCAL
 local:
   url: local/:name/:action/*

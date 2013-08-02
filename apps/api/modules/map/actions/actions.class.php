@@ -2,6 +2,11 @@
 
 class mapActions extends LsApiActions
 {
+  public function preExecute()
+  {
+    $this->allowCrossDomainRequest();
+  }
+
   public function executeEntities($request)
   {
     $this->setResponseFormat();    

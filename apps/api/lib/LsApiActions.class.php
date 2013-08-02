@@ -64,6 +64,12 @@ class LsApiActions extends sfActions
   }
 
 
+  public function allowCrossDomainRequest()
+  {
+    $this->getResponse()->setHttpHeader('Access-Control-Allow-Origin', "http://littlesis.org");
+  }
+
+
   public function setResponseFormat(Array $validFormats = array('xml', 'json'))
   {
     $this->format = $this->getRequest()->getParameter('format', 'xml'); 
