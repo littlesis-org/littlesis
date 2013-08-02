@@ -2230,7 +2230,8 @@ input#simple_search_terms
 .littlesis-carousel .pagenum { background-color: #fff; text-decoration: none; text-align: center; padding: 5px; color: #555555; font-size: 14px; font-weight: bold; display: block; }
 .littlesis-carousel .active { color: #fff; background-color:  #555555; }
 
-/* D3 stuff */
+
+/* MAP STUFF */
 
 #netmap {
   width: 850px;
@@ -2241,6 +2242,13 @@ input#simple_search_terms
   width: 110px;
   float: right;
 }
+
+#map_description {
+  width: 800px;
+}
+
+
+/* D3 stuff */
 
 svg {
   border: 0px solid #ddd;
