@@ -1805,6 +1805,7 @@ class EntityTable extends Doctrine_Table
            "WHERE r.entity1_id IN (" . join(",", $entity_ids) . ") " . 
            "AND r.entity2_id IN (" . join(",", $entity_ids) . ") " . 
            "AND r.is_deleted = 0 " .
+           "AND r.entity1_id <> r.entity2_id " .
            (count($exclude_categories) ? "AND r.category_id NOT IN (" . join(",", $exclude_categories) . ") " : "") .
            "GROUP BY r.entity1_id, r.entity2_id";
     $stmt = $db->execute($sql);
