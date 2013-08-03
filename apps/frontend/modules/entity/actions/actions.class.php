@@ -4721,6 +4721,51 @@ class entityActions extends sfActions
     $this->checkEntity($request, false, false);
     $num = $request->getParameter("num", 15);
    
-    $this->data = json_encode(EntityTable::getRelatedEntitiesAndRelsForMap($this->entity->id, $num, array()));
+    $this->data = json_encode(EntityTable::getRelatedEntitiesAndRelsForMap($this->entity->id, $num));
+  }
+  
+  public function executeInterlocksMap($request)
+  {
+    $this->checkEntity($request, false, false);
+    $num = $request->getParameter("num", 5);  
+
+    $order1 = ($this->entity['primary_ext'] == 'Person') ? 1 : 2;
+    $order2 = ($this->entity['primary_ext'] == 'Person') ? 2 : 1;
+
+    $options = array(
+      'cat1_ids' => RelationshipTable::POSITION_CATEGORY . ',' . RelationshipTable::MEMBERSHIP_CATEGORY,
+      'order1' => $order1,
+      'cat2_ids' => RelationshipTable::POSITION_CATEGORY . ',' . RelationshipTable::MEMBERSHIP_CATEGORY,
+      'order2' => $order2,
+      'page' => 1,
+      'num' => $num
+    );
+    
+    $interlocks = EntityApi::getSecondDegreeNetwork($this->entity['id'], $options);
+    $degree1_ids = array();
+    $degree2_ids = array();
+    
+    foreach ($interlocks as $i) {
+      $degree1_ids = array_merge($degree1_ids, explode(",", $i["degree1_ids"]));
+      $degree2_ids[] = $i["id"];
+    }
+
+    $unique = array_unique($degree1_ids);
+    $degree1_ids = count($unique) > 10 ? array_unique(array_diff_key($degree1_ids, $unique)) : $unique;  
+    
+    $entity_ids = array_unique(array_merge(array($this->entity["id"]), $degree1_ids, $degree2_ids));
+    $cats = array(RelationshipTable::POSITION_CATEGORY, RelationshipTable::MEMBERSHIP_CATEGORY);
+
+    $data = EntityTable::getEntitiesAndRelsForMap($entity_ids, $cats);
+    $entities = array();
+
+    foreach ($data["entities"] as $e)
+    {
+      array_push($entities, $e);
+    }
+
+    $this->data = json_encode(array("entities" => $entities, "rels" => $data["rels"]));
+    $this->degree1_ids = $degree1_ids;  
+    $this->degree2_ids = $degree2_ids;
   }
 }

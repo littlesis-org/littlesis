@@ -16,8 +16,6 @@
 <input id="netmap_save" type="button" value="save" /><br />
 <?php endif; ?>
 
-<input id="netmap_reload" type="button" value="reload" /><br />
-
 
 <script>
 $("#netmap_force").on("click", function() {

@@ -431,6 +431,33 @@
       return this.update_positions();
     };
 
+    Netmap.prototype.interlocks = function(degree0_id, degree1_ids, degree2_ids) {
+      var angle, d0, d1, d2, i, id, radius, range, _i, _j, _len, _len1;
+
+      d0 = this.entity_by_id(degree0_id);
+      d0.x = this.width / 2;
+      d0.y = 30;
+      for (i = _i = 0, _len = degree1_ids.length; _i < _len; i = ++_i) {
+        id = degree1_ids[i];
+        range = Math.PI * 2 / 3;
+        angle = (Math.PI * 3 / 2) + i * (range / (degree1_ids.length - 1)) - range / 2;
+        radius = (this.width - 100) / 2;
+        d1 = this.entity_by_id(id);
+        d1.x = 70 + i * (this.width - 70) / degree1_ids.length - 1;
+        d1.y = this.height / 2 + 230 + radius * Math.sin(angle);
+      }
+      for (i = _j = 0, _len1 = degree2_ids.length; _j < _len1; i = ++_j) {
+        id = degree2_ids[i];
+        range = Math.PI * 1 / 3;
+        angle = (Math.PI * 3 / 2) + i * (range / (degree2_ids.length - 1)) - range / 2;
+        radius = (this.width - 100) / 2;
+        d2 = this.entity_by_id(id);
+        d2.x = i * (this.width * 2 / 3) / (degree2_ids.length - 1) + this.width * 1 / 6;
+        d2.y = this.height + 250 + radius * Math.sin(angle);
+      }
+      return this.update_positions();
+    };
+
     Netmap.prototype.shuffle_array = function(array) {
       var counter, index, temp;
 
@@ -445,13 +472,15 @@
     };
 
     Netmap.prototype.shuffle = function() {
-      var i, p, positions, _i, _len;
+      var e, i, p, positions, _i, _j, _len, _len1, _ref;
 
-      positions = this.entities().map(function(e) {
-        return [e.x, e.y];
-      });
+      _ref = this.entities();
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        e = _ref[_i];
+        positions = [e.x, e.y];
+      }
       positions = this.shuffle_array(positions);
-      for (i = _i = 0, _len = positions.length; _i < _len; i = ++_i) {
+      for (i = _j = 0, _len1 = positions.length; _j < _len1; i = ++_j) {
         p = positions[i];
         this.entities()[i].x = p[0];
         this.entities()[i].y = p[1];

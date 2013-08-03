@@ -52,7 +52,7 @@ class entityComponents extends sfComponents
     $this->connections = $stmt->fetchAll(PDO::FETCH_ASSOC);
   }
 
-  public function getInterlocks($db, $num=10)
+  public function getInterlocks($num=10)
   {
     $order1 = ($this->entity['primary_ext'] == 'Person') ? 1 : 2;
     $order2 = ($this->entity['primary_ext'] == 'Person') ? 2 : 1;
@@ -95,7 +95,7 @@ class entityComponents extends sfComponents
     $this->getConnections($db, 5, $primary_ext);
         
     //get interlocks
-    $this->getInterlocks($db, 5);          
+    $this->getInterlocks(5);
   }
   
 
