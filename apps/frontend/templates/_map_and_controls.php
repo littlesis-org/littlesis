@@ -7,10 +7,15 @@
 <input id="netmap_shuffle" type="button" value="shuffle" /><br />
 <input id="netmap_short_force" type="button" value="force" /><br />
 <!-- force: <input id="netmap_force" type="button" value="off" />-->
+
+
+<?php if ($sf_user->hasCredential('admin')) : ?>
 <?php if (isset($id)) : ?>
   <?php echo button_to('Edit', "map/edit?id=" . $id) ?><br />
 <?php endif; ?>
-<input id="netmap_save" type="button" value="save" /> <a id="network_map_id"><?php echo isset($id) ? $id : "" ?></a><br />
+<input id="netmap_save" type="button" value="save" /><br />
+<?php endif; ?>
+
 <input id="netmap_reload" type="button" value="reload" /><br />
 
 
@@ -25,12 +30,11 @@ $("#netmap_force").on("click", function() {
   }
 });
 
+<?php if ($sf_user->hasCredential('admin')) : ?>
 $("#netmap_save").on("click", function() {
-  netmap.save_map(function(id) {
-    $("#network_map_id").attr("href", "http://littlesis.org/map/" + id);
-    $("#network_map_id").text(id);
-  });
+  netmap.save_map();
 });
+<?php endif; ?>
 
 $("#netmap_reload").on("click", function() {
   netmap.reload_map();
