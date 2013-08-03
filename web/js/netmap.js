@@ -167,8 +167,16 @@
       });
     };
 
+    Netmap.prototype.entities = function() {
+      return this._data.entities;
+    };
+
     Netmap.prototype.rel_ids = function() {
       return this._rel_ids;
+    };
+
+    Netmap.prototype.rels = function() {
+      return this._data.rels;
     };
 
     Netmap.prototype.set_user_id = function(user_id) {
@@ -415,10 +423,38 @@
         for (j = _j = 0, _ref1 = y_num - 1; 0 <= _ref1 ? _j <= _ref1 : _j >= _ref1; j = 0 <= _ref1 ? ++_j : --_j) {
           k = x_num * j + i;
           if (this._data.entities[k] != null) {
-            this._data.entities[k].x = i * radius + 50;
-            this._data.entities[k].y = j * radius + 30;
+            this._data.entities[k].x = i * radius + 70 + (50 - 50 * Math.random());
+            this._data.entities[k].y = j * radius + 30 + (50 - 50 * Math.random());
           }
         }
+      }
+      return this.update_positions();
+    };
+
+    Netmap.prototype.shuffle_array = function(array) {
+      var counter, index, temp;
+
+      counter = array.length;
+      while (counter--) {
+        index = (Math.random() * counter) | 0;
+        temp = array[counter];
+        array[counter] = array[index];
+        array[index] = temp;
+      }
+      return array;
+    };
+
+    Netmap.prototype.shuffle = function() {
+      var i, p, positions, _i, _len;
+
+      positions = this.entities().map(function(e) {
+        return [e.x, e.y];
+      });
+      positions = this.shuffle_array(positions);
+      for (i = _i = 0, _len = positions.length; _i < _len; i = ++_i) {
+        p = positions[i];
+        this.entities()[i].x = p[0];
+        this.entities()[i].y = p[1];
       }
       return this.update_positions();
     };
