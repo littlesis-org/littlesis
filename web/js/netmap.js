@@ -396,6 +396,9 @@
       if (this.center_entity_id != null) {
         center_entity_id = this.center_entity_id;
       }
+      if (center_entity_id != null) {
+        return this.halfwheel(center_entity_id);
+      }
       count = 0;
       _ref = this._data["entities"];
       for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
@@ -407,6 +410,36 @@
           angle = (2 * Math.PI / (this._data["entities"].length - (center_entity_id != null ? 1 : 0))) * count;
           this._data["entities"][i].x = this.width / 2 + this.distance * Math.cos(angle);
           this._data["entities"][i].y = this.height / 2 + this.distance * Math.sin(angle);
+          count++;
+        }
+      }
+      return this.update_positions();
+    };
+
+    Netmap.prototype.halfwheel = function(center_entity_id) {
+      var angle, count, entity, i, range, _i, _len, _ref;
+
+      if (center_entity_id == null) {
+        center_entity_id = null;
+      }
+      if (this.center_entity_id != null) {
+        center_entity_id = this.center_entity_id;
+      }
+      if (center_entity_id == null) {
+        return;
+      }
+      count = 0;
+      _ref = this._data["entities"];
+      for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
+        entity = _ref[i];
+        if (parseInt(entity.id) === center_entity_id) {
+          this._data["entities"][i].x = this.width / 2;
+          this._data["entities"][i].y = 30;
+        } else {
+          range = Math.PI * 2 / 3;
+          angle = Math.PI + (Math.PI / (this._data["entities"].length - 2)) * count;
+          this._data["entities"][i].x = 70 + (this.width - 140) / 2 + ((this.width - 140) / 2) * Math.cos(angle);
+          this._data["entities"][i].y = 30 - ((this.width - 140) / 2) * Math.sin(angle);
           count++;
         }
       }
@@ -446,7 +479,7 @@
         angle = (Math.PI * 3 / 2) + i * (range / (degree1_ids.length - 1)) - range / 2;
         radius = (this.width - 100) / 2;
         d1 = this.entity_by_id(id);
-        d1.x = 70 + i * (this.width - 70) / degree1_ids.length - 1;
+        d1.x = 70 + i * (this.width - 70) / degree1_ids.length;
         d1.y = this.height / 2 + 250 + radius * Math.sin(angle);
       }
       for (i = _j = 0, _len1 = degree2_ids.length; _j < _len1; i = ++_j) {
@@ -455,8 +488,8 @@
         angle = (Math.PI * 3 / 2) + i * (range / (degree2_ids.length - 1)) - range / 2;
         radius = (this.width - 100) / 2;
         d2 = this.entity_by_id(id);
-        d2.x = i * (this.width * 2 / 3) / (degree2_ids.length - 1) + this.width * 1 / 6;
-        d2.y = this.height - 450 - radius * Math.sin(angle);
+        d2.x = 70 + i * (this.width - 70) / degree2_ids.length;
+        d2.y = this.height - 480 - radius * Math.sin(angle);
       }
       return this.update_positions();
     };

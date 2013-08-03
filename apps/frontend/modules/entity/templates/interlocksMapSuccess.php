@@ -2,7 +2,7 @@
 
 <?php include_partial('entity/header', array('entity' => $entity, 'show_actions' => true)) ?>
 
-<?php include_partial('global/map_and_controls') ?>
+<?php include_partial('global/map_and_controls', array('entity' => $entity)) ?>
 
 <script>
 var data = <?php echo $data ?>;

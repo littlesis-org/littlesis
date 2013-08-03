@@ -2233,18 +2233,30 @@ input#simple_search_terms
 
 /* MAP STUFF */
 
+#map_nav {
+  display: table-row;
+}
+
+.map_nav_item {
+  display: table-cell;
+  font-size: 1.5em;
+  padding: 10px;
+  background-color: #eee;
+}
+
 #netmap {
-  width: 850px;
+  width: 900px;
   float: left;
 }
 
 #netmap_controls {
-  width: 110px;
+  width: 60px;
   float: right;
 }
 
 #map_description {
-  width: 800px;
+  float: left;
+  width: 850px;
 }
 
 

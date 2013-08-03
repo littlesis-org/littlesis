@@ -8,7 +8,7 @@
 )) ?>
 -->
 
-<?php include_partial('global/map_and_controls') ?>
+<?php include_partial('global/map_and_controls', array('entity' => $entity)) ?>
 
 <script>
 var data = <?php echo $data ?>;
@@ -20,5 +20,5 @@ var netmap = new Netmap(width, height, "#netmap", key);
 netmap.set_user_id(<?php echo $sf_user->isAuthenticated() ? $sf_user->getGuardUser()->id : "" ?>);
 netmap.set_data(data, center_entity_id);
 netmap.build();
-netmap.wheel();
+netmap.halfwheel();
 </script>

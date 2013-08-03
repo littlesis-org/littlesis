@@ -4719,16 +4719,69 @@ class entityActions extends sfActions
   public function executeMap($request)
   {
     $this->checkEntity($request, false, false);
-    $num = $request->getParameter("num", 15);
-   
-    $this->data = json_encode(EntityTable::getRelatedEntitiesAndRelsForMap($this->entity->id, $num));
+    $num = $request->getParameter("num", 14);
+
+    if ($request->getParameter("use_interlocks", "0") == "0")
+    {
+      $this->data = json_encode(EntityTable::getRelatedEntitiesAndRelsForMap($this->entity->id, $num));
+    }
+    else
+    {
+    
+      $order1 = ($this->entity['primary_ext'] == 'Person') ? 1 : 2;
+      $order2 = ($this->entity['primary_ext'] == 'Person') ? 2 : 1;
+
+      $options = array(
+        //'cat1_ids' => RelationshipTable::POSITION_CATEGORY . ',' . RelationshipTable::MEMBERSHIP_CATEGORY,
+        //'cat2_ids' => RelationshipTable::POSITION_CATEGORY . ',' . RelationshipTable::MEMBERSHIP_CATEGORY,
+        'cat1_ids' => "1,2,3,4,6,7",
+        'cat2_ids' => "1,2,3,4,6,7",
+        'order1' => $order1,
+        'order2' => $order2,
+        'page' => 1,
+        'num' => 5
+      );
+    
+      $interlocks = EntityApi::getSecondDegreeNetwork($this->entity['id'], $options);
+
+      $degree1_ids = array();
+      $degree1_scores = array();
+    
+      foreach ($interlocks as $i) 
+      {
+        $new_degree1_ids = explode(",", $i["degree1_ids"]);
+    
+        foreach ($new_degree1_ids as $id)
+        {
+          $degree1_scores[$id] = isset($degree1_scores[$id]) ? $degree1_scores[$id] + 1 : 1;
+        }
+      
+        $degree1_ids = array_merge($degree1_ids, $new_degree1_ids);
+      }
+
+      arsort($degree1_scores);
+      $degree1_ids = array_keys($degree1_scores);
+      $degree1_ids = array_slice($degree1_ids, 0, $num);
+    
+      $entity_ids = array_unique(array_merge(array($this->entity["id"]), $degree1_ids));
+
+      $data = EntityTable::getEntitiesAndRelsForMap($entity_ids);
+      $entities = array();
+
+      foreach ($data["entities"] as $e)
+      {
+        array_push($entities, $e);
+      }
+
+      $this->data = json_encode(array("entities" => $entities, "rels" => $data["rels"]));   
+    }
   }
   
   public function executeInterlocksMap($request)
   {
     $this->checkEntity($request, false, false);
-    $num = $request->getParameter("num", 5);  
-    $degree1_num = $request->getParameter("degree1_num", 10);  
+    $num = $request->getParameter("num", 8);  
+    $degree1_num = $request->getParameter("degree1_num", 10);
 
     $order1 = ($this->entity['primary_ext'] == 'Person') ? 1 : 2;
     $order2 = ($this->entity['primary_ext'] == 'Person') ? 2 : 1;
@@ -4743,6 +4796,7 @@ class entityActions extends sfActions
     );
     
     $interlocks = EntityApi::getSecondDegreeNetwork($this->entity['id'], $options);
+
     $degree1_ids = array();
     $degree2_ids = array();
     $degree1_scores = array();
@@ -4768,6 +4822,12 @@ class entityActions extends sfActions
     $cats = array(RelationshipTable::POSITION_CATEGORY, RelationshipTable::MEMBERSHIP_CATEGORY);
 
     $data = EntityTable::getEntitiesAndRelsForMap($entity_ids, $cats);
+
+    foreach ($data["entities"] as $i => $entity)
+    {
+      $data["entities"][$i]["url"] = preg_replace("/map$/", "interlocksMap", $entity["url"]);
+    }
+
     $entities = array();
 
     foreach ($data["entities"] as $e)
