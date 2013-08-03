@@ -127,7 +127,11 @@
       if (center_entity_id == null) {
         center_entity_id = null;
       }
-      this._original_data = this._data = data;
+      this._original_data = {
+        "entities": data.entities.slice(0),
+        "rels": data.rels.slice(0)
+      };
+      this._data = data;
       if (center_entity_id != null) {
         this.set_center_entity_id(center_entity_id);
       }
