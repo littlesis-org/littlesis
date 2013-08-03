@@ -17,6 +17,7 @@
 <?php include_partial('global/tabs', array(
   'tabs' => $tabs
 )) ?>
+<br />
 <?php endif; ?>
 
 <div id="netmap"></div>
