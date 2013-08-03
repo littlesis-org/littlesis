@@ -4728,6 +4728,7 @@ class entityActions extends sfActions
   {
     $this->checkEntity($request, false, false);
     $num = $request->getParameter("num", 5);  
+    $degree1_num = $request->getParameter("degree1_num", 10);  
 
     $order1 = ($this->entity['primary_ext'] == 'Person') ? 1 : 2;
     $order2 = ($this->entity['primary_ext'] == 'Person') ? 2 : 1;
@@ -4744,14 +4745,24 @@ class entityActions extends sfActions
     $interlocks = EntityApi::getSecondDegreeNetwork($this->entity['id'], $options);
     $degree1_ids = array();
     $degree2_ids = array();
+    $degree1_scores = array();
     
-    foreach ($interlocks as $i) {
-      $degree1_ids = array_merge($degree1_ids, explode(",", $i["degree1_ids"]));
+    foreach ($interlocks as $i) 
+    {
+      $new_degree1_ids = explode(",", $i["degree1_ids"]);
+      
+      foreach ($new_degree1_ids as $id)
+      {
+        $degree1_scores[$id] = isset($degree1_scores[$id]) ? $degree1_scores[$id] + 1 : 1;
+      }
+      
+      $degree1_ids = array_merge($degree1_ids, $new_degree1_ids);
       $degree2_ids[] = $i["id"];
     }
 
-    $unique = array_unique($degree1_ids);
-    $degree1_ids = count($unique) > 10 ? array_unique(array_diff_key($degree1_ids, $unique)) : $unique;  
+    arsort($degree1_scores);
+    $degree1_ids = array_keys($degree1_scores);
+    $degree1_ids = array_slice($degree1_ids, 0, $degree1_num);
     
     $entity_ids = array_unique(array_merge(array($this->entity["id"]), $degree1_ids, $degree2_ids));
     $cats = array(RelationshipTable::POSITION_CATEGORY, RelationshipTable::MEMBERSHIP_CATEGORY);

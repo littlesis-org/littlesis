@@ -93,7 +93,7 @@
 
       t = this;
       return d3.select(document).on("keydown", function() {
-        var d, rebuild, _i, _j, _len, _len1, _ref, _ref1;
+        var d, rebuild, selected, _i, _j, _len, _len1, _ref, _ref1;
 
         switch (d3.event.keyCode) {
           case 8:
@@ -101,6 +101,7 @@
           case 68:
           case 100:
             rebuild = false;
+            selected = $(".selected").length > 0;
             _ref = d3.selectAll($(".rel.selected")).data();
             for (_i = 0, _len = _ref.length; _i < _len; _i++) {
               d = _ref[_i];
@@ -116,7 +117,9 @@
             if (rebuild) {
               t.build();
             }
-            return d3.event.preventDefault();
+            if (selected) {
+              return d3.event.preventDefault();
+            }
         }
       });
     };
@@ -439,12 +442,12 @@
       d0.y = 30;
       for (i = _i = 0, _len = degree1_ids.length; _i < _len; i = ++_i) {
         id = degree1_ids[i];
-        range = Math.PI * 2 / 3;
+        range = Math.PI * 1 / 2;
         angle = (Math.PI * 3 / 2) + i * (range / (degree1_ids.length - 1)) - range / 2;
         radius = (this.width - 100) / 2;
         d1 = this.entity_by_id(id);
         d1.x = 70 + i * (this.width - 70) / degree1_ids.length - 1;
-        d1.y = this.height / 2 + 230 + radius * Math.sin(angle);
+        d1.y = this.height / 2 + 250 + radius * Math.sin(angle);
       }
       for (i = _j = 0, _len1 = degree2_ids.length; _j < _len1; i = ++_j) {
         id = degree2_ids[i];
@@ -453,7 +456,7 @@
         radius = (this.width - 100) / 2;
         d2 = this.entity_by_id(id);
         d2.x = i * (this.width * 2 / 3) / (degree2_ids.length - 1) + this.width * 1 / 6;
-        d2.y = this.height + 250 + radius * Math.sin(angle);
+        d2.y = this.height - 450 - radius * Math.sin(angle);
       }
       return this.update_positions();
     };
@@ -472,15 +475,13 @@
     };
 
     Netmap.prototype.shuffle = function() {
-      var e, i, p, positions, _i, _j, _len, _len1, _ref;
+      var i, p, positions, _i, _len;
 
-      _ref = this.entities();
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        e = _ref[_i];
-        positions = [e.x, e.y];
-      }
+      positions = this.entities().map(function(e) {
+        return [e.x, e.y];
+      });
       positions = this.shuffle_array(positions);
-      for (i = _j = 0, _len1 = positions.length; _j < _len1; i = ++_j) {
+      for (i = _i = 0, _len = positions.length; _i < _len; i = ++_i) {
         p = positions[i];
         this.entities()[i].x = p[0];
         this.entities()[i].y = p[1];
@@ -685,31 +686,7 @@
       has_image = function(d) {
         return d.image.indexOf("anon") === -1;
       };
-      groups.append("rect").attr("class", "image_rect").attr("fill", this.entity_background_color).attr("opacity", 1).attr("width", function(d) {
-        if (has_image(d)) {
-          return 58;
-        } else {
-          return 43;
-        }
-      }).attr("height", function(d) {
-        if (has_image(d)) {
-          return 58;
-        } else {
-          return 43;
-        }
-      }).attr("x", function(d) {
-        if (has_image(d)) {
-          return -29;
-        } else {
-          return -21;
-        }
-      }).attr("y", function(d) {
-        if (has_image(d)) {
-          return -29;
-        } else {
-          return -29;
-        }
-      }).attr("stroke", "#f8f8f8").attr("stroke-width", 1);
+      groups.append("rect").attr("class", "image_rect").attr("fill", this.entity_background_color).attr("opacity", 1).attr("width", 58).attr("height", 58).attr("x", -29).attr("y", -29).attr("stroke", "#f8f8f8").attr("stroke-width", 1);
       groups.append("image").attr("class", "image").attr("opacity", function(d) {
         if (has_image(d)) {
           return 1;
@@ -718,52 +695,16 @@
         }
       }).attr("xlink:href", function(d) {
         return d.image;
-      }).attr("x", function(d) {
-        if (has_image(d)) {
-          return -25;
-        } else {
-          return -17;
-        }
-      }).attr("y", function(d) {
-        if (has_image(d)) {
-          return -25;
-        } else {
-          return -25;
-        }
-      }).attr("width", function(d) {
-        if (has_image(d)) {
-          return 50;
-        } else {
-          return 35;
-        }
-      }).attr("height", function(d) {
-        if (has_image(d)) {
-          return 50;
-        } else {
-          return 35;
-        }
-      });
+      }).attr("x", -25).attr("y", -25).attr("width", 50).attr("height", 50);
       links = groups.append("a").attr("xlink:href", function(d) {
         return d.url;
       }).attr("title", function(d) {
         return d.description;
       });
-      links.append("text").attr("dx", 0).attr("dy", function(d) {
-        if (has_image(d)) {
-          return 40;
-        } else {
-          return 25;
-        }
-      }).attr("text-anchor", "middle").text(function(d) {
+      links.append("text").attr("dx", 0).attr("dy", 40).attr("text-anchor", "middle").text(function(d) {
         return t.split_name(d.name)[0];
       });
-      links.append("text").attr("dx", 0).attr("dy", function(d) {
-        if (has_image(d)) {
-          return 55;
-        } else {
-          return 40;
-        }
-      }).attr("text-anchor", "middle").text(function(d) {
+      links.append("text").attr("dx", 0).attr("dy", 55).attr("text-anchor", "middle").text(function(d) {
         return t.split_name(d.name)[1];
       });
       groups.filter(function(d) {
@@ -775,7 +716,7 @@
 
         image_offset = $(this.parentNode).find("image").attr("height") / 2;
         text_offset = $(this.parentNode).find("text").height();
-        extra_offset = has_image(d) ? 2 : -5;
+        extra_offset = 2;
         return image_offset + text_offset + extra_offset;
       }).attr("width", function(d) {
         return $(this.parentNode).find("text:nth-child(2)").width() + 6;
@@ -788,7 +729,7 @@
         var extra_offset, image_offset;
 
         image_offset = $(this.parentNode).find("image").attr("height") / 2;
-        extra_offset = has_image(d) ? 1 : -6;
+        extra_offset = 1;
         return image_offset + extra_offset;
       }).attr("width", function(d) {
         return $(this.parentNode).find("text").width() + 6;
