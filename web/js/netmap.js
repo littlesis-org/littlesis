@@ -206,6 +206,9 @@
       _results = [];
       for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
         r = _ref1[_j];
+        if (r.category_ids != null) {
+          r.category_ids = r.category_ids.split(",");
+        }
         r.source = this._data["entities"][entity_index[parseInt(r.entity1_id)]];
         _results.push(r.target = this._data["entities"][entity_index[parseInt(r.entity2_id)]]);
       }
@@ -371,6 +374,38 @@
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         e = _ref[_i];
         this.remove_entity(e.id);
+      }
+      return this.build();
+    };
+
+    Netmap.prototype.show_all_rels = function() {
+      var rel, _i, _len, _ref;
+
+      _ref = this._data.rels;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        rel = _ref[_i];
+        delete rel["hidden"];
+      }
+      return this.build();
+    };
+
+    Netmap.prototype.limit_to_cats = function(cat_ids) {
+      var rel, _i, _len, _ref;
+
+      _ref = this._data.rels;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        rel = _ref[_i];
+        if (rel.category_ids != null) {
+          if (rel.category_ids.filter(function(id) {
+            return cat_ids.indexOf(Number(id)) > -1;
+          }).length > 0) {
+            rel.hidden = false;
+          } else {
+            rel.hidden = true;
+          }
+        } else {
+          rel.hidden = cat_ids.indexOf(Number(rel.category_id)) === -1;
+        }
       }
       return this.build();
     };
@@ -738,6 +773,13 @@
         return d.label;
       });
       rels.exit().remove();
+      rels.style("display", function(d) {
+        if (d.hidden === true) {
+          return "none";
+        } else {
+          return null;
+        }
+      });
       this.svg.selectAll(".rel .line").data(this._data["rels"], function(d) {
         return d.id;
       });

@@ -29,6 +29,24 @@
 <input id="netmap_shuffle" type="button" value="shuffle" /><br />
 <input id="netmap_short_force" type="button" value="force" /><br />
 
+<br />
+
+Filter:
+<select multiple id="netmap_cat_ids" size="10">
+  <option value="1">Pos</option>
+  <option value="2">Edu</option>
+  <option value="3">Mem</option>
+  <option value="4">Fam</option>
+  <option value="5">Don</option>
+  <option value="6">Trn</option>
+  <option value="7">Lob</option>
+  <option value="8">Soc</option>
+  <option value="9">Pro</option>
+  <option value="10">Own</option>
+</select>
+
+<br />
+
 <?php if ($sf_user->hasCredential('admin')) : ?>
 <?php if (isset($id)) : ?>
   <?php echo button_to('edit', "map/edit?id=" . $id) ?><br />
@@ -37,6 +55,7 @@
 <?php endif; ?>
 
 <div id="netmap_add_entity">
+<div id="netmap_add_entity_hide"><a id="netmap_add_entity_hide_link" onclick="$('#netmap_add_entity').css('display', 'none'); return false;">hide</a></div>
 <?php include_partial('global/section', array('title' => 'Add Entity')) ?>
 <form id="netmap_add_entity_form">
   <input id="netmap_add_entity_search" type="text" />
@@ -55,6 +74,16 @@ A: add<br />
 </div>
 
 <script>
+$("#netmap_cat_ids").on("change", function() {
+  var cat_ids = $(this).val() == null ? 
+    [] : $(this).val().map(function(i) { return Number(i); });
+  if (cat_ids.length == 0) {
+    netmap.show_all_rels();
+  } else {
+    netmap.limit_to_cats(cat_ids);
+  }
+});
+
 <?php if ($sf_user->hasCredential('admin')) : ?>
 $("#netmap_save").on("click", function() {
   netmap.save_map();

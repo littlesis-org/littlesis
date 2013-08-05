@@ -2273,6 +2273,15 @@ input#simple_search_terms
   box-shadow: 2px 2px 5px #888;
 }
 
+#netmap_add_entity_hide {
+  position: absolute;
+  top: 0;
+  right: 0;
+  margin-top: 5px;
+  margin-right: 10px;  
+  font-size: 12px;
+}
+
 #netmap_add_entity_results a {
   text-decoration: underline;
 }

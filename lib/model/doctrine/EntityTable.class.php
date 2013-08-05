@@ -1790,6 +1790,7 @@ class EntityTable extends Doctrine_Table
         "entity1_id" => $rel["entity1_id"],
         "entity2_id" => $rel["entity2_id"],
         "category_id" => $rel["category_id"],
+        "category_ids" => $rel["category_ids"],
         "is_current" => $rel["is_current"],        
         "value" => 1, 
         "label" => $rel["label"],
@@ -1804,7 +1805,9 @@ class EntityTable extends Doctrine_Table
   {
     $db = Doctrine_Manager::connection();
     $sql = "SELECT r.id, r.entity1_id, r.entity2_id, r.category_id, r.is_current, r.is_deleted, " . 
-           "GROUP_CONCAT(DISTINCT(rc.name) SEPARATOR ', ') AS label, COUNT(r.id) AS  num " . 
+           "GROUP_CONCAT(DISTINCT(rc.name) SEPARATOR ', ') AS label, " . 
+           "GROUP_CONCAT(DISTINCT(r.category_id) SEPARATOR ',') AS category_ids, " . 
+           "COUNT(r.id) AS  num " . 
            "FROM relationship r LEFT JOIN relationship_category rc ON (rc.id = r.category_id) " . 
            "WHERE r.entity1_id IN (" . join(",", $entity_ids) . ") " . 
            "AND r.entity2_id IN (" . join(",", $entity_ids) . ") " . 
@@ -1828,7 +1831,9 @@ class EntityTable extends Doctrine_Table
     
     $db = Doctrine_Manager::connection();
     $sql = "SELECT r.id, r.entity1_id, r.entity2_id, r.category_id, r.is_current, r.is_deleted, " . 
-           "GROUP_CONCAT(DISTINCT(rc.name) SEPARATOR ', ') AS label, COUNT(r.id) AS  num " . 
+           "GROUP_CONCAT(DISTINCT(rc.name) SEPARATOR ', ') AS label, " . 
+           "GROUP_CONCAT(DISTINCT(r.category_id) SEPARATOR ',') AS category_ids, " . 
+           "COUNT(r.id) AS  num " . 
            "FROM relationship r LEFT JOIN relationship_category rc ON (rc.id = r.category_id) " . 
            "WHERE r.entity1_id IN (" . join(",", $entity_ids) . ") " . 
            "AND r.entity2_id IN (" . join(",", $entity_ids) . ") " . 
