@@ -37,7 +37,7 @@
 <?php endif; ?>
 
 <div id="netmap_add_entity">
-Add Entity:<br />
+<?php include_partial('global/section', array('title' => 'Add Entity')) ?>
 <form id="netmap_add_entity_form">
   <input id="netmap_add_entity_search" type="text" />
   <input id="netmap_add_entity_button" type="submit" value="search" />
@@ -90,6 +90,12 @@ $("#netmap_add_entity_form").on("submit", function() {
   netmap.search_entities(q, function(entities) {
     var results = $("#netmap_add_entity_results");
     results.text("");
+
+    if (entities.length == 0)
+    {
+      results.html("<strong>No results found.</strong>");
+    }
+
     $(entities).each(function(i, e) {
       var result = $('<div class="netmap_add_entity_result" /></div>');
       add = $('<a>add</a>');
