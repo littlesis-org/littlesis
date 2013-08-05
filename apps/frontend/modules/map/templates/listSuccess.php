@@ -7,7 +7,7 @@
 <thead style="text-align: left; border-bottom: 1px solid #ddd;">
   <th class="padded">ID</th>
   <th class="padded">Title</th>
-  <th class="padded">User ID</th>
+  <th class="padded">User</th>
   <th class="padded">Updated At</th>
 </thead>
 <?php foreach ($maps as $map) : ?>
