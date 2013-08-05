@@ -249,6 +249,7 @@
       if (callback == null) {
         callback = null;
       }
+      this.remove_hidden_rels();
       if (this.network_map_id != null) {
         return this.update_map(callback);
       } else {
@@ -355,16 +356,6 @@
         t.set_data(new_data);
         return t.build();
       });
-      /*
-      t = this
-      entity_ids = @entity_ids().push(id)
-      @api.entities_and_rels(entity_ids, (data) -> 
-        t.set_data(data, t.center_entity_id)
-        t.build()
-        t.wheel()
-      )
-      */
-
     };
 
     Netmap.prototype.prune = function() {
@@ -407,6 +398,13 @@
           rel.hidden = cat_ids.indexOf(Number(rel.category_id)) === -1;
         }
       }
+      return this.build();
+    };
+
+    Netmap.prototype.remove_hidden_rels = function() {
+      this._data.rels = this._data.rels.filter(function(r) {
+        return !r.hidden;
+      });
       return this.build();
     };
 
