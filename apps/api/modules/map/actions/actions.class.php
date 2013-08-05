@@ -88,5 +88,29 @@ class mapActions extends LsApiActions
     
     //404 Not Found
     $this->returnStatusCode(400);
-  } 
+  }
+  
+  public function executeAddEntityData($request)
+  {
+    $this->setResponseFormat();    
+
+    $entity_id = $request->getParameter("entity_id");
+    $entity_ids = explode(",", $request->getParameter("entity_ids"));
+
+    $data = EntityTable::getAddEntityAndRelsForMap($entity_id, $entity_ids);    
+
+    return $this->renderText(json_encode($data));
+  }
+  
+  public function executeSearchEntities($request)
+  {
+    $this->setResponseFormat();    
+
+    $num = $request->getParameter('num', 10);
+    $entities = EntityTable::getSphinxPager($request->getParameter('q'), 1, $num)->execute();
+    $entity_ids = array_map(function($e) { return $e["id"]; }, $entities);
+    $this->entities = EntityTable::getEntitiesForMap($entity_ids);
+    
+    return $this->renderText(json_encode($this->entities));
+  }
 }

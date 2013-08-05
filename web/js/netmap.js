@@ -8,17 +8,48 @@
       this.base_url = "http://api.littlesis.org/";
     }
 
-    LittlesisApi.prototype.entity_and_rels_url = function(entity_ids) {
+    LittlesisApi.prototype.entities_and_rels_url = function(entity_ids) {
       return this.base_url + "map/entities.json?entity_ids=" + entity_ids.join(",") + "&_key=" + this.key;
     };
 
-    LittlesisApi.prototype.entity_and_rels = function(entity_ids, callback) {
+    LittlesisApi.prototype.entities_and_rels = function(entity_ids, callback) {
       return $.ajax({
-        url: this.entity_and_rels_url(entity_ids),
+        url: this.entities_and_rels_url(entity_ids),
         success: callback,
         error: function() {
           return alert("There was an error retrieving data from the API");
         },
+        dataType: "json"
+      });
+    };
+
+    LittlesisApi.prototype.get_add_entity_data = function(entity_id, entity_ids, callback) {
+      return $.ajax({
+        url: this.base_url + "map/addEntityData.json",
+        data: {
+          "entity_id": entity_id,
+          "entity_ids": entity_ids.join(",")
+        },
+        success: callback,
+        error: function() {
+          return alert("There was an error retrieving data from the API");
+        },
+        type: "GET",
+        dataType: "json"
+      });
+    };
+
+    LittlesisApi.prototype.search_entities = function(q, callback) {
+      return $.ajax({
+        url: this.base_url + "map/searchEntities.json",
+        data: {
+          "q": q
+        },
+        success: callback,
+        error: function() {
+          return alert("There was an error retrieving data from the API");
+        },
+        type: "GET",
         dataType: "json"
       });
     };
@@ -73,7 +104,8 @@
     function Netmap(width, height, parent_selector, key) {
       this.width = width;
       this.height = height;
-      this.init_svg(parent_selector);
+      this.parent_selector = parent_selector;
+      this.init_svg();
       this.force_enabled = false;
       this.entity_background_opacity = 0.6;
       this.entity_background_color = "#fff";
@@ -83,8 +115,8 @@
       this.init_callbacks();
     }
 
-    Netmap.prototype.init_svg = function(parent_selector) {
-      this.svg = d3.select(parent_selector).append("svg").attr("id", "svg").attr("width", this.width).attr("height", this.height);
+    Netmap.prototype.init_svg = function() {
+      this.svg = d3.select(this.parent_selector).append("svg").attr("id", "svg").attr("width", this.width).attr("height", this.height);
       return window.svg = this.svg;
     };
 
@@ -92,10 +124,14 @@
       var t;
 
       t = this;
-      return d3.select(document).on("keydown", function() {
+      $(window).on("mousemove", function(e) {
+        t.mouse_x = e.pageX;
+        return t.mouse_y = e.pageY;
+      });
+      return $(document).on("keydown", function(e) {
         var d, rebuild, selected, _i, _j, _len, _len1, _ref, _ref1;
 
-        switch (d3.event.keyCode) {
+        switch (e.keyCode) {
           case 8:
           case 46:
           case 68:
@@ -118,10 +154,26 @@
               t.build();
             }
             if (selected) {
-              return d3.event.preventDefault();
+              return e.preventDefault();
+            }
+            break;
+          case 65:
+          case 97:
+            if ($("#svg:hover").length > 0) {
+              return t.toggle_add_entity_form();
             }
         }
       });
+    };
+
+    Netmap.prototype.toggle_add_entity_form = function() {
+      var form;
+
+      form = $("#netmap_add_entity");
+      $(this.parent_selector).append(form);
+      form.css("left", this.mouse_x - $(this.parent_selector).offset().left - 10 + "px");
+      form.css("top", this.mouse_y - $(this.parent_selector).offset().top + 55 + "px");
+      return form.css("display", form.css("display") === "none" ? "block" : "none");
     };
 
     Netmap.prototype.set_data = function(data, center_entity_id) {
@@ -166,7 +218,7 @@
 
     Netmap.prototype.entity_ids = function() {
       return this._data["entities"].map(function(e) {
-        return e.id;
+        return parseInt(e.id);
       });
     };
 
@@ -268,16 +320,48 @@
       return this.api.update_map(this.network_map_id, this._data, this.api_data_callback(callback));
     };
 
-    Netmap.prototype.add_entity = function(id) {
-      var entity_ids, t;
+    Netmap.prototype.search_entities = function(q, callback) {
+      if (callback == null) {
+        callback = null;
+      }
+      return this.api.search_entities(q, callback);
+    };
 
+    Netmap.prototype.add_entity = function(id, position) {
+      var t;
+
+      if (position == null) {
+        position = null;
+      }
+      if (this.entity_ids().indexOf(parseInt(id)) > -1) {
+        return false;
+      }
       t = this;
-      entity_ids = this.entity_ids().push(id);
-      return this.api.entity_and_rels(entity_ids, function(data) {
-        t.set_data(data, t.center_entity_id);
-        t.build();
-        return t.wheel();
+      return this.api.get_add_entity_data(id, this.entity_ids(), function(data) {
+        var new_data;
+
+        data.entities = data.entities.map(function(e) {
+          e.x = position != null ? position[0] : t.width / 2 + 200 * (0.5 - Math.random());
+          e.y = position != null ? position[1] : t.height / 2 + 200 * (0.5 - Math.random());
+          return e;
+        });
+        new_data = {
+          "entities": t.data().entities.concat(data.entities),
+          "rels": t.data().rels.concat(data.rels)
+        };
+        t.set_data(new_data);
+        return t.build();
       });
+      /*
+      t = this
+      entity_ids = @entity_ids().push(id)
+      @api.entities_and_rels(entity_ids, (data) -> 
+        t.set_data(data, t.center_entity_id)
+        t.build()
+        t.wheel()
+      )
+      */
+
     };
 
     Netmap.prototype.prune = function() {
@@ -479,7 +563,7 @@
         angle = (Math.PI * 3 / 2) + i * (range / (degree1_ids.length - 1)) - range / 2;
         radius = (this.width - 100) / 2;
         d1 = this.entity_by_id(id);
-        d1.x = 70 + i * (this.width - 70) / degree1_ids.length;
+        d1.x = 70 + i * (this.width - 140) / (degree1_ids.length - 1);
         d1.y = this.height / 2 + 250 + radius * Math.sin(angle);
       }
       for (i = _j = 0, _len1 = degree2_ids.length; _j < _len1; i = ++_j) {
@@ -488,7 +572,7 @@
         angle = (Math.PI * 3 / 2) + i * (range / (degree2_ids.length - 1)) - range / 2;
         radius = (this.width - 100) / 2;
         d2 = this.entity_by_id(id);
-        d2.x = 70 + i * (this.width - 70) / degree2_ids.length;
+        d2.x = 70 + i * (this.width - 140) / (degree2_ids.length - 1);
         d2.y = this.height - 480 - radius * Math.sin(angle);
       }
       return this.update_positions();
@@ -770,10 +854,13 @@
         return $(this.parentNode).find("text").height() + 4;
       });
       entities.exit().remove();
-      return this.svg.selectAll(".entity").on("click", function(d, i) {
+      this.svg.selectAll(".entity").on("click", function(d, i) {
         if (!t.drag) {
           return t.toggle_selected_entity(d.id);
         }
+      });
+      return this.svg.selectAll(".entity a").on("click", function(d, i) {
+        return d3.event.stopPropagation();
       });
     };
 

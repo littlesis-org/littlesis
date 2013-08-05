@@ -4780,7 +4780,7 @@ class entityActions extends sfActions
   public function executeInterlocksMap($request)
   {
     $this->checkEntity($request, false, false);
-    $num = $request->getParameter("num", 8);  
+    $num = $request->getParameter("num", 6);  
     $degree1_num = $request->getParameter("degree1_num", 10);
 
     $order1 = ($this->entity['primary_ext'] == 'Person') ? 1 : 2;

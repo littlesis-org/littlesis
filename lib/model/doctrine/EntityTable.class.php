@@ -1743,10 +1743,9 @@ class EntityTable extends Doctrine_Table
   {
     $entities = self::getEntitiesForMap($entity_ids);
     $entity_ids = array_map(function($e) { return $e['id']; }, $entities);
-    $entity_index = array_flip(array_map(function($e) { return $e['id']; }, $entities));
 
     // get all rels
-    $rels = self::getRelsForMap($entity_ids, $entity_index, $include_cats, $exclude_cats);
+    $rels = self::getRelsForMap($entity_ids, $include_cats, $exclude_cats);
     
     return array("entities" => $entities, "rels" => $rels); 
   }
@@ -1756,20 +1755,27 @@ class EntityTable extends Doctrine_Table
     // get related entity ids    
     $entities = EntityTable::getRelatedEntitiesForMap($entity_id, $num, $exclude_cats);
     $entity_ids = array_map(function($e) { return $e['id']; }, $entities);
-    $entity_index = array_flip(array_map(function($e) { return $e['id']; }, $entities));
 
     // get all rels
-    $rels = self::getRelsForMap($entity_ids, $entity_index, $include_cats, $exclude_cats);
+    $rels = self::getRelsForMap($entity_ids, $include_cats, $exclude_cats);
     
     return array("entities" => $entities, "rels" => $rels); 
   }
 
-  public static function getRelsForMap($entity_ids, $entity_index, $include_cats=array(), $exclude_cats=array())
+  public static function getAddEntityAndRelsForMap($entity_id, $entity_ids, $include_cats=array(), $exclude_cats=array())
+  {
+    $entity = self::getEntityForMap($entity_id);
+    $rels = self::getRelsForNewMapEntity($entity_id, $entity_ids, $include_cats, $exclude_cats);
+    
+    return array("entities" => array($entity), "rels" => $rels); 
+  }
+
+  public static function mapRelsFromRows($rows)
   {
     $rels = array();
 
-    foreach (self::getAllRelsForMap($entity_ids, $include_cats, $exclude_cats) as $rel)
-    {    
+    foreach ($rows as $rel)
+    {
       try 
       {
         $url = url_for(RelationshipTable::generateRoute($rel));
@@ -1778,25 +1784,23 @@ class EntityTable extends Doctrine_Table
       {
         $url = "http://littlesis.org/relationship/view/id/" . $rel['id'];
       }
-
+      
       $rels[] = array(
-        "id" => $rel["id"],
+       "id" => $rel["id"],
         "entity1_id" => $rel["entity1_id"],
         "entity2_id" => $rel["entity2_id"],
         "category_id" => $rel["category_id"],
         "is_current" => $rel["is_current"],        
-        "source" => $entity_index[$rel["entity1_id"]], 
-        "target" => $entity_index[$rel["entity2_id"]], 
         "value" => 1, 
         "label" => $rel["label"],
-        "url" => $url
+        "url" => $url      
       );
     }
     
-    return $rels;
-  }  
+    return $rels;  
+  }
 
-  public static function getAllRelsForMap($entity_ids, $include_cats=array(), $exclude_cats=array())
+  public static function getRelsForMap($entity_ids, $include_cats=array(), $exclude_cats=array())
   {
     $db = Doctrine_Manager::connection();
     $sql = "SELECT r.id, r.entity1_id, r.entity2_id, r.category_id, r.is_current, r.is_deleted, " . 
@@ -1810,7 +1814,34 @@ class EntityTable extends Doctrine_Table
            (count($exclude_cats) ? "AND r.category_id NOT IN (" . join(",", $exclude_cats) . ") " : "") .
            "GROUP BY r.entity1_id, r.entity2_id";
     $stmt = $db->execute($sql);
-    return $stmt->fetchAll(PDO::FETCH_ASSOC);      
+    $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+    return self::mapRelsFromRows($rows);
+  }
+
+  public static function getRelsForNewMapEntity($entity_id, $entity_ids, $include_cats=array(), $exclude_cats=array())
+  {
+    if (!in_array($entity_id, $entity_ids))
+    {
+      $entity_ids[] = $entity_id;
+    }
+    
+    $db = Doctrine_Manager::connection();
+    $sql = "SELECT r.id, r.entity1_id, r.entity2_id, r.category_id, r.is_current, r.is_deleted, " . 
+           "GROUP_CONCAT(DISTINCT(rc.name) SEPARATOR ', ') AS label, COUNT(r.id) AS  num " . 
+           "FROM relationship r LEFT JOIN relationship_category rc ON (rc.id = r.category_id) " . 
+           "WHERE r.entity1_id IN (" . join(",", $entity_ids) . ") " . 
+           "AND r.entity2_id IN (" . join(",", $entity_ids) . ") " . 
+           "AND (r.entity1_id = ? OR r.entity2_id = ?) " .
+           "AND r.is_deleted = 0 " .
+           "AND r.entity1_id <> r.entity2_id " .
+           (count($include_cats) ? "AND r.category_id IN (" . join(",", $include_cats) . ") " : "") .
+           (count($exclude_cats) ? "AND r.category_id NOT IN (" . join(",", $exclude_cats) . ") " : "") .
+           "GROUP BY r.entity1_id, r.entity2_id";
+    $stmt = $db->execute($sql, array($entity_id, $entity_id));
+    $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    return self::mapRelsFromRows($rows);    
   }
 
   public static function getEntitiesForMap($entity_ids)

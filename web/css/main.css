@@ -2259,6 +2259,19 @@ input#simple_search_terms
   width: 850px;
 }
 
+#netmap_add_entity {
+  display: none;
+  position: absolute;
+  padding: 1em;
+  background-color: white;
+  border: 1px solid #eee;
+  border-radius: 5px;
+  box-shadow: 2px 2px 5px #888;
+}
+
+#netmap_add_entity_results a {
+  text-decoration: underline;
+}
 
 /* D3 stuff */
 

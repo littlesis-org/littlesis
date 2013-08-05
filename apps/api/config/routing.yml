@@ -171,6 +171,14 @@ entity_types:
   url:   /entities/types.:format
   param: { module: lookup, action: entityTypes }
 
+map_add_entity_data:
+  url:   /map/addEntityData.:format
+  param: { module: map, action: addEntityData }
+
+map_search_entities:
+  url:   /map/searchEntities.:format
+  param: { module: map, action: searchEntities }
+
 map_entities:
   url:   /map/entities.:format
   param: { module: map, action: entities }

@@ -36,6 +36,24 @@
 <input id="netmap_save" type="button" value="save" /><br />
 <?php endif; ?>
 
+<div id="netmap_add_entity">
+Add Entity:<br />
+<form id="netmap_add_entity_form">
+  <input id="netmap_add_entity_search" type="text" />
+  <input id="netmap_add_entity_button" type="submit" value="search" />
+</form>
+<div id="netmap_add_entity_results"></div>
+</div>
+
+<br />
+
+<div id="netmap_control_key">
+CLICK: select<br />
+<br />
+D: delete<br />
+A: add<br />
+</div>
+
 <script>
 <?php if ($sf_user->hasCredential('admin')) : ?>
 $("#netmap_save").on("click", function() {
@@ -65,6 +83,33 @@ $("#netmap_shuffle").on("click", function() {
 
 $("#netmap_short_force").on("click", function() {
   netmap.one_time_force();
+});
+
+$("#netmap_add_entity_form").on("submit", function() {
+  var q = $("#netmap_add_entity_search").val();
+  netmap.search_entities(q, function(entities) {
+    var results = $("#netmap_add_entity_results");
+    results.text("");
+    $(entities).each(function(i, e) {
+      var result = $('<div class="netmap_add_entity_result" /></div>');
+      add = $('<a>add</a>');
+      add.data("entity_id", e.id)
+      add.on("click", function(e) {
+        position = [e.pageX - $("#svg").offset().left, e.pageY - $("#svg").offset().top]
+        console.log(e.pageX, e.pageY, $("#svg").offset(), position)
+        netmap.add_entity($(this).data("entity_id"), position);
+        $("#netmap_add_entity").css("display", "none");
+      })
+      result.append(add);
+      result.append("&nbsp;&nbsp;");
+      var name = $('<a>' + e.name + '</a>');
+      name.attr("href", e.url);
+      name.attr("target", "_blank");
+      result.append(name);
+      results.append(result);
+    });
+  });  
+  return false;
 });
 </script>
 </div>
