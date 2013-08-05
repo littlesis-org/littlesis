@@ -1901,7 +1901,7 @@ class EntityTable extends Doctrine_Table
     } 
     catch (Exception $e) 
     {
-      $url = 'http://littlesis.org/' . strtolower($entity['primary_ext']) . '/' . $entity['id'] . '/' . LsSlug::convertNameToSlug($entity['name']);
+      $url = 'http://littlesis.org/' . strtolower($entity['primary_ext']) . '/' . $entity['id'] . '/' . LsSlug::convertNameToSlug($entity['name']) . '/map';
     }
     
     return array(

@@ -4823,10 +4823,12 @@ class entityActions extends sfActions
 
     $data = EntityTable::getEntitiesAndRelsForMap($entity_ids, $cats);
 
+    /*
     foreach ($data["entities"] as $i => $entity)
     {
       $data["entities"][$i]["url"] = preg_replace("/map$/", "interlocksMap", $entity["url"]);
     }
+    */
 
     $entities = array();
 

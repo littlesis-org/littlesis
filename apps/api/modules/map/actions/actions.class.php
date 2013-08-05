@@ -110,7 +110,7 @@ class mapActions extends LsApiActions
     $entities = EntityTable::getSphinxPager($request->getParameter('q'), 1, $num)->execute();
     $entity_ids = array_map(function($e) { return $e["id"]; }, $entities);
     $this->entities = EntityTable::getEntitiesForMap($entity_ids);
-    
+
     return $this->renderText(json_encode($this->entities));
   }
 }
