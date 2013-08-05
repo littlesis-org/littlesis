@@ -48,6 +48,7 @@ Filter:
 <br />
 
 <?php if ($sf_user->hasCredential('admin')) : ?>
+<br />
 <?php if (isset($id)) : ?>
   <?php echo button_to('edit', "map/edit?id=" . $id) ?><br />
 <?php endif; ?>
