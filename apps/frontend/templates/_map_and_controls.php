@@ -132,7 +132,6 @@ $("#netmap_add_entity_form").on("submit", function() {
       add.data("entity_id", e.id)
       add.on("click", function(e) {
         position = [e.pageX - $("#svg").offset().left, e.pageY - $("#svg").offset().top]
-        console.log(e.pageX, e.pageY, $("#svg").offset(), position)
         netmap.add_entity($(this).data("entity_id"), position);
         $("#netmap_add_entity").css("display", "none");
       })

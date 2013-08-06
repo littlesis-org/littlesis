@@ -206,8 +206,13 @@
       _results = [];
       for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
         r = _ref1[_j];
-        if (r.category_ids != null) {
+        if ((r.category_ids != null) && typeof r.category_ids === "string") {
           r.category_ids = r.category_ids.split(",");
+        }
+        if (r.category_ids instanceof Array) {
+          r.category_ids = r.category_ids.map(function(i) {
+            return Number(i);
+          });
         }
         r.source = this._data["entities"][entity_index[parseInt(r.entity1_id)]];
         _results.push(r.target = this._data["entities"][entity_index[parseInt(r.entity2_id)]]);
