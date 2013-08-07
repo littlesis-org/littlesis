@@ -37,4 +37,18 @@ class mapActions extends sfActions
        ->orderBy('updated_at DESC')
        ->execute();
   }
+  
+  public function executeDelete($request)
+  {
+    if ($request->isMethod('post'))
+    {
+      $this->checkMap($request);    
+      $this->map->delete();    
+      $this->redirect("map/list");
+    }
+    else
+    {
+      $this->forward("error", "invalid");
+    }
+  }
 }

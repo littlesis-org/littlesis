@@ -1,3 +1,7 @@
 edit:
   is_secure: on
   credentials: admin
+
+delete:
+  is_secure: on
+  credentials: admin
