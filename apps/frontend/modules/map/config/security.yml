@@ -1,3 +1,7 @@
+save:
+  is_secure: on
+  credentials: admin
+
 edit:
   is_secure: on
   credentials: admin

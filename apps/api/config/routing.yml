@@ -183,15 +183,15 @@ map_entities:
   url:   /map/entities.:format
   param: { module: map, action: entities }
 
-create_map:
-  url:   /map.:format
-  param: { module: map, action: create }
-  methods: [POST]
+# create_map:
+#   url:   /map.:format
+#   param: { module: map, action: create }
+#  methods: [POST]
 
-update_map:
-  url:   /map/:id/update.:format
-  param: { module: map, action: update }
-  methods: [POST]
+# update_map:
+#   url:   /map/:id/update.:format
+#   param: { module: map, action: update }
+#  methods: [POST]
 
 view_map:
   url:   /map/:id.:format

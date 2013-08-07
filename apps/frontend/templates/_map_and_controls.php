@@ -99,7 +99,27 @@ $("#netmap_cat_ids").on("change", function() {
 
 <?php if ($sf_user->hasCredential('admin')) : ?>
 $("#netmap_save").on("click", function() {
-  netmap.save_map();
+  netmap.remove_hidden_rels();
+
+  var id = netmap.get_network_map_id();
+  if (id) {
+    var url = '<?php echo url_for("map/update?id=999999") ?>'.replace("999999", id);
+  } else {
+    var url = '<?php echo url_for("map/create") ?>';
+  }
+
+  $.ajax({
+    url: url,
+    type: "POST",
+    data: netmap.data_for_save(),
+    success: function(data) { 
+      window.location.href = '<?php echo url_for("map/view?id=999999") ?>'.replace("999999", data.id);    
+    },
+    error: function() { 
+      alert("There was an error saving the map"); 
+    },
+    dataType: "json"
+  })  
 });
 <?php endif; ?>
 

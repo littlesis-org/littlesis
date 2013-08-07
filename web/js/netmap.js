@@ -250,6 +250,10 @@
       return this.user_id = user_id;
     };
 
+    Netmap.prototype.set_network_map_id = function(id) {
+      return this.network_map_id = id;
+    };
+
     Netmap.prototype.get_network_map_id = function() {
       return this.network_map_id;
     };
@@ -333,6 +337,15 @@
       return this.api.update_map(this.network_map_id, this.width, this.height, this._data, this.api_data_callback(callback));
     };
 
+    Netmap.prototype.data_for_save = function() {
+      return {
+        "width": this.width,
+        "height": this.height,
+        "user_id": this.user_id,
+        "data": JSON.stringify(this._data)
+      };
+    };
+
     Netmap.prototype.search_entities = function(q, callback) {
       if (callback == null) {
         callback = null;
@@ -370,6 +383,7 @@
     Netmap.prototype.prune = function() {
       var e, _i, _len, _ref;
 
+      this.remove_hidden_rels();
       _ref = this.unconnected_entities();
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         e = _ref[_i];

@@ -61,7 +61,6 @@ class mapActions extends LsApiActions
       return $this->renderText(json_encode($response));
     }  
     
-    //404 Not Found
     $this->returnStatusCode(400);
   }  
 
