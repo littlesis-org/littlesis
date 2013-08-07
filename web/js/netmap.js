@@ -406,6 +406,21 @@
       return this.build();
     };
 
+    Netmap.prototype.limit_to_current = function() {
+      var rel, _i, _len, _ref;
+
+      _ref = this._data.rels;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        rel = _ref[_i];
+        if (rel.is_current === "1") {
+          rel.hidden = false;
+        } else {
+          rel.hidden = true;
+        }
+      }
+      return this.build();
+    };
+
     Netmap.prototype.remove_hidden_rels = function() {
       this._data.rels = this._data.rels.filter(function(r) {
         return !r.hidden;

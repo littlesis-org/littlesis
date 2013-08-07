@@ -31,7 +31,7 @@
 
 <br />
 
-Filter:
+Cats:
 <select multiple id="netmap_cat_ids" size="10">
   <option value="1">Pos</option>
   <option value="2">Edu</option>
@@ -46,6 +46,10 @@ Filter:
 </select>
 
 <br />
+<br />
+
+Current:
+<input id="netmap_current_only" type="checkbox" /><br />
 
 <?php if ($sf_user->hasCredential('admin')) : ?>
 <br />
@@ -75,6 +79,14 @@ A: add<br />
 </div>
 
 <script>
+$("#netmap_current_only").on("change", function() {
+  if ($(this).is(':checked')) {
+    netmap.limit_to_current();
+  } else {
+    netmap.show_all_rels();
+  }
+});
+
 $("#netmap_cat_ids").on("change", function() {
   var cat_ids = $(this).val() == null ? 
     [] : $(this).val().map(function(i) { return Number(i); });
