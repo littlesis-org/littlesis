@@ -114,7 +114,9 @@ class LsCacheFilter extends sfCacheFilter
     'entity' => array(
       'view'                      => self::MONTH_LIFETIME,
       'references'                => self::MONTH_LIFETIME,
-      'notes'                     => self::MONTH_LIFETIME
+      'notes'                     => self::MONTH_LIFETIME,
+      'map'                       => self::MONTH_LIFETIME,
+      'interlocksMap'             => self::MONTH_LIFETIME
     ),
     'relationship' => array(
       'view'                      => self::MONTH_LIFETIME,
@@ -125,7 +127,8 @@ class LsCacheFilter extends sfCacheFilter
       'view'                      => self::MONTH_LIFETIME,
       'references'                => self::MONTH_LIFETIME,
       'notes'                     => self::MONTH_LIFETIME,
-      'list'                      => self::DAY_LIFETIME
+      'list'                      => self::DAY_LIFETIME,
+      'map'                       => self::MONTH_LIFETIME
     ),
     'group' => array(
       'view'                      => self::DAY_LIFETIME      
@@ -138,6 +141,9 @@ class LsCacheFilter extends sfCacheFilter
       'index'                     => self::HOUR_LIFETIME,
       'analysts'                  => self::DAY_LIFETIME,
       'notes'                     => self::HOUR_LIFETIME
+    ),
+    'map' => array(
+      'view'                      => self::MONTH_LIFETIME    
     )
   );
 

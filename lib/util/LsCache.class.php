@@ -59,7 +59,8 @@ class LsCache
       'Entity' => 'Entity', 
       'List' => 'List',
       'Relationship' => 'Relationship', 
-      'sfGuardUser' => 'User'
+      'sfGuardUser' => 'User',
+      'NetworkMap' => 'NetworkMap'
     );
 
     $recordClass = get_class($r);    
@@ -150,6 +151,22 @@ class LsCache
     
     $patterns = array_merge($patterns, self::clearEntityCacheById($entity1Id));
     $patterns = array_merge($patterns, self::clearEntityCacheById($entity2Id));
+    
+    return $patterns;
+  }
+
+
+  static function getNetworkMapCachePatternsById($id)
+  {
+    return array(self::$clearPatternPrefix . 'map/*/_sf_cache_key/*/id/' . $id);
+  }
+  
+
+  static function clearNetworkMapCacheById($id)
+  {
+    $patterns = self::getNetworkMapCachePatternsById($id);
+
+    self::clearCachePatterns($patterns);
     
     return $patterns;
   }

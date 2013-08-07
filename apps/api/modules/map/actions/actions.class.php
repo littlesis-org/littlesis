@@ -83,6 +83,8 @@ class mapActions extends LsApiActions
       $map->rel_ids = implode(",", array_values(array_map(function($e) { return $e->id; }, $decoded->rels)));
       $map->save();
 
+      LsCache::clearNetworkMapCacheById($map->id);
+
       $response = $map->toArray();
       $response["data"] = json_decode($response["data"]);
 

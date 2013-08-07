@@ -26,6 +26,8 @@ class mapActions extends sfActions
       $this->map->title = trim($request->getParameter("title"));
       $this->map->description = trim($request->getParameter("description"));
       $this->map->save();
+
+      LsCache::clearNetworkMapCacheById($this->map->id);
       
       $this->redirect("map/view?id=" . $this->map->id);
     }    
@@ -73,6 +75,8 @@ class mapActions extends sfActions
       $map->rel_ids = implode(",", array_values(array_map(function($e) { return $e->id; }, $decoded->rels)));
       $map->save();
 
+      LsCache::clearNetworkMapCacheById($map->id);
+
       $response = $map->toArray();
       $response["data"] = json_decode($response["data"]);
 
@@ -96,6 +100,9 @@ class mapActions extends sfActions
     {
       $this->checkMap($request);    
       $this->map->delete();    
+
+      LsCache::clearNetworkMapCacheById($this->map->id);
+
       $this->redirect("map/list");
     }
     else
