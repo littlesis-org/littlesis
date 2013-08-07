@@ -227,6 +227,7 @@
       _ref = this._data.entities;
       for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
         e = _ref[i];
+        e.id = Number(e.id);
         if (e.px == null) {
           e.px = e.x;
         }
@@ -239,14 +240,17 @@
       _results = [];
       for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
         r = _ref1[_j];
+        r.id = Number(r.id);
+        r.entity1_id = Number(r.entity1_id);
+        r.entity2_id = Number(r.entity2_id);
+        r.category_id = Number(r.category_id);
         if ((r.category_ids != null) && typeof r.category_ids === "string") {
           r.category_ids = r.category_ids.split(",");
         }
         if (r.category_ids instanceof Array) {
-          r.category_ids = r.category_ids.map(function(i) {
-            return Number(i);
-          });
+          r.category_ids = r.category_ids.map(Number);
         }
+        r.is_current = Number(r.is_current);
         r.source = this._data["entities"][entity_index[parseInt(r.entity1_id)]];
         _results.push(r.target = this._data["entities"][entity_index[parseInt(r.entity2_id)]]);
       }
@@ -459,7 +463,7 @@
       _ref = this._data.rels;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         rel = _ref[_i];
-        if (rel.is_current === "1") {
+        if (rel.is_current === 1) {
           rel.hidden = false;
         } else {
           rel.hidden = true;
@@ -543,7 +547,8 @@
     };
 
     Netmap.prototype.remove_entity = function(id) {
-      return this._data.entities.splice(this.entity_index(id), 1);
+      this._data.entities.splice(this.entity_index(id), 1);
+      return this.remove_orphaned_rels();
     };
 
     Netmap.prototype.rels_by_entity = function(id) {
@@ -815,6 +820,33 @@
       if (this.has_positions()) {
         return this.update_positions();
       }
+    };
+
+    Netmap.prototype.remove_orphaned_rels = function() {
+      var entity_ids, i, id, rel, rel_ids, _i, _len, _results;
+
+      entity_ids = this._data.entities.map(function(e) {
+        return e.id;
+      });
+      rel_ids = (function() {
+        var _i, _len, _ref, _results;
+
+        _ref = this._data.rels;
+        _results = [];
+        for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
+          rel = _ref[i];
+          if (entity_ids.indexOf(rel.entity1_id) === -1 || entity_ids.indexOf(rel.entity2_id) === -1) {
+            _results.push(rel.id);
+          }
+        }
+        return _results;
+      }).call(this);
+      _results = [];
+      for (_i = 0, _len = rel_ids.length; _i < _len; _i++) {
+        id = rel_ids[_i];
+        _results.push(this.remove_rel(id));
+      }
+      return _results;
     };
 
     Netmap.prototype.build_rels = function() {
