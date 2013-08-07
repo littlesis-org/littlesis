@@ -219,6 +219,11 @@ editMap:
   param: { module: map, action: edit }
   methods: [GET,POST]
 
+deleteMap:
+  url: /map/:id/delete
+  param: { module: map, action: delete }
+  methods: [POST]
+
 listMaps:
   url: /map/list
   param: { module: map, action: list }

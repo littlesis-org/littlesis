@@ -47,6 +47,8 @@ class mapActions extends LsApiActions
       $decoded = json_decode($data);
 
       $map = new NetworkMap();
+      $map->width = $request->getParameter("width", sfConfig::get('app_netmap_default_width'));
+      $map->height = $request->getParameter("height", sfConfig::get('app_netmap_default_height'));
       $map->user_id = $request->getParameter("user_id");
       $map->data = $data;
       $map->entity_ids = implode(",", array_values(array_map(function($e) { return $e->id; }, $decoded->entities)));
@@ -75,6 +77,8 @@ class mapActions extends LsApiActions
       $data = $request->getParameter("data");
       $decoded = json_decode($data);
 
+      $map->width = $request->getParameter("width");
+      $map->height = $request->getParameter("height");
       $map->data = $data;
       $map->entity_ids = implode(",", array_values(array_map(function($e) { return $e->id; }, $decoded->entities)));
       $map->rel_ids = implode(",", array_values(array_map(function($e) { return $e->id; }, $decoded->rels)));

@@ -1509,6 +1509,12 @@ NetworkMap:
     rel_ids: string(200)
     title: string(100)
     description: clob
+    width: 
+      type: integer(4)
+      notnull: true
+    height:
+      type: integer(4)
+      notnull: true
   relations:
     User:
       class: sfGuardUser

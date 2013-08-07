@@ -54,10 +54,12 @@
       });
     };
 
-    LittlesisApi.prototype.create_map = function(user_id, out_data, callback) {
+    LittlesisApi.prototype.create_map = function(width, height, user_id, out_data, callback) {
       return $.ajax({
         url: this.base_url + "map.json",
         data: {
+          "width": width,
+          "height": height,
           "user_id": user_id,
           "data": JSON.stringify(out_data)
         },
@@ -81,10 +83,12 @@
       });
     };
 
-    LittlesisApi.prototype.update_map = function(id, out_data, callback) {
+    LittlesisApi.prototype.update_map = function(id, width, height, out_data, callback) {
       return $.ajax({
         url: this.base_url + ("map/" + id + "/update.json"),
         data: {
+          "width": width,
+          "height": height,
           "data": JSON.stringify(out_data)
         },
         success: callback,
@@ -292,7 +296,7 @@
         callback = null;
       }
       t = this;
-      return this.api.create_map(this.user_id, this._data, this.api_data_callback(callback, true));
+      return this.api.create_map(this.width, this.height, this.user_id, this._data, this.api_data_callback(callback, true));
     };
 
     Netmap.prototype.load_map = function(id, callback) {
@@ -326,7 +330,7 @@
         return;
       }
       t = this;
-      return this.api.update_map(this.network_map_id, this._data, this.api_data_callback(callback));
+      return this.api.update_map(this.network_map_id, this.width, this.height, this._data, this.api_data_callback(callback));
     };
 
     Netmap.prototype.search_entities = function(q, callback) {
