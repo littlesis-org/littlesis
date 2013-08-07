@@ -120,8 +120,37 @@
     }
 
     Netmap.prototype.init_svg = function() {
+      var zoom, zoom_func;
+
       this.svg = d3.select(this.parent_selector).append("svg").attr("id", "svg").attr("width", this.width).attr("height", this.height);
-      return window.svg = this.svg;
+      zoom = this.svg.append('g').attr("id", "zoom").attr("fill", "#ffe");
+      this.zoom = d3.behavior.zoom();
+      this.zoom.scaleExtent([0.5, 5]);
+      zoom_func = function() {
+        var scale, trans;
+
+        trans = d3.event.translate;
+        scale = d3.event.scale;
+        return zoom.attr("transform", "translate(" + trans + ")" + " scale(" + scale + ")");
+      };
+      this.svg.call(this.zoom.on("zoom", zoom_func));
+      return zoom.append('rect').attr("id", "bg").attr('width', this.width).attr('height', this.height).attr('fill', 'white');
+    };
+
+    Netmap.prototype.zoom_by = function(scale) {
+      var x_diff, y_diff;
+
+      x_diff = (scale - 1) * this.width;
+      y_diff = (scale - 1) * this.height;
+      this.zoom.scale(this.zoom.scale() * scale);
+      this.zoom.translate([this.zoom.translate()[0] - x_diff / 2, this.zoom.translate()[1] - y_diff / 2]);
+      return d3.select("#zoom").attr("transform", "translate(" + this.zoom.translate() + ") scale(" + this.zoom.scale() + ")");
+    };
+
+    Netmap.prototype.reset_zoom = function() {
+      this.zoom.scale(1);
+      this.zoom.translate([0, 0]);
+      return d3.selectAll("#zoom").attr("transform", "translate(0, 0) scale(1)");
     };
 
     Netmap.prototype.init_callbacks = function() {
@@ -789,10 +818,11 @@
     };
 
     Netmap.prototype.build_rels = function() {
-      var groups, rels, t;
+      var groups, rels, t, zoom;
 
       t = this;
-      rels = this.svg.selectAll(".rel").data(this._data["rels"], function(d) {
+      zoom = d3.select("#zoom");
+      rels = zoom.selectAll(".rel").data(this._data["rels"], function(d) {
         return d.id;
       });
       groups = rels.enter().append("g").attr("class", "rel").attr("id", function(d) {
@@ -848,9 +878,10 @@
     };
 
     Netmap.prototype.build_entities = function() {
-      var entities, entity_drag, groups, has_image, links, t;
+      var entities, entity_drag, groups, has_image, links, t, zoom;
 
       t = this;
+      zoom = d3.selectAll("#zoom");
       entity_drag = d3.behavior.drag().on("dragstart", function(d, i) {
         if (t.force_enabled) {
           t.alpha = t.force.alpha();
@@ -858,12 +889,26 @@
         if (t.force_enabled) {
           t.force.stop();
         }
-        return t.drag = false;
+        t.drag = false;
+        d3.event.sourceEvent.preventDefault();
+        return d3.event.sourceEvent.stopPropagation();
       }).on("drag", function(d, i) {
         d.px += d3.event.dx;
         d.py += d3.event.dy;
         d.x += d3.event.dx;
         d.y += d3.event.dy;
+        if (d.x < 0) {
+          d.x = 0;
+        }
+        if (d.x > t.width) {
+          d.x = t.width;
+        }
+        if (d.y < 0) {
+          d.y = 0;
+        }
+        if (d.y > t.height) {
+          d.y = t.height;
+        }
         t.update_positions();
         return t.drag = true;
       }).on("dragend", function(d, i) {
@@ -872,7 +917,7 @@
           return t.force.alpha(t.alpha);
         }
       });
-      entities = this.svg.selectAll(".entity").data(this._data["entities"], function(d) {
+      entities = zoom.selectAll(".entity").data(this._data["entities"], function(d) {
         return d.id;
       });
       groups = entities.enter().append("g").attr("class", "entity").attr("id", function(d) {
@@ -959,12 +1004,13 @@
     };
 
     Netmap.prototype.entities_on_top = function() {
-      var svg;
+      var zoom;
 
-      svg = $("#svg");
-      return $("g.rel").each(function(i, g) {
-        return $(g).prependTo(svg);
+      zoom = $("#zoom");
+      $("g.rel").each(function(i, g) {
+        return $(g).prependTo(zoom);
       });
+      return $("#bg").prependTo(zoom);
     };
 
     Netmap.prototype.split_name = function(name, min_length) {

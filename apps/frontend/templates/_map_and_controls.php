@@ -28,6 +28,7 @@
 <input id="netmap_grid" type="button" value="grid" /><br />
 <input id="netmap_shuffle" type="button" value="shuffle" /><br />
 <input id="netmap_short_force" type="button" value="force" /><br />
+<input id="netmap_rezoom" type="button" value="rezoom" /><br />
 
 <br />
 
@@ -73,6 +74,8 @@ Current:
 
 <div id="netmap_control_key">
 CLICK: select<br />
+<br />
+SCROLL: zoom<br />
 <br />
 D: delete<br />
 A: add<br />
@@ -125,6 +128,10 @@ $("#netmap_save").on("click", function() {
 
 $("#netmap_reload").on("click", function() {
   netmap.reload_map();
+});
+
+$("#netmap_rezoom").on("click", function() {
+  netmap.reset_zoom();
 });
 
 $("#netmap_prune").on("click", function() {
