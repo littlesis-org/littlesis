@@ -239,7 +239,6 @@
       form = $("#netmap_add_related_entities");
       $(this.parent_selector).append(form);
       $("#netmap_add_related_entities_entity_id").val(entity_id);
-      console.log(entity.x, $(this.parent_selector).offset().left);
       form.css("left", entity.x + 30 + "px");
       form.css("top", entity.y + 60 + "px");
       return form.css("display", form.css("display") === "none" ? "block" : "none");
