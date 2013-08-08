@@ -2251,6 +2251,7 @@ input#simple_search_terms
 #netmap {
   width: 900px;
   float: left;
+  position: relative;
 }
 
 #netmap_controls {
