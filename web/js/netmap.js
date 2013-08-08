@@ -269,7 +269,7 @@
         if (e.py == null) {
           e.py = e.y;
         }
-        entity_index[parseInt(e.id)] = i;
+        entity_index[Number(e.id)] = i;
       }
       _ref1 = this._data.rels;
       _results = [];
@@ -286,8 +286,8 @@
           r.category_ids = r.category_ids.map(Number);
         }
         r.is_current = Number(r.is_current);
-        r.source = this._data["entities"][entity_index[parseInt(r.entity1_id)]];
-        _results.push(r.target = this._data["entities"][entity_index[parseInt(r.entity2_id)]]);
+        r.source = this._data.entities[entity_index[Number(r.entity1_id)]];
+        _results.push(r.target = this._data.entities[entity_index[Number(r.entity2_id)]]);
       }
       return _results;
     };

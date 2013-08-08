@@ -1852,10 +1852,13 @@ class EntityTable extends Doctrine_Table
            "GROUP_CONCAT(DISTINCT(r.category_id) SEPARATOR ',') AS category_ids, " . 
            "COUNT(r.id) AS  num " . 
            "FROM relationship r LEFT JOIN relationship_category rc ON (rc.id = r.category_id) " . 
+           "LEFT JOIN entity e1 ON (e1.id = r.entity1_id) " .
+           "LEFT JOIN entity e2 ON (e2.id = r.entity2_id) " .
            "WHERE r.entity1_id IN (" . join(",", $entity_ids) . ") " . 
            "AND r.entity2_id IN (" . join(",", $entity_ids) . ") " . 
            "AND r.is_deleted = 0 " .
            "AND r.entity1_id <> r.entity2_id " .
+           "AND e1.is_deleted = 0 AND e2.is_deleted = 0 " .
            (count($exclude_ids) ? "AND r.id NOT IN (" . join(",", $exclude_ids) . ") " : "") .
            (count($include_cats) ? "AND r.category_id IN (" . join(",", $include_cats) . ") " : "") .
            (count($exclude_cats) ? "AND r.category_id NOT IN (" . join(",", $exclude_cats) . ") " : "") .
@@ -1876,10 +1879,13 @@ class EntityTable extends Doctrine_Table
            "FROM link l " .
            "LEFT JOIN relationship r ON (r.id = l.relationship_id) " .
            "LEFT JOIN relationship_category rc ON (rc.id = r.category_id) " . 
+           "LEFT JOIN entity e1 ON (e1.id = r.entity1_id) " .
+           "LEFT JOIN entity e2 ON (e2.id = r.entity2_id) " .
            "WHERE l.entity1_id IN (" . join(",", $entity1_ids) . ") " . 
            "AND l.entity2_id IN (" . join(",", $entity2_ids) . ") " . 
            "AND l.entity1_id <> l.entity2_id " .
            "AND r.is_deleted = 0 " .
+           "AND e1.is_deleted = 0 AND e2.is_deleted = 0 " .
            (count($include_cats) ? "AND r.category_id IN (" . join(",", $include_cats) . ") " : "") .
            (count($exclude_cats) ? "AND r.category_id NOT IN (" . join(",", $exclude_cats) . ") " : "") .
            "GROUP BY r.entity1_id, r.entity2_id";
@@ -1904,11 +1910,14 @@ class EntityTable extends Doctrine_Table
            "GROUP_CONCAT(DISTINCT(r.category_id) SEPARATOR ',') AS category_ids, " . 
            "COUNT(r.id) AS  num " . 
            "FROM relationship r LEFT JOIN relationship_category rc ON (rc.id = r.category_id) " . 
+           "LEFT JOIN entity e1 ON (e1.id = r.entity1_id) " .
+           "LEFT JOIN entity e2 ON (e2.id = r.entity2_id) " .
            "WHERE r.entity1_id IN (" . join(",", $entity_ids) . ") " . 
            "AND r.entity2_id IN (" . join(",", $entity_ids) . ") " . 
            "AND (r.entity1_id = ? OR r.entity2_id = ?) " .
            "AND r.is_deleted = 0 " .
            "AND r.entity1_id <> r.entity2_id " .
+           "AND e1.is_deleted = 0 AND e2.is_deleted = 0 " .
            (count($include_cats) ? "AND r.category_id IN (" . join(",", $include_cats) . ") " : "") .
            (count($exclude_cats) ? "AND r.category_id NOT IN (" . join(",", $exclude_cats) . ") " : "") .
            "GROUP BY r.entity1_id, r.entity2_id";
