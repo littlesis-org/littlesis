@@ -1061,10 +1061,10 @@
         return d.image;
       }).attr("x", -25).attr("y", -25).attr("width", 50).attr("height", 50);
       buttons = groups.append("a").attr("class", "add_button");
-      buttons.append("text").attr("dx", 30).attr("dy", -16).text("+").on("click", function(d) {
+      buttons.append("text").attr("dx", 30).attr("dy", -20).text("+").on("click", function(d) {
         return t.toggle_add_related_entities_form(d.id);
       });
-      groups.insert("rect", ":first-child").attr("class", "add_button_rect").attr("x", 29).attr("y", -29).attr("fill", this.entity_background_color).attr("opacity", this.entity_background_opacity).attr("width", 14).attr("height", 14);
+      groups.insert("rect", ":first-child").attr("class", "add_button_rect").attr("x", 29).attr("y", -29).attr("fill", this.entity_background_color).attr("opacity", this.entity_background_opacity).attr("width", 10).attr("height", 10);
       links = groups.append("a").attr("class", "entity_link").attr("xlink:href", function(d) {
         return d.url;
       }).attr("title", function(d) {

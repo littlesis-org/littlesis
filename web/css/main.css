@@ -2306,7 +2306,6 @@ svg .entity.selected .image_rect {
 
 svg .entity .add_button text {
   fill: #000;
-  font: 20px sans-serif;
 }
 
 svg .entity .add_button, svg .entity .add_button_rect {
