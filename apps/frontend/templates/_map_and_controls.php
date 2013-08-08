@@ -70,6 +70,27 @@ Current:
 <div id="netmap_add_entity_results"></div>
 </div>
 
+<div id="netmap_add_related_entities">
+<div id="netmap_add_related_entities_hide"><a id="netmap_add_related_entities_hide_link" onclick="$('#netmap_add_related_entities').css('display', 'none'); return false;">hide</a></div>
+<input id="netmap_add_related_entities_entity_id" type="hidden" />
+<?php include_partial('global/section', array('title' => 'Add Related')) ?>
+Num: <input id="netmap_add_related_entities_num" type="text" value="10" size="2" /><br />
+Cats:<br />
+<select multiple id="netmap_add_related_entities_cat_ids" size="10">
+  <option value="1">Pos</option>
+  <option value="2">Edu</option>
+  <option value="3">Mem</option>
+  <option value="4">Fam</option>
+  <option value="5">Don</option>
+  <option value="6">Trn</option>
+  <option value="7">Lob</option>
+  <option value="8">Soc</option>
+  <option value="9">Pro</option>
+  <option value="10">Own</option>
+</select>
+<input id="netmap_add_related_entities_button" type="button" value="add" />
+</div>
+
 <br />
 
 <div id="netmap_control_key">
@@ -184,6 +205,14 @@ $("#netmap_add_entity_form").on("submit", function() {
     });
   });  
   return false;
+});
+
+$("#netmap_add_related_entities_button").on("click", function() {
+  var entity_id = $("#netmap_add_related_entities_entity_id").val();
+  var cat_ids = $("#netmap_add_related_entities_cat_ids").val();    
+  var num = $("#netmap_add_related_entities_num").val();    
+  netmap.add_related_entities(entity_id, num, cat_ids);
+  $("#netmap_add_related_entities").css("display", "none");
 });
 </script>
 </div>

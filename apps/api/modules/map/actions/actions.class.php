@@ -100,12 +100,27 @@ class mapActions extends LsApiActions
     $this->setResponseFormat();    
 
     $entity_id = $request->getParameter("entity_id");
-    $entity_ids = explode(",", $request->getParameter("entity_ids"));
+    $entity_ids = $request->getParameter("entity_ids");
 
     $data = EntityTable::getAddEntityAndRelsForMap($entity_id, $entity_ids);    
 
     return $this->renderText(json_encode($data));
   }
+  
+  public function executeAddRelatedEntitiesData($request)
+  {
+    $this->setResponseFormat();    
+
+    $entity_id = $request->getParameter("entity_id");
+    $num = $request->getParameter("num", 10);
+    $entity_ids = $request->getParameter("entity_ids");
+    $rel_ids = $request->getParameter("rel_ids");
+    $include_cat_ids = $request->getParameter("include_cat_ids");
+
+    $data = EntityTable::getAddRelatedEntitiesAndRelsForMap($entity_id, $num, $entity_ids, $rel_ids, $include_cat_ids);    
+
+    return $this->renderText(json_encode($data));
+  }  
   
   public function executeSearchEntities($request)
   {

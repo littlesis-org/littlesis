@@ -1753,7 +1753,7 @@ class EntityTable extends Doctrine_Table
   public static function getRelatedEntitiesAndRelsForMap($entity_id, $num=10, $include_cats=array(), $exclude_cats=array())
   {
     // get related entity ids    
-    $entities = EntityTable::getRelatedEntitiesForMap($entity_id, $num, $exclude_cats);
+    $entities = EntityTable::getRelatedEntitiesForMap($entity_id, $num, $include_cats, $exclude_cats);
     $entity_ids = array_map(function($e) { return $e['id']; }, $entities);
 
     // get all rels
@@ -1770,8 +1770,51 @@ class EntityTable extends Doctrine_Table
     return array("entities" => array($entity), "rels" => $rels); 
   }
 
+  public static function getAddRelatedEntitiesAndRelsForMap($entity_id, $num, $entity_ids, $rel_ids, $include_cats=array(), $exclude_cats=array())
+  {
+    if (!$entity_ids) $entity_ids = array();
+    if (!$rel_ids) $rel_ids = array();
+    if (!$include_cats) $include_cats = array();
+    if (!$exclude_cats) $exclude_cats = array();
+
+    $related_entities = EntityTable::getRelatedEntitiesForMap($entity_id, $num, $include_cats, $exclude_cats, $entity_ids);
+    $new_entities = array();
+    
+    foreach ($related_entities as $entity)
+    {
+      if (!in_array($entity["id"], $entity_ids))
+      {
+        $new_entities[] = $entity;
+      }
+    }
+
+    if (count($new_entities) == 0)
+    {
+      return array("entities" => array(), "rels" => array());
+    }
+    
+    $new_entity_ids = array_map(function($e) { return $e['id']; }, $new_entities);
+    $entity_ids = array_map(function($id) { return (int) $id; }, array_merge($entity_ids, $new_entity_ids));
+    $entity_ids = array_unique($entity_ids);
+
+    // get all new rels
+    $rels = self::getRelsForMapBetween($new_entity_ids, $entity_ids, $include_cats, $exclude_cats);    
+    $new_rels = array();
+
+    foreach ($rels as $rel)
+    {
+      if (!in_array($rel["id"], $rel_ids))
+      {
+        $new_rels[] = $rel;
+      }
+    }
+
+    return array("entities" => $new_entities, "rels" => $new_rels); 
+  }
+
   public static function mapRelsFromRows($rows)
   {
+    sfLoader::loadHelpers(array("Asset", "Url"));
     $rels = array();
 
     foreach ($rows as $rel)
@@ -1801,7 +1844,7 @@ class EntityTable extends Doctrine_Table
     return $rels;  
   }
 
-  public static function getRelsForMap($entity_ids, $include_cats=array(), $exclude_cats=array())
+  public static function getRelsForMap($entity_ids, $include_cats=array(), $exclude_cats=array(), $exclude_ids=array())
   {
     $db = Doctrine_Manager::connection();
     $sql = "SELECT r.id, r.entity1_id, r.entity2_id, r.category_id, r.is_current, r.is_deleted, " . 
@@ -1813,6 +1856,7 @@ class EntityTable extends Doctrine_Table
            "AND r.entity2_id IN (" . join(",", $entity_ids) . ") " . 
            "AND r.is_deleted = 0 " .
            "AND r.entity1_id <> r.entity2_id " .
+           (count($exclude_ids) ? "AND r.id NOT IN (" . join(",", $exclude_ids) . ") " : "") .
            (count($include_cats) ? "AND r.category_id IN (" . join(",", $include_cats) . ") " : "") .
            (count($exclude_cats) ? "AND r.category_id NOT IN (" . join(",", $exclude_cats) . ") " : "") .
            "GROUP BY r.entity1_id, r.entity2_id";
@@ -1822,8 +1866,33 @@ class EntityTable extends Doctrine_Table
     return self::mapRelsFromRows($rows);
   }
 
-  public static function getRelsForNewMapEntity($entity_id, $entity_ids, $include_cats=array(), $exclude_cats=array())
+  public static function getRelsForMapBetween($entity1_ids, $entity2_ids, $include_cats=array(), $exclude_cats=array())
   {
+    $db = Doctrine_Manager::connection();
+    $sql = "SELECT r.id, r.entity1_id, r.entity2_id, r.category_id, r.is_current, r.is_deleted, " . 
+           "GROUP_CONCAT(DISTINCT(rc.name) SEPARATOR ', ') AS label, " . 
+           "GROUP_CONCAT(DISTINCT(r.category_id) SEPARATOR ',') AS category_ids, " . 
+           "COUNT(r.id) AS  num " . 
+           "FROM link l " .
+           "LEFT JOIN relationship r ON (r.id = l.relationship_id) " .
+           "LEFT JOIN relationship_category rc ON (rc.id = r.category_id) " . 
+           "WHERE l.entity1_id IN (" . join(",", $entity1_ids) . ") " . 
+           "AND l.entity2_id IN (" . join(",", $entity2_ids) . ") " . 
+           "AND l.entity1_id <> l.entity2_id " .
+           "AND r.is_deleted = 0 " .
+           (count($include_cats) ? "AND r.category_id IN (" . join(",", $include_cats) . ") " : "") .
+           (count($exclude_cats) ? "AND r.category_id NOT IN (" . join(",", $exclude_cats) . ") " : "") .
+           "GROUP BY r.entity1_id, r.entity2_id";
+    $stmt = $db->execute($sql);
+    $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    return self::mapRelsFromRows($rows);    
+  }
+
+  public static function getRelsForNewMapEntity($entity_id, $entity_ids=array(), $include_cats=array(), $exclude_cats=array())
+  {
+    if (!$entity_ids) $entity_ids = array();
+
     if (!in_array($entity_id, $entity_ids))
     {
       $entity_ids[] = $entity_id;
@@ -1854,24 +1923,28 @@ class EntityTable extends Doctrine_Table
     return array_map(function($entity_id) { return EntityTable::getEntityForMap($entity_id); }, $entity_ids);    
   }
   
-  public static function getRelatedEntitiesForMap($entity_id, $num=10, $exclude_cats=array())
+  public static function getRelatedEntitiesForMap($entity_id, $num=10, $include_cats=array(), $exclude_cats=array(), $exclude_ids=array())
   {
     $entity_ids = array_merge(array($entity_id), self::getRelatedEntityIdsForMap(
       $entity_id, 
       $num, 
-      $exclude_cats
+      $include_cats,
+      $exclude_cats,
+      $exclude_ids
     ));
 
     return self::getEntitiesForMap($entity_ids);
   }
 
-  public static function getRelatedEntityIdsForMap($entity_id, $num=10, $exclude_cats=array())
+  public static function getRelatedEntityIdsForMap($entity_id, $num=10, $include_cats=array(), $exclude_cats=array(), $exclude_ids=array())
   {
     $db = Doctrine_Manager::connection();
     $sql = "SELECT l.entity2_id, COUNT(l.id) AS num " . 
            "FROM link l " . 
            "WHERE l.entity1_id = ? AND l.entity2_id <> ? " . 
-           (count($exclude_cats) ? "AND l.category_id NOT IN (" . join($exclude_cats, ", ") . ") " : "") . 
+           (count($exclude_ids) ? "AND l.entity2_id NOT IN (" . join($exclude_ids, ",") . ") " : "") .
+           (count($include_cats) ? "AND l.category_id IN (" . join($include_cats, ",") . ") " : "") .
+           (count($exclude_cats) ? "AND l.category_id NOT IN (" . join($exclude_cats, ",") . ") " : "") . 
            "GROUP BY l.entity2_id " . 
            "ORDER BY num DESC LIMIT " . $num;
     $params = array($entity_id, $entity_id);

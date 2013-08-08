@@ -6,6 +6,7 @@
     function LittlesisApi(key) {
       this.key = key;
       this.base_url = "http://api.littlesis.org/";
+      this.base_url = "http://localhost/littlesis/api_dev.php/";
     }
 
     LittlesisApi.prototype.entities_and_rels_url = function(entity_ids) {
@@ -28,7 +29,29 @@
         url: this.base_url + "map/addEntityData.json",
         data: {
           "entity_id": entity_id,
-          "entity_ids": entity_ids.join(",")
+          "entity_ids": entity_ids
+        },
+        success: callback,
+        error: function() {
+          return alert("There was an error retrieving data from the API");
+        },
+        type: "GET",
+        dataType: "json"
+      });
+    };
+
+    LittlesisApi.prototype.get_add_related_entities_data = function(entity_id, num, entity_ids, rel_ids, include_cats, callback) {
+      if (include_cats == null) {
+        include_cats = [];
+      }
+      return $.ajax({
+        url: this.base_url + "map/addRelatedEntitiesData.json",
+        data: {
+          "entity_id": entity_id,
+          "num": num,
+          "entity_ids": entity_ids,
+          "rel_ids": rel_ids,
+          "include_cat_ids": include_cats
         },
         success: callback,
         error: function() {
@@ -209,6 +232,19 @@
       return form.css("display", form.css("display") === "none" ? "block" : "none");
     };
 
+    Netmap.prototype.toggle_add_related_entities_form = function(entity_id) {
+      var entity, form;
+
+      entity = this.entity_by_id(entity_id);
+      form = $("#netmap_add_related_entities");
+      $(this.parent_selector).append(form);
+      $("#netmap_add_related_entities_entity_id").val(entity_id);
+      console.log(entity.x, $(this.parent_selector).offset().left);
+      form.css("left", entity.x + 30 + "px");
+      form.css("top", entity.y + 60 + "px");
+      return form.css("display", form.css("display") === "none" ? "block" : "none");
+    };
+
     Netmap.prototype.set_data = function(data, center_entity_id) {
       var e, entity_index, i, r, _i, _j, _len, _len1, _ref, _ref1, _results;
 
@@ -262,8 +298,8 @@
     };
 
     Netmap.prototype.entity_ids = function() {
-      return this._data["entities"].map(function(e) {
-        return parseInt(e.id);
+      return this._data.entities.map(function(e) {
+        return Number(e.id);
       });
     };
 
@@ -272,7 +308,9 @@
     };
 
     Netmap.prototype.rel_ids = function() {
-      return this._rel_ids;
+      return this._data.rels.map(function(r) {
+        return Number(r.id);
+      });
     };
 
     Netmap.prototype.rels = function() {
@@ -413,6 +451,71 @@
       });
     };
 
+    Netmap.prototype.add_related_entities = function(entity_id, num, include_cats) {
+      var entity, t;
+
+      if (num == null) {
+        num = 10;
+      }
+      if (include_cats == null) {
+        include_cats = [];
+      }
+      entity = this.entity_by_id(entity_id);
+      if (entity == null) {
+        return false;
+      }
+      t = this;
+      this.api.get_add_related_entities_data(entity_id, num, this.entity_ids(), this.rel_ids(), include_cats, function(data) {
+        data.entities = t.circle_entities_around_point(data.entities, [entity.x, entity.y]);
+        t.set_data({
+          "entities": t.data().entities.concat(data.entities),
+          "rels": t.data().rels.concat(data.rels)
+        });
+        return t.build();
+      });
+      return true;
+    };
+
+    Netmap.prototype.move_entities_inbounds = function() {
+      var e, _i, _len, _ref, _results;
+
+      _ref = this._data.entities;
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        e = _ref[_i];
+        if (e.x < 70) {
+          e.x = 70;
+        }
+        if (e.x > this.width) {
+          e.x = this.width;
+        }
+        if (e.y < 50) {
+          e.y = 50;
+        }
+        if (e.y > this.height) {
+          _results.push(e.y = this.height);
+        } else {
+          _results.push(void 0);
+        }
+      }
+      return _results;
+    };
+
+    Netmap.prototype.circle_entities_around_point = function(entities, position, radius) {
+      var angle, e, i, _i, _len;
+
+      if (radius == null) {
+        radius = 150;
+      }
+      for (i = _i = 0, _len = entities.length; _i < _len; i = ++_i) {
+        e = entities[i];
+        angle = i * ((2 * Math.PI) / entities.length);
+        e.x = position[0] + radius * Math.cos(angle);
+        e.y = position[1] + radius * Math.sin(angle);
+      }
+      return entities;
+    };
+
     Netmap.prototype.prune = function() {
       var e, _i, _len, _ref;
 
@@ -544,6 +647,7 @@
           return e;
         }
       }
+      return null;
     };
 
     Netmap.prototype.remove_entity = function(id) {
@@ -910,7 +1014,7 @@
     };
 
     Netmap.prototype.build_entities = function() {
-      var entities, entity_drag, groups, has_image, links, t, zoom;
+      var buttons, entities, entity_drag, groups, has_image, links, t, zoom;
 
       t = this;
       zoom = d3.selectAll("#zoom");
@@ -929,18 +1033,6 @@
         d.py += d3.event.dy;
         d.x += d3.event.dx;
         d.y += d3.event.dy;
-        if (d.x < 0) {
-          d.x = 0;
-        }
-        if (d.x > t.width) {
-          d.x = t.width;
-        }
-        if (d.y < 0) {
-          d.y = 0;
-        }
-        if (d.y > t.height) {
-          d.y = t.height;
-        }
         t.update_positions();
         return t.drag = true;
       }).on("dragend", function(d, i) {
@@ -968,7 +1060,12 @@
       }).attr("xlink:href", function(d) {
         return d.image;
       }).attr("x", -25).attr("y", -25).attr("width", 50).attr("height", 50);
-      links = groups.append("a").attr("xlink:href", function(d) {
+      buttons = groups.append("a").attr("class", "add_button");
+      buttons.append("text").attr("dx", 30).attr("dy", -16).text("+").on("click", function(d) {
+        return t.toggle_add_related_entities_form(d.id);
+      });
+      groups.insert("rect", ":first-child").attr("class", "add_button_rect").attr("x", 29).attr("y", -29).attr("fill", this.entity_background_color).attr("opacity", this.entity_background_opacity).attr("width", 14).attr("height", 14);
+      links = groups.append("a").attr("class", "entity_link").attr("xlink:href", function(d) {
         return d.url;
       }).attr("title", function(d) {
         return d.description;
@@ -982,21 +1079,21 @@
       groups.filter(function(d) {
         return t.split_name(d.name)[0] !== d.name;
       }).insert("rect", ":first-child").attr("fill", this.entity_background_color).attr("opacity", this.entity_background_opacity).attr("rx", this.entity_background_corner_radius).attr("ry", this.entity_background_corner_radius).attr("x", function(d) {
-        return -$(this.parentNode).find("text:nth-child(2)").width() / 2 - 3;
+        return -$(this.parentNode).find(".entity_link text:nth-child(2)").width() / 2 - 3;
       }).attr("y", function(d) {
         var extra_offset, image_offset, text_offset;
 
         image_offset = $(this.parentNode).find("image").attr("height") / 2;
-        text_offset = $(this.parentNode).find("text").height();
+        text_offset = $(this.parentNode).find(".entity_link text").height();
         extra_offset = 2;
         return image_offset + text_offset + extra_offset;
       }).attr("width", function(d) {
-        return $(this.parentNode).find("text:nth-child(2)").width() + 6;
+        return $(this.parentNode).find(".entity_link text:nth-child(2)").width() + 6;
       }).attr("height", function(d) {
-        return $(this.parentNode).find("text:nth-child(2)").height() + 4;
+        return $(this.parentNode).find(".entity_link text:nth-child(2)").height() + 4;
       });
       groups.insert("rect", ":first-child").attr("fill", this.entity_background_color).attr("opacity", this.entity_background_opacity).attr("rx", this.entity_background_corner_radius).attr("ry", this.entity_background_corner_radius).attr("x", function(d) {
-        return -$(this.parentNode).find("text").width() / 2 - 3;
+        return -$(this.parentNode).find(".entity_link text").width() / 2 - 3;
       }).attr("y", function(d) {
         var extra_offset, image_offset;
 
@@ -1004,9 +1101,9 @@
         extra_offset = 1;
         return image_offset + extra_offset;
       }).attr("width", function(d) {
-        return $(this.parentNode).find("text").width() + 6;
+        return $(this.parentNode).find(".entity_link text").width() + 6;
       }).attr("height", function(d) {
-        return $(this.parentNode).find("text").height() + 4;
+        return $(this.parentNode).find(".entity_link text").height() + 4;
       });
       entities.exit().remove();
       this.svg.selectAll(".entity").on("click", function(d, i) {

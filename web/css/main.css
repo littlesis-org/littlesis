@@ -2263,7 +2263,7 @@ input#simple_search_terms
   width: 850px;
 }
 
-#netmap_add_entity {
+#netmap_add_entity, #netmap_add_related_entities {
   display: none;
   position: absolute;
   padding: 1em;
@@ -2273,7 +2273,7 @@ input#simple_search_terms
   box-shadow: 2px 2px 5px #888;
 }
 
-#netmap_add_entity_hide {
+#netmap_add_entity_hide, #netmap_add_related_entities_hide {
   position: absolute;
   top: 0;
   right: 0;
@@ -2302,6 +2302,23 @@ svg .rel.selected .line {
 
 svg .entity.selected .image_rect {
   fill: #ffe;
+}
+
+svg .entity .add_button text {
+  fill: #000;
+  font: 20px sans-serif;
+}
+
+svg .entity .add_button, svg .entity .add_button_rect {
+  display: none;
+}
+
+svg .entity:hover .add_button, svg .entity:hover .add_button_rect {
+  display: block;
+}
+
+svg .entity .add_button:hover {
+  text-decoration: none;
 }
 
 svg text {
