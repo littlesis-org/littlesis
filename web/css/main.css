@@ -2342,3 +2342,171 @@ svg .image {
   fill: white;
   background-color: white;
 }
+
+/* HELP */
+
+.help_search
+{
+  height: 2em;
+  color: gray;
+  width: 62%;
+  padding-left: 0.5em;
+}
+
+.help_home_section
+{
+  background-color: #f1f1f1;
+  -moz-border-radius: 15px;
+  border-radius: 15px;
+  padding: 1em;
+  margin: 0.5em;
+  border: 1px solid #ddd;
+  height: 15em;
+}
+
+.help_home_header
+{
+  text-align: center;
+  padding-bottom: 0.5em;
+  font-size: 2em;
+}
+
+#help_menu ul
+{
+  font-size: 1em;
+  list-style-type: none;
+  line-height: 1.5em;
+  margin: 0.4em;
+  padding: 0.4em;
+}
+
+#help_menu
+{
+  padding: 1em;
+  background-color: #f1f1f1;
+  -moz-border-radius: 8px;
+  border-radius: 8px;
+  border: 4px solid #ddd;
+  margin-right: 40px;
+  width: 160px;
+}
+
+.help_home_list
+{
+  color: #555;
+  font-size: 1em;
+  list-style-type: none;
+  padding: 0.5em 0 0 0 ;
+  margin: 0;
+}
+
+.help_home_list li
+{
+  padding-bottom: 1em;
+}
+
+#help_search_box
+{
+
+  padding: 2em;
+  width: 100%;
+  background-color: #f1f1f1;
+  -moz-border-radius: 8px;
+  border-radius: 8px;
+  border: 4px solid #ddd;
+
+}
+
+.help_active
+{
+  font-weight: bold;
+  text-decoration: underline;
+}
+
+.help_main_section
+{
+  padding: 1em;
+  margin: 0 1.4em 1.4em 0;
+  background-color: #f1f1f1;
+  -moz-border-radius: 8px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  min-height: 11em;
+}
+
+.help_main_header
+{
+  font-size: 1.4em;
+}
+
+.help_main_links li
+{
+  
+}
+
+.help_sub_header
+{
+  font-size: 1.1em;
+  margin: 4em 10em 2em 10em;
+  padding: 1em;
+  color: white;
+  text-align: center;
+  background-color: #1C4767;
+
+
+}
+
+.help_sub_header div
+{
+  font-size: 1.5em;
+  padding-bottom: 0.3em;
+}
+
+.help-anchor {
+   position: relative;
+   top: -110px;
+   visibility: hidden;
+}
+
+.help-toc-page
+{
+  font-size: 1.6em;
+  margin-bottom: 1em;
+}
+
+.help-toc-section
+{
+  font-size: 1.3em;
+  margin-bottom: 0.4em;
+}
+
+.help-toc-article
+{
+  padding: .2em 0 .2em 1em;
+}
+
+.help-article
+{
+  padding: 0.2em 0;
+  color: #444;
+  font-size: 1.1;
+}
+
+.help-article-header
+{
+  font-size: 1.3em;
+  padding: 0.1em 0;
+}
+
+.help-top
+{
+  padding-top: 0.2em;
+}
+
+.help-centered-image
+{
+  display: block;
+  margin: auto;
+  padding: 2em;
+  max-width: 500px;
+}
