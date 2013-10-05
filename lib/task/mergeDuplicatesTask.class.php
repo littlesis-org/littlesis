@@ -68,12 +68,17 @@ EOF;
      	$e1 = Doctrine::getTable('Entity')->find($row[0]);
      	$e2 = Doctrine::getTable('Entity')->find($row[1]);
      	if (!PersonTable::areSame($e1,$e2))
-     	{
-     	  print("skipping $e1->name and $e2->name");
+      {
+        $response = $this->readline("skip $e1->name and $e2->name?");
+        if ($response == 'y')
+        {
+          continue;
+        }
      	}
      	$response='y';
      	if ($ask_user)
      	{ 
+
      	  $prompt = "\n\n*********\n\nDo you want to merge these entities?\n";
      	  $prompt .= $this->getEntityString($e1) . "\n**********\n" . $this->getEntityString($e2);
      	  $response = $this->readline($prompt);
