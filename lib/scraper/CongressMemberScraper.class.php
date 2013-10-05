@@ -14,6 +14,7 @@ class CongressMemberScraper extends Scraper
   protected $_senateEntityId;
   protected $_senateEntityName = 'US Senate';
   protected $_sessionListId;
+  protected $_duplicateListId = 448;
   protected $_rows;
   protected $_existingSessionMemberIds = array();
   protected $_completeSessionOnFinish = true;
@@ -58,7 +59,7 @@ class CongressMemberScraper extends Scraper
   public function execute()
   {
     require sfConfig::get('sf_lib_dir') . '/vendor/votesmart/VoteSmart.php';
-    $this->_sunlightUrlBase = 'http://services.sunlightlabs.com/api/legislators.get.xml?apikey=' . sfConfig::get('app_sunlight_api_key') . '&all_legislators=true&bioguide_id=';
+    $this->_sunlightUrlBase = 'http://congress.api.sunlightfoundation.com/legislators?apikey=' . sfConfig::get('app_sunlight_api_key') . '&all_legislators=true&bioguide_id=';
     
     if (!$this->safeToRun('congress'))
     {
@@ -199,9 +200,6 @@ class CongressMemberScraper extends Scraper
           //get sunlight data for each member
           $this->getSunlightData($member);
           
-          //get pvs data for each member
-          $this->getPvsData($member);
-          
           $modified = $member->getAllModifiedFields();
           $member->save();
           
@@ -214,60 +212,7 @@ class CongressMemberScraper extends Scraper
             $ref->object_id = $member->id;
             $ref->save();
           }
-          
-          /*
-          foreach ($this->_schoolRelationships as $rel)
-          {
-            $modified = $rel->getAllModifiedFields();
-            $rel->save();
-            
-            $rel->addReference($this->_pvsUrlBase . $member->pvs_id, null, $modified, 'Project Vote Smart');
-          }      
 
-          foreach ($this->_offices as $address)
-          {
-            $modified = $address->getAllModifiedFields();
-            if ($member->addAddress($address))
-            {
-              $this->printDebug("Added office address: " . $address);
-              $address->save();
-              $address->addReference($this->_pvsUrlBase . $member->pvs_id, null, $modified, 'Project Vote Smart');
-            }        
-          }*/
-          
-          /*
-          //find matches
-          $match = LsDoctrineQuery::create()
-          ->from('Entity e')
-          ->leftJoin('e.PoliticalCandidate pc')
-          ->where('((pc.house_fec_id = ? and pc.house_fec_id is not null and pc.house_fec_id <> ?) or (pc.senate_fec_id = ? and pc.senate_fec_id is not null and pc.senate_fec_id <> ?) or (pc.pres_fec_id is not null and pc.pres_fec_id = ? and pc.pres_fec_id <> ?)) and e.id <> ?', array($member->house_fec_id,"",$member->senate_fec_id,"", $member->pres_fec_id,"",$member->id))
-          ->fetchOne();
-          
-          if ($match)
-          {
-            $this->printDebug("\n\n\t\t\tMERGING MERGING\n\n");
-            $this->printDebug("Member found in database with name " . $match->name . " and entity ID " . $match->id);
-            if ($match->id < $member->id)
-            {
-              $merged_member = EntityTable::mergeAll($match, $member);
-              $member->setMerge(true);
-  
-              //clear relations so merged relations aren't deleted
-              $member->clearRelated();
-              $member->delete();
-            }
-            else
-            {
-              $merged_member = EntityTable::mergeAll($member,$match);
-              $match->setMerge(true);
-  
-              //clear relations so merged relations aren't deleted
-              $match->clearRelated();
-              $match->delete();
-            }
-            $merged_member->save();
-            
-          }*/
           $this->resetMemberVariables();
           echo "\n";
           if (!$this->testMode)
@@ -463,10 +408,6 @@ class CongressMemberScraper extends Scraper
         {
           $this->printDebug("Continuing member from previous session...");
 
-
-          //update committee relationships -- not used right now, use 
-          //govtrack:parse-congress-committees instead
-          //$this->updatePvsCommittees($member);
 
 
           //if member continuing, look for relationship with opposite chamber to end,
@@ -674,55 +615,6 @@ class CongressMemberScraper extends Scraper
       }
 
 
-      //save school relationships (and the schools)   
-      foreach ($this->_schoolRelationships as $rel)
-      {
-        $modified = $rel->getAllModifiedFields();
-        $rel->save();
-        
-        $rel->addReference($this->_pvsUrlBase . $member->pvs_id, null, $modified, 'Project Vote Smart');
-      }      
-      
-      //save staffers
-      foreach ($this->_staffers as $staffer)
-      {
-        $modified = $staffer->getAllModifiedFields();
-        $staffer->save();
-        
-        $staffer->addReference($this->_pvsUrlBase . $member->pvs_id, null, $modified, 'Project Vote Smart');
-      }
-            
-      
-      //save office relationships
-      foreach ($this->_offices as $address)
-      {
-        $modified = $address->getAllModifiedFields();
-        if ($member->addAddress($address))
-        {
-          $this->printDebug("Added office address: " . $address);
-          $address->save();
-          $address->addReference($this->_pvsUrlBase . $member->pvs_id, null, $modified, 'Project Vote Smart');
-        }        
-      }
-
-      //save office staffer relationships
-      foreach ($this->_officeStafferRelationships as $rel)
-      {
-        $modified = $rel->getAllModifiedFields();
-        $rel->save();
-        
-        $rel->addReference($this->_pvsUrlBase . $member->pvs_id, null, $modified, 'Project Vote Smart');
-      }
-
-      //save committee relationships, if any
-      foreach ($this->_committeeRelationships as $rel)
-      {
-        $modified = $rel->getAllModifiedFields();
-        $rel->save();
-
-        $rel->addReference($this->_govtrackUrlBase . $member->govtrack_id, null, $modified, 'GovTrack.us');
-      }
-
       //create party membership relationships        
       if ($partyName)
       {        
@@ -786,14 +678,7 @@ class CongressMemberScraper extends Scraper
       $this->db->rollback();
       throw $e;
     }  
-    /*if(isset($redundant_member) && $redundant_member)
-    {
-      $redundant_member->setMerge(true);
-      //clear relations so merged relations aren't deleted
-      $redundant_member->clearRelated();
-      $redundant_member->delete();
-      echo "REDUNDANT MEMBER DELETED\n";
-    }*/
+
   }
 
 
@@ -810,11 +695,6 @@ class CongressMemberScraper extends Scraper
 
     $years = explode('-', $row->lifespan);
 
-    //get birth year
-    if ($startYear = trim($years[0]))
-    {
-      $startDate = $startYear . '-00-00';
-    }
 
     $member->start_date = $startDate;
 
@@ -835,8 +715,6 @@ class CongressMemberScraper extends Scraper
     //get info from sunlight
     $this->getSunlightData($member);
     
-    //get info from PVS API
-    $this->getPvsData($member);
     
     
     return $member;
@@ -1008,7 +886,7 @@ class CongressMemberScraper extends Scraper
       ->leftJoin('e.PoliticalCandidate pc')
       ->where('(pc.house_fec_id = ? and pc.house_fec_id is not null and pc.house_fec_id <> ?) or (pc.senate_fec_id = ? and pc.senate_fec_id is not null and pc.senate_fec_id <> ?) or (pc.pres_fec_id is not null and pc.pres_fec_id = ? and pc.pres_fec_id <> ?)', array($member->house_fec_id,"",$member->senate_fec_id,"", $member->pres_fec_id,""))
       ->fetchOne();
-    
+    /*
     if (!$match)
     {
       $matches = EntityTable::getByExtensionQuery('Person')
@@ -1019,11 +897,14 @@ class CongressMemberScraper extends Scraper
       {
         if (PersonTable::areSame($member, $m))
         {
-          $match = $m;
+          $le = new LsListEntity;
+          $le->entity_id = $member->id;
+          $le->list_id = $this->_duplicateListId;
+          $le->save();
           break;
         }    
       }
-    }
+    }*/
     if ($match)
     {
       //merge entities
@@ -1206,303 +1087,6 @@ class CongressMemberScraper extends Scraper
   }
 
 
-  //updates congressional committee assignments from Project Vote Smart data -- not currently used, use parse:govtrack-congress-committees task instead
-  public function updatePvsCommittees($member)
-  {
-    /*if (!$member->pvs_id)
-    {
-      return;
-    }
-
-
-    //get pvs bio data
-    $v = new VoteSmart;
-
-    if (!$result = $v->query('CandidateBio.getBio', array('candidateId' => $member->pvs_id)))
-    {
-      $this->printDebug("Couldn't get PVS committees for member ID " . $member->id);
-      return;
-    }
-    var_dump($result);*/
-    
-    $gp = Doctrine::getTable('GovtrackPerson')->findOneByBioguideId($member->bioguide_id);
-    
-    if (!$gp)
-    {
-      return null;
-    }
-
-    $this->printDebug("Updating committees from Project Vote Smart data...");
-
-
-    //get names of existing committees and subcommittees
-    $existingCommittees = array();
-    $existingSubcommittees = array();
-
-    if ($member->id)
-    {
-      //committees always have house or senate as parent
-      $q = LsDoctrineQuery::create()
-        ->from('Relationship r')
-        ->leftJoin('r.Entity2 e')
-        ->where('r.entity1_id = ?', $member->id)
-        ->andWhereIn('e.parent_id', array($this->_houseEntityId, $this->_senateEntityId));
-        
-      foreach ($q->fetchArray() as $row)
-      {
-        $existingCommittees[] = $row['Entity2']['name'];
-      }
-
-
-      /*//subcommittees always have house or senate as grandparent, and names end in 'Subcommittee'
-      $q = LsDoctrineQuery::create()
-        ->from('Relationship r')
-        ->leftJoin('r.Entity2 e')
-        ->leftJoin('e.Parent p')
-        ->where('r.entity1_id = ?', $member->id)
-        ->andWhere('e.name LIKE ?', '% Subcommittee')
-        ->andWhereIn('p.parent_id', array($this->_houseEntityId, $this->_senateEntityId));
-        
-      foreach ($q->fetchArray() as $row)
-      {
-        $existingCommittees[] = $row['Entity2']['name'];
-      }*/
-    }
-
-
-    //get current committees and subcommittees
-    $currentCommittees = array();
-    $currentCommitteeRoles = array();
-    $currentSubcommittees = array();
-    $currentSubcommitteeRoles = array();
-    $currentSubcommitteeParents = array();
-
-
-
-    $q = LsDoctrineQuery::create()
-      ->from('GovtrackPersonCommittee gpc')
-      ->leftJoin('gpc.Committee gc')
-      ->where('gpc.person_id = ? AND gpc.subcommittee_id IS NULL', $gp->govtrack_id);
-
-    foreach ($q->fetchArray() as $row)
-    {
-      //standardize name
-      $name = $row['Committee']['name'];
-      $name = strstr($name, 'Committee') ? $name : $name . ' Committee';
-      $name = html_entity_decode($name);
-
-      $currentCommittees[] = $name;
-      $currentCommitteeRoles[$name] = $row['role'];
-    }
-
-
-    //create relationships to new committees
-    $newCommittees = array_diff($currentCommittees, $existingCommittees);
-    
-    foreach ($newCommittees as $name)
-    {
-      //see if committee already exists
-      if (!$cmte = @$this->_committees[$name])
-      {
-        $q = LsDoctrineQuery::create()
-          ->from('Entity e')
-          ->where('e.name = ?', $name);
-          
-        //create committee if needed
-        if (!$cmte = $q->fetchOne())
-        {
-          $cmte = new Entity;
-          $cmte->addExtension('Org');
-          $cmte->addExtension('GovernmentBody');
-          $cmte->name = $name;
-          if (stripos($cmte->name, 'House') === 0)
-          {
-            $cmte->parent_id = $this->_houseEntityId;
-          }
-          else if (stripos($cmte->name, 'Senate') === 0)
-          {
-            $cmte->parent_id = $this->_senateEntityId;
-          }
-          $cmte->save();
-          
-          $this->printDebug("Created new committee: " . $name);
-          
-          $this->_committees[$name] = $cmte;
-        }
-      }
-      
-      //create relationship
-      $rel = new Relationship;
-      $rel->Entity1 = $member;
-      $rel->Entity2 = $cmte;
-      $rel->setCategory('Membership');
-
-      if ($role = $currentCommitteeRoles[$name])
-      {
-        $rel->setCategory('Position');
-        $rel->description1 = $role;
-      }
-                 
-      $this->_committeeRelationships[] = $rel;
-      
-      $this->printDebug('Added ' . ($role ? 'membership' : 'position') . ' in ' . $name);
-    }
-
-
-    //end relationships to old committees
-    $oldCommittees = array_diff($existingCommittees, $currentCommittees);
-    foreach ($oldCommittees as $name)
-    {
-      $cmte = Doctrine::getTable('Entity')->findOneByName($name);
-      
-      $q = LsDoctrineQuery::create()
-        ->from('Relationship r')
-        ->where('r.entity1_id = ?', $member->id)
-        ->andWhere('r.entity2_id = ?', $cmte->id)
-        ->andWhere('r.end_date IS NULL');
-        
-      foreach ($q->execute() as $rel)
-      {
-        $rel->is_current = false;
-        $rel->end_date = ($this->_sessionStartYear - 1) . '-00-00';
-        $rel->save();
-        
-        $this->printDebug("Ended relationship in " . $name);
-      }    
-    }
-
-
-    //get existing subcommittees
-    $existingSubcommittees = array();
-    $q = LsDoctrineQuery::create()
-      ->from('Relationship r')
-      ->leftJoin('r.Entity2 e')
-      ->leftJoin('e.Parent p')
-      ->where('r.entity1_id = ?', $member->id)
-      ->andWhere('e.name LIKE ?', '% Subcommittee')
-      ->andWhereIn('p.parent_id', array($this->_houseEntityId, $this->_senateEntityId));
-      
-    foreach ($q->fetchArray() as $row)
-    {
-      $existingCommittees[] = $row['Entity2']['name'];
-    }
-
-
-    //get current subcommittees
-    $currentSubcommittees = array();
-    $currentSubcommitteeRoles = array();
-    $currentSubcommitteeParents = array();
-    $q = LsDoctrineQuery::create()
-      ->from('GovtrackPersonCommittee gpc')
-      ->leftJoin('gpc.Committee gc')
-      ->leftJoin('gpc.Subcommittee gs')
-      ->where('gpc.person_id = ? AND gs.name IS NOT NULL', $gp->govtrack_id);
-
-    foreach ($q->fetchArray() as $row)
-    {
-      //standardize name
-      $name = $row['Subcommittee']['name'];
-      $name = strstr($name, 'Subcommittee') ? $name : $name . ' Subcommittee';
-      $name = html_entity_decode($name);
-
-      //standardize parent name
-      $parentName = $row['Committee']['name'];
-      $parentName = strstr($parentName, 'Committee') ? $parentName : $parentName . ' Committee';
-      $parentName = html_entity_decode($parentName);
-
-      $currentSubcommittees[] = $name;
-      $currentSubcommitteeRoles[$name] = $row['role'];
-      $currentSubcommitteeParents[$name] = $parentName;
-    }
-    
-
-    //create relationships to new subcommittees
-    $newSubcommittees = array_diff($currentSubcommittees, $existingSubcommittees);
-    
-    foreach ($newSubcommittees as $name)
-    {
-      //see if subcommittee already exists
-      if (!$cmte = @$this->_committees[$name])
-      {
-        $q = LsDoctrineQuery::create()
-          ->from('Entity e')
-          ->where('e.name = ?', $name);
-          
-        //create subcommittee if needed
-        if (!$cmte = $q->fetchOne())
-        {
-          $cmte = new Entity;
-          $cmte->addExtension('Org');
-          $cmte->addExtension('GovernmentBody');
-          $cmte->name = $name;
-
-          //get subcommittee's parent
-          $parentName = $currentSubcommitteeParents[$name];
-          if (!$parent = @$this->_committees[$parentName])
-          {
-            if (!$parent = Doctrine::getTable('Entity')->findOneByName($parentName))
-            {
-              $parent = new Entity;
-              $parent->addExtension('Org');
-              $parent->addExtension('GovernmentBody');
-              $parent->name = $parentName;
-              $parent->save();
-              
-              $this->printDebug("Created commmittee: " . $parentName);
-            }
-          }
-          $cmte->parent_id = $parent->id;
-          $cmte->save();
-          
-          $this->printDebug("Created committee: " . $name);
-          
-          $this->_committees[$name] = $cmte;
-        }
-      }
-      
-      //create relationship
-      $rel = new Relationship;
-      $rel->Entity1 = $member;
-      $rel->Entity2 = $cmte;
-      $rel->setCategory('Membership');
-
-      if ($role = $currentSubcommitteeRoles[$name])
-      {
-        $rel->setCategory('Position');;
-        $rel->description1 = $role;
-      }
-                 
-      $this->_committeeRelationships[] = $rel;
-      
-      $this->printDebug('Added ' . ($role ? 'membership' : 'position') . ' in ' . $name);
-    }
-
-
-    //end relationships to old subcommittees
-    $oldSubcommittees = array_diff($existingSubcommittees, $currentSubcommittees);
-    foreach ($oldSubcommittees as $name)
-    {
-      $cmte = Doctrine::getTable('Entity')->findOneByName($name);
-      
-      $q = LsDoctrineQuery::create()
-        ->from('Relationship r')
-        ->where('r.entity1_id = ?', $member->id)
-        ->andWhere('r.entity2_id = ?', $cmte->id)
-        ->andWhere('r.end_date IS NULL');
-        
-      foreach ($q->execute() as $rel)
-      {
-        $rel->is_current = false;
-        $rel->end_date = ($this->_sessionStartYear - 1) . '-00-00';
-        $rel->save();
-        
-        $this->printDebug("Ended relationship with " . $name);
-      }    
-    }  
-  }
-
-
-
   //use Sunlight Labs API to get a bunch of 3rd party IDs
   public function getSunlightData($member)
   {
@@ -1516,18 +1100,12 @@ class CongressMemberScraper extends Scraper
       return null;
     }
     
-    $xml = $this->browser->getResponseXml();
-
-    
-    if (!$legislators = $xml->xpath('/response/legislator'))
-    {
-      return;
-    }
-
-    $legislator = $legislators[0];
+    $text = $this->browser->getResponseText();
+    $json = json_decode($text,true);
+    $legislator = $json['results'][0];
     
     //set VoteSmart ID
-    if (!$member->pvs_id && $pvsId = $legislator->votesmart_id)
+    if (!$member->pvs_id && $pvsId = $legislator['votesmart_id'])
     {
       $member->pvs_id = $pvsId;
       $this->printDebug("Set pvs_id: " . $pvsId);
@@ -1535,310 +1113,48 @@ class CongressMemberScraper extends Scraper
     
     
     //set CRP ID
-    if (!$member->crp_id && $crpId = $legislator->crp_id)
+    if (!$member->crp_id && $crpId = $legislator['crp_id'])
     {
       $member->crp_id = $crpId;
       $this->printDebug("Set crp_id: " . $crpId);
     }
     
+    $member->start_date = $legislator['birthday'];
+    
     
     //set FEC ID
-    if ($fecId = $legislator->fec_id)
+    if ($fecIds = $legislator['fec_ids'])
     {
-      $char = substr($fecId, 0, 1);
+      foreach($fecIds as $fecId)
+      {
+        $char = substr($fecId, 0, 1);
       
-      switch ($char)
-      {
-        case 'H':
-          if ($member->house_fec_id != $fecId)
-          {
-            $member->house_fec_id = $fecId;
-            $this->printDebug("Set house_fec_id: " . $fecId);
-          }
-          break;
-        case 'S':
-          if ($member->senate_fec_id != $fecId)
-          {
-            $member->senate_fec_id = $fecId;
-            $this->printDebug("Set senate_fec_id: " . $fecId);
-          }
-          break;
-        case 'P':
-          if ($member->pres_fec_id != $fecId)
-          {
-            $member->pres_fec_id = $fecId;
-            $this->printDebug("Set pres_fec_id: " . $fecId);    
-          }
-          break;
-      }
-    }
-  }
-
-
-
-  public function getWatchdogData($member)
-  {
-    //get pvs id
-    $wp = Doctrine::getTable('WatchdogPerson')->findOneByGovtrackId($member->govtrack_id);
-    
-    if (!$wp)
-    {
-      return;
-    }
-        
-    
-    //get watchdog_id and pvs_id
-    $member->watchdog_id = $wp->watchdog_id;
-    $member->pvs_id = $wp->pvs_id;
-    $modified = array('watchdog_id', 'pvs_id');
-
-    $this->printDebug("Set pvs_id: " . $member->pvs_id);  
-    $this->printDebug("Set watchdog_id: " . $member->watchdog_id);  
-
-
-    //get FEC IDs
-    foreach ($wp->Fec as $fec)
-    {
-      $fecId = $fec->fec_id;
-      $char = substr($fecId, 0, 1);
-      
-      switch ($char)
-      {
-        case 'H':
-          $member->house_fec_id = $fecId;
-          $modified = array('house_fec_id');
-          break;
-        case 'S':
-          $member->senate_fec_id = $fecId;
-          $modified = array('senate_fec_id');
-          break;
-        case 'P':
-          $member->pres_fec_id = $fecId;
-          $modified = array('pres_fec_id');
-          break;
-      }
-      
-      $this->printDebug("Set " . $modified[0] . ": " . $fecId);
-    }
-    
-
-    //create reference for watchdog
-    $ref = new Reference;
-    $ref->source = $this->_watchdogUrlBase . 'p/' . $member->watchdog_id;
-    $ref->name = 'watchdog.net';
-    $ref->addFields($modified);
-
-    $this->_references['watchdog'] = $ref;
-  }
-
-
-  public function getPvsData($member)
-  {
-    if (!$member->pvs_id)
-    {
-      return;
-    }
-
-
-    $modified = array();
-
-    //get pvs bio data
-    $v = new VoteSmart;
-
-    if (!$result = $v->query('CandidateBio.getBio', array('candidateId' => $member->pvs_id)))
-    {
-      $this->printDebug("Couldn't get VoteSmart candidate bio for member ID " . $member->id);
-    }
-    else
-    {
-      //get birthplace
-      if ($birthplace = $result->candidate->birthPlace)
-      {
-        $member->birthplace = $birthplace;
-        $modified[] = 'birthplace';
-        
-        $this->printDebug("Set birthplace to: " . $member->birthplace);
-      }
-        
-        
-      //get education
-      if ($education = $result->candidate->education)
-      {
-        //parse education
-        $educationLines = explode("\n", $education);
-        
-        $schools = array();
-        
-        foreach ($educationLines as $educationLine)
+        switch ($char)
         {
-          $educationLine = str_replace('.', '', trim($educationLine));
-          
-          $educationParts = explode(', ', $educationLine);
-          $numParts = count($educationParts);
-          
-          if (!preg_match('/^\d+$/', $educationParts[$numParts-1]))
-          {
-            continue;
-          }
-          
-          $schoolYear = null;
-          $schoolName = null;
-          $schoolDegree = null;
-          $schoolField = null;
-                  
-          switch ($numParts)
-          {
-            case 4:
-              $schoolYear = trim($educationParts[3]);
-              $schoolName = trim($educationParts[2]);
-              $schoolField = trim($educationParts[1]);
-              $schoolDegree = trim($educationParts[0]);
-              break;
-              
-            case 3:
-              $schoolYear = trim($educationParts[2]);
-              $schoolName = trim($educationParts[1]);
-              $schoolDegree = trim($educationParts[0]);
-              break;
-              
-            default:
-              continue 2;
-              break;
-          }
-            
-         
-          //look for existing school
-          $q = LsDoctrineQuery::create()
-                ->from('Entity e')
-                ->leftJoin('e.Alias a')
-                ->leftJoin('e.ExtensionRecord er')
-                ->leftJoin('er.Definition ed on er.definition_id = ed.id')
-                ->where('a.name = ? and ed.name = ?',array($schoolName,'School'));
-          $school = $q->fetchOne();
-          if (isset($schools[$schoolName]))
-          {
-            $school = $schools[$schoolName];
-          }
-          elseif (!$school)
-          {
-            $school = new Entity;
-            $school->addExtension('Org');
-            $school->addExtension('School');
-            $school->name = $schoolName;
-            $schools[$schoolName] = $school;
-          }
-          
-          //look for existing school relationship
-          $q= LsDoctrineQuery::create()
-                ->from('Relationship r')
-                ->where('r.entity1_id = ? and r.entity2_id = ? and r.category_id = ?',array($member->id,$school->id,RelationshipTable::EDUCATION_CATEGORY));
-          
-          if ($q->fetchOne())
-          {
-            continue;
-          }
-          //create relationship
-          $rel = new Relationship;
-          $rel->Entity1 = $member;
-          $rel->Entity2 = $school;
-          $rel->setCategory('Education');
-          $rel->end_date = $schoolYear . '-00-00';        
-      
-          //look for degree
-          if ($degree = DegreeTable::getByText($schoolDegree))
-          {
-            $rel->Degree = $degree;
-          }
-    
-          if ($schoolField)
-          {
-            $rel->field = $schoolField;
-          }
-    
-                    
-          $this->_schoolRelationships[] = $rel;
-          
-          $this->printDebug("Added relationship to school: " . $schoolName);
-        }      
-      }
-    }
-    
-    //get office info
-    $v = new VoteSmart;
-
-    if (!$result = $v->query('Address.getOffice', array('candidateId' => $member->pvs_id)))
-    {
-      $this->printDebug("Couldn't get VoteSmart office info for member ID " . $member->id);
-    }
-    else
-    {
-      foreach ($result->office as $office)
-      {
-        //save address
-        if ($office->address && (string) $office->address->state != 'NA')
-        {
-          $address = new Address;
-
-          //set street parts
-          $streetParts = explode("\n", (string) $office->address->street);
-          $countTo = count($streetParts) < 4 ? count($streetParts) : 3;
-  
-          for ($n = 1; $n <= $countTo; $n++)
-          {
-            $field = 'street' . $n;
-            $address->$field = $streetParts[$n-1];
-          }
-
-          //set other parts
-          $address->city = LsString::emptyToNull((string) $office->address->city);
-          $address->State = AddressStateTable::retrieveByText(LsString::emptyToNull((string) $office->address->state));
-          $address->postal = LsString::emptyToNull((string) $office->address->postal);
-          $address->country_id = 1;
-          $address->category_id = AddressTable::OFFICE_CATEGORY;
-          $this->_offices[] = $address;
-
+          case 'H':
+            if ($member->house_fec_id != $fecId)
+            {
+              $member->house_fec_id = $fecId;
+              $this->printDebug("Set house_fec_id: " . $fecId);
+            }
+            break;
+          case 'S':
+            if ($member->senate_fec_id != $fecId)
+            {
+              $member->senate_fec_id = $fecId;
+              $this->printDebug("Set senate_fec_id: " . $fecId);
+            }
+            break;
+          case 'P':
+            if ($member->pres_fec_id != $fecId)
+            {
+              $member->pres_fec_id = $fecId;
+              $this->printDebug("Set pres_fec_id: " . $fecId);    
+            }
+            break;
         }
-                
-        //if there's a contact, add as a staffer
-        /*if ($contactName = (string) $office->notes->contactName)
-        {
-          //create person from name
-          $staffer = PersonTable::parseFlatName($contactName);
-          
-          if (!$staffer->name_last)
-          {
-            continue;
-          }
-  
-          $this->_staffers[] = $staffer;          
-          
-          $this->printDebug("Added STAFFER: " . $staffer->name_last);          
-  
-          //create position relationship
-          $stafferRel = new Relationship;
-          $stafferRel->Entity1 = $staffer;
-          $stafferRel->Entity2 = $member;
-          $stafferRel->setCategory('Position');
-                    
-          if ($contactTitle = (string) $office->notes->contactTitle)
-          {
-            $stafferRel->description1 = $contactTitle;
-          }      
-          
-          $this->_officeStafferRelationships[] = $stafferRel;
-  
-          $this->printDebug("Created relationship between staffer and member");          
-        }*/
       }
-    }    
-
-    //create reference
-    $ref = new Reference;
-    $ref->source = $this->_pvsUrlBase . $member->pvs_id;
-    $ref->name = 'Project Vote Smart';
-    $ref->addFields($modified);
-    
-    $this->_references['pvs'] = $ref;
+    }
   }
 
 
