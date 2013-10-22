@@ -2407,14 +2407,32 @@ svg .image {
 
 #help_search_box
 {
-
-  padding: 2em;
+  padding: 0.5em;
+  padding-top: 1em;
   width: 100%;
   background-color: #f1f1f1;
   -moz-border-radius: 8px;
   border-radius: 8px;
   border: 4px solid #ddd;
+}
 
+#help_search_box form div {
+  display: inherit;
+}
+
+#help_search_box form div.gsc-input-box {
+}
+
+#help_search_box div.gs-title {
+  text-align: left;
+}
+
+#help_search_box div.gsc-webResult.gsc-result {
+  margin-bottom: 2em;
+}
+
+#help_search_box .gsc-cursor-current-page, #help_search_box .gsc-cursor-box {
+  color: #fff;
 }
 
 .help_active

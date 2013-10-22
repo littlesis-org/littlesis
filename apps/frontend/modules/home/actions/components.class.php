@@ -82,6 +82,7 @@ class homeComponents extends sfComponents
       ),
       $this->getContext()->getI18N()->__('Add') => null,
       $this->getContext()->getI18N()->__('Help') => array(
+        'url' => '@help',
         'items' => array(
           $this->getContext()->getI18N()->__('Site Guide') => '@guide',
           $this->getContext()->getI18N()->__('FAQ') => '@faq',
