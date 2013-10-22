@@ -229,6 +229,12 @@ listMaps:
   param: { module: map, action: list }
 
 
+# HELP
+help:
+  url: /help
+  param: { module: help, action: index }
+
+
 # LOCAL
 local:
   url: local/:name/:action/*
