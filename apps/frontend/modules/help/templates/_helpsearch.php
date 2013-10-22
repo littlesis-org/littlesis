@@ -1,5 +1,5 @@
 <div id="help_search_box">
-<span style="font-size: 2em;">Search Help Pages</span>
+<span style="font-size: 1.5em;">Search Help Pages</span>
 <br />
 <script>
   (function() {

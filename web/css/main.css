@@ -2409,11 +2409,12 @@ svg .image {
 {
   padding: 0.5em;
   padding-top: 1em;
-  width: 100%;
+  width: 97%;
   background-color: #f1f1f1;
   -moz-border-radius: 8px;
   border-radius: 8px;
   border: 4px solid #ddd;
+  text-align: center;
 }
 
 #help_search_box form div {
