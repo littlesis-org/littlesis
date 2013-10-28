@@ -11,7 +11,7 @@
 </tr>
 <tr>
 <td><?php include_component("help","helpmenu",array("current" => $this->getActionName()))?></td>
-<td>
+<td class="help-right-col">
 
 <table>
 <tr>

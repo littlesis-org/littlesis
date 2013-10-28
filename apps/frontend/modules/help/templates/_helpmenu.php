@@ -16,4 +16,6 @@
 
 </ul>
 
+Can’t find what you're looking for? <strong><?php echo link_to("contact us &raquo;","@contact") ?></strong>
+
 </div>

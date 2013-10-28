@@ -2409,7 +2409,7 @@ svg .image {
 {
   padding: 0.5em;
   padding-top: 1em;
-  width: 97%;
+
   background-color: #f1f1f1;
   -moz-border-radius: 8px;
   border-radius: 8px;
@@ -2507,14 +2507,16 @@ svg .image {
 .help-article
 {
   padding: 0.2em 0;
-  color: #444;
+  line-height: 1.8em;
   font-size: 1.1;
+  max-width: 600px;
 }
 
 .help-article-header
 {
   font-size: 1.3em;
   padding: 0.1em 0;
+  line-height: 1.6em;
 }
 
 .help-top
@@ -2526,6 +2528,11 @@ svg .image {
 {
   display: block;
   margin: auto;
-  padding: 2em;
-  max-width: 500px;
+  padding: 1em;
+  max-width: 600px;
+}
+
+.help-right-col
+{
+  padding-right: 8em;
 }
