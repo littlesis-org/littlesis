@@ -10,7 +10,7 @@
 class ReferenceForm extends BaseReferenceForm
 {
   protected $_selectObject = null;
-  protected $_sourceHelp = 'original sources only &mdash; <a href="http://blog.littlesis.org/2009/01/07/references-and-wikipedia/" target="_blank">not Wikipedia</a>';
+  protected $_sourceHelp = 'original sources only &mdash; <a href="http://littlesis.org/help/sources#q-appropriate" target="_blank">more about appropriate sources</a>';
   protected $_nameHelp = 'detailed, eg: <em>Washington Post - BofA to buy Merrill</em> or <em>Carlyle Group - David Rubenstein bio</em>';
     
 

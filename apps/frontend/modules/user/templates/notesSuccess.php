@@ -20,7 +20,7 @@
   'pager' => $note_pager,
   'pointer' => 'Notes posted by or alerting ' . $user->getProfile()->public_name,
   'action' => array(
-    'text' => $sf_request->getParameter('replies', 1) ? 'hide replies' : 'show replies',
+    'text' => $sf_request->getParameter('replies', 1) ? 'hide mentions' : 'show mentions',
     'url' => $user->getInternalUrl('notes', $sf_request->getParameter('replies', 1) ? array('replies' => 0) : null)
   )
 )) ?>

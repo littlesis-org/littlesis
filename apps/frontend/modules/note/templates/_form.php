@@ -14,9 +14,9 @@
 <br />
 
 <div style="padding: 0.5em; background-color: #f8f8f8; border: 1px dotted #ddd;">
-Alert other analysts using <strong>@kevin</strong>. 
-Link to pages using <strong>@entity:14305[Cheney]</strong> or <strong>@list:1[Fortune 1000]</strong> or <strong>@rel:23[CEO]</strong>. 
-HTML will not be rendered.
+<li>Alert other analysts using <strong>@kevin</strong>. 
+<li>Link to pages using <strong>@entity:14305[Cheney]</strong> or <strong>@list:1[Fortune 1000]</strong> or <strong>@rel:23[CEO]</strong>. 
+<li>HTML will not be rendered, though you can include links.
 </div>
 
 <br />
@@ -46,7 +46,7 @@ function copyMarkup()
 </script>
 
 
-<?php if ($sf_user->hasCredential('bulker')) : ?>
+<?php if ($sf_user->hasCredential('contributor')) : ?>
 Find an entity: 
 <?php echo input_auto_complete_tag(
   'name', 

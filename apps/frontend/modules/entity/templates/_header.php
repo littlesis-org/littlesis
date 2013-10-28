@@ -5,7 +5,7 @@
 <?php $actions = array(); ?>
 <?php if (!$entity['is_deleted'] && isset($show_actions) && $show_actions) : ?>
   <?php $actions = array(
-    'add connection' => array(
+    'add relationship' => array(
       'url' => EntityTable::getInternalUrl($entity,'addRelationship')
     ),
     'edit' => array(
