@@ -84,10 +84,9 @@ class homeComponents extends sfComponents
       $this->getContext()->getI18N()->__('Help') => array(
         'url' => '@help',
         'items' => array(
-          $this->getContext()->getI18N()->__('Site Guide') => '@guide',
-          $this->getContext()->getI18N()->__('FAQ') => '@faq',
-          $this->getContext()->getI18N()->__('Analyst Howto') => '@howto',
-          $this->getContext()->getI18N()->__('Videos') => '@videos'
+          $this->getContext()->getI18N()->__('beginner') => '@beginnerhelp',
+          $this->getContext()->getI18N()->__('advanced') => '@advancedhelp'
+
         )
       ),
       $this->getContext()->getI18N()->__('About') => array(
