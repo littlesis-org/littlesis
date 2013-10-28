@@ -55,7 +55,7 @@ if ($sf_request->getParameter('analysts') == 1 && !isset($groupId))
   'title' => $unread_notes > 0 ? 'Notes (' . $unread_notes . ')' : 'Notes',
   'pager' => $note_pager,
   'action' => array(
-    'text' => $sf_request->getParameter('replies', 1) ? 'hide replies' : 'show replies',
+    'text' => $sf_request->getParameter('replies', 1) ? 'hide mentions' : 'show mentions',
     'url' => $sf_request->getParameter('replies', 1) ? 'home/notes?replies=0' : 'home/notes'
   )
 )) ?>
