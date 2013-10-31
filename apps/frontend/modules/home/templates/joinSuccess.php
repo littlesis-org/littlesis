@@ -10,19 +10,20 @@
 <span class="about-text">
 <p><strong>LittleSis is bringing together a community of citizens who believe in transparency and accountability where it matters most.</strong> Our task is to study, document, and expose the social networks that have our democracy in a stranglehold, so that grassroots efforts can more effectively challenge their claim to power.</p> 
 
-<p><strong>We're looking for researchers, programmers, artists and organizers to lend a hand.</strong> If you want to get involved, <?php echo link_to('send us a note', '@contact') ?>, join our email list, <a href="#signup">sign up</a> to become a LittleSis analyst and start adding information to the site, or check out our <?php echo link_to('public wiki', 'http://wiki.littlesis.org') ?> for more ideas.</p>
+<p><strong>We're looking for researchers, programmers, artists and organizers to lend a hand.</strong> If you want to get involved, <?php echo link_to('send us a note', '@contact') ?>, join our email list, <a href="#signup">sign up</a> to become a LittleSis analyst and start adding information to the site, or check out our <?php echo link_to('help pages', 'http://littlesis.org/help') ?> for information on how to use the site.</p>
 
 <br />
 
 <?php include_partial('global/section', array('title' => 'Join Our Announcement List')) ?>
 
 <p style="text-align: center;">
-<form action="http://groups.google.com/group/littlesis/boxsubscribe">
-  &nbsp; &nbsp; Email: &nbsp;<input type=text name=email style="position: relative; top: -1px;"> &nbsp;<input class="button_small" style="font-size: 12px;" type=submit name="sub" value="Join">
+<form method="post" action="http://oi.vresp.com?fid=ba4140c884" target="vr_optin_popup" onsubmit="window.open( 'http://www.verticalresponse.com', 'vr_optin_popup', 'scrollbars=yes,width=600,height=450' ); return true;" >
+    &nbsp; &nbsp; Email: &nbsp;
+    <input name="email_address" style="position: relative; top: -1px;"/>&nbsp;
+    <input type="submit" value="Join" style="font-size: 12px;"/><br/>
 </form>
 </p>
 
-<br />
 <br />
 <br />
 
