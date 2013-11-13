@@ -234,6 +234,13 @@ help:
   url: /help
   param: { module: help, action: index }
 
+beginnerhelp:
+  url:   /beginnerhelp
+  param: { module: help, action: beginner }
+
+advancedhelp:
+  url:   /advancedhelp
+  param: { module: help, action: advanced }
 
 # LOCAL
 local:

@@ -549,7 +549,7 @@ class EntityApi
       if ($ext2Ids = @$options['ext2_ids'])
       {
         $from .= ' LEFT JOIN entity e on e.id = l2.entity2_id LEFT JOIN extension_record er on er.entity_id = e.id';
-        if (count(explode(',', $cat2Ids)) == 1)
+        if (count(explode(',', $ext2Ids)) == 1)
         {
           $where .= ' AND er.definition_id = ?';
           $params[] = $ext2Ids;
