@@ -37,8 +37,8 @@
 </div>
 
 
-<div style="margin-left: 0px; width: 560px;">
-<div id="homepage-splash-header"><strong>LittleSis</strong><span style="color: #faa;">*</span> is a free database of who-knows-who at the heights of business and government.</div>
+<div style="margin-left: 0px; width: 600px;">
+<div id="homepage-splash-header">LittleSis<span style="color: #faa;">*</span> is a free database of who-knows-who at the heights of business and government.</div>
 <div style="font-size: 14px; color: #faa;">* opposite of Big Brother</div>
 
 <div id="homepage-splash-subheader">

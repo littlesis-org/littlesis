@@ -15,9 +15,9 @@
     <br />
   
     <?php if ($entity['primary_ext'] == 'Person') : ?>
-      <span class="entity-carousel-count">Key affiliations: </span>&nbsp;
+      <span class="entity-carousel-count">Key affiliations: </span>
     <?php else : ?>
-      <span class="entity-carousel-count">Key people: </span>&nbsp;    
+      <span class="entity-carousel-count">Key people: </span>    
     <?php endif; ?>
 
     <?php $connection_links = array() ?>
@@ -26,12 +26,12 @@
     <?php endforeach; ?>
     <?php $connection_links[] = '<nobr><strong>' . entity_link($entity, 'entity-carousel-related', false, 'More &raquo;') . '</strong></nobr>' ?>
     
-    <?php echo implode(" &nbsp;&bull;&nbsp; ", $connection_links) ?>
+    <?php echo implode(" &bull; ", $connection_links) ?>
 
     <br />
     <br />
   
-    <span class="entity-carousel-count">Related <?php echo $entity['primary_ext'] == 'Person' ? 'people' : 'orgs' ?>: </span>&nbsp;
+    <span class="entity-carousel-count">Related <?php echo $entity['primary_ext'] == 'Person' ? 'people' : 'orgs' ?>: </span>
    
     <?php $related_links = array() ?>
     <?php foreach ($interlocks as $related) : ?>
@@ -39,7 +39,7 @@
     <?php endforeach; ?>
     <?php $related_links[] = '<nobr><strong>' . link_to('More &raquo;', EntityTable::generateRoute($entity, 'interlocks')) . '</strong></nobr>' ?>
     
-    <?php echo implode(" &nbsp;&bull;&nbsp; ", $related_links) ?>
+    <?php echo implode(" &bull; ", $related_links) ?>
   </div>
 </div>
 <?php endif; ?>

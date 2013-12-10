@@ -50,8 +50,13 @@ all:
 #      default_culture: %SF_DEFAULT_CULTURE%
 #
   storage:
-    class: sfSessionStorage
+    class: LsPDOSessionStorage
     param:
+      database: main
+      db_table: sessions
+      db_id_col: session_id
+      db_data_col: data
+      db_time_col: updated_at
       session_name: LittleSis
 
 #  view_cache:

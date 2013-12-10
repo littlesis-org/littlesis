@@ -95,6 +95,10 @@ analysts:
   url:   /analysts
   param: { module: user, action: featured }
 
+users:
+  url:   /users
+  param: { module: user, action: list }
+
 chat:
   url:   /chat
   param: { module: home, action: chat }

@@ -38,18 +38,49 @@
   fjs.parentNode.insertBefore(js, fjs);
 }(document, 'script', 'facebook-jssdk'));</script>
 
-<div id="topfixed">
+
+<div id="top">
+  <nav class="navbar navbar-default navbar-fixed-top">
+    <div id="top_content">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <div id="brand">
+          <?php echo link_to(image_tag('system/lilsis-logo-trans-200.png'), $sf_user->isAuthenticated() ? 'home/dashboard' : '@homepage') ?>
+        </div>
+      </div>
+      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+        <?php include_component('home', 'menu') ?>
+        <form action="/search" method="get" class="navbar-form navbar-right" role="search">
+          <div id="top_search" class="input-group">
+            <input type="text" name="q" class="form-control" placeholder="Search LittleSis" />
+            <span class="input-group-btn">
+              <button type="submit" id="search_button" class="btn btn-default">
+                <span class="glyphicon glyphicon-search"></span>
+              </button>
+            </span>
+          </div>
+        </form>
+        <div id="top_social_icons" class="navbar-right">
+          <a href="http://facebook.com/LittleSis.org"><?php echo image_tag('system/facebook-icon.jpg') ?></a>
+          <a href="http://twitter.com/twittlesis"><?php echo image_tag('system/twitter-icon.jpg') ?></a>
+          <a href="http://feeds2.feedburner.com/EyesOnTheTies" rel="alternate" type="application/rss+xml"><?php echo image_tag('system/rss-icon.jpg') ?></a>
+        </div>    
+      </div>
+    </div>
+  </nav>
+</div>
+
 <?php if (!sfConfig::get('app_login_enabled')) : ?>
 <div id="maintenance-notice">Login is temporarily disabled for site maintenance. Sorry for the inconvenience.</div>
 <?php endif; ?>
 
-<div id="subtop">
-  <?php include_partial('global/subtop') ?>
-</div>
-
-<div id="page-title" <?php echo (!$sf_request->getParameter("is_local") && $sf_request->getParameter('module') == 'home' && $sf_request->getParameter('action') == 'index') ? "style='height: 0; padding: 0; border: 0;'" : "" ?>>
-
-  <?php if (has_slot('header_text')) : ?>
+<?php if (has_slot('header_text') && strlen(get_slot('header_text'))) : ?>
+<div id="header_block">
   <div id="header">
     <div id="header_text">
       <?php use_helper('LsText') ?>
@@ -72,6 +103,7 @@
     </div>
     <?php endif; ?>
 
+    <?php if (has_slot('header_actions') || ((!$sf_user->isAuthenticated() && has_slot('share_text')))) : ?>
     <div id="header_actions">
       <?php if (has_slot('header_actions')) : ?>
       <?php foreach (get_slot('header_actions') as $text => $ary) : ?>
@@ -97,14 +129,16 @@
         <div style="display: inline;">
           <iframe src="//www.facebook.com/plugins/like.php?href=<?php echo urlencode($share_link) ?>&amp;send=false&amp;layout=button_count&amp;width=450&amp;show_faces=false&amp;action=recommend&amp;colorscheme=light&amp;font&amp;height=21" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:95px !important; height:21px;" allowTransparency="true"></iframe>
         </div>
+      <?php else : ?>
+        <div style="display: inline; position: relative; top: -1px;">
+          <iframe scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:95px !important; height:21px;"></iframe>
+        </div>
       <?php endif; ?>
     </div>
-  </div>
   <?php endif; ?>
-
+  </div>
 </div>
-
-</div>
+<?php endif; ?>
 
 <div id="container" class="<?php echo ($sf_request->getParameter('module') == 'home' && $sf_request->getParameter('action') == 'index') ? 'homepage-container' : 'container' ?>">
 
@@ -138,20 +172,9 @@
     More <?php echo link_to('about LittleSis', '@about') ?>.
     Read the <?php echo link_to('disclaimer', '@disclaimer') ?>.
 
-<!--
-    <br />
-    <br />
-    <?php echo link_to(image_tag('system' . DIRECTORY_SEPARATOR . 'pai-logo-300.png', 'width=230 border=0'), 'http://public-accountability.org') ?> &nbsp; &nbsp;
--->
   </div>
 </div>
 
-<script type="text/javascript">
-  container = document.getElementById("container");
-  title = document.getElementById("page-title");
-  offset = title.offsetTop + title.offsetHeight;
-  container.style.top = container.offsetTop + offset + "px";
-</script>
 
 <?php include_partial('global/analytics') ?>
 

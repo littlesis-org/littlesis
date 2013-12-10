@@ -94,4 +94,14 @@ class sfGuardAuthActions extends BasesfGuardAuthActions
       }
     }
   }
+
+  public function executeSignout($request)
+  {
+    $session_id = $request->getCookie('_lilsis_session');
+    $sql = "DELETE FROM sessions WHERE session_id = ?";
+    $db = Doctrine_Manager::connection();
+    $stmt = $db->execute($sql, array($session_id));
+
+    parent::executeSignout($request);
+  }
 }

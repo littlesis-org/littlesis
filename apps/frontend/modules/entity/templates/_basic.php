@@ -23,7 +23,13 @@
 <?php if ($entity['blurb'] && $entity['blurb'] != '') : ?>  
 
   <div id="entity_blurb_container">
-  <div id="entity_blurb" onmouseover="showBlurbEdit();" onmouseout="hideBlurbEdit();">
+
+  <?php if ($sf_user->hasCredential('editor')) : ?>
+    <div id="entity_blurb" onmouseover="showBlurbEdit();" onmouseout="hideBlurbEdit();">
+  <?php else : ?>
+    <div id="entity_blurb">
+  <?php endif; ?>
+
   <span class="entity_blurb"><?php echo excerpt($entity['blurb'], 90) ?></span>
   
   <?php if ($sf_user->hasCredential('editor')) : ?>
@@ -49,7 +55,6 @@
   <br />
 </span>
 <?php endif; ?>
-
 
 
 <?php if ($sf_user->hasCredential('editor')) : ?>

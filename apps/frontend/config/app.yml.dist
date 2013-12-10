@@ -1,5 +1,8 @@
 # default values
 all:
+  rails:
+    enabled: on
+
   netmap:
     api_key: LITTLESIS_API_KEY
     

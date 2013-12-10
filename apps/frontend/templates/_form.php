@@ -15,7 +15,7 @@
     <?php $required = (isset($validator_schema[$name]) && $options = $validator_schema[$name]->getOptions()) ? $options['required'] : false ?>
     <?php include_partial('global/formfield', array(
       'field' => $field, 
-      'label_width' => isset($label_width) ? $label_width : '100px',
+      'label_width' => isset($label_width) ? $label_width : '120px',
       'form_label_class' => isset($form_label_class) ? $form_label_class : null,
       'form_field_class' => isset($form_field_class) ? $form_field_class : null,
       'required' => ($show_required && $required) ? true : false,

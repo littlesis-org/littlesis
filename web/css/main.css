@@ -5,6 +5,7 @@ body
   font-family: Lato, Helvetica, Arial, sans-serif;
   font-size: 13px;
   background-position: center top;
+  padding-top: 51px;
 }
 
 table
@@ -18,14 +19,14 @@ td
   vertical-align: top;
 }
 
-a
+html a
 {
   color: #008;
   text-decoration: none;
   cursor: pointer;
 }
 
-a:hover
+html a:hover
 {
   text-decoration: underline;
 }
@@ -445,7 +446,7 @@ img.screenshot
   margin-top: 1.7em;
   margin-bottom: 0.6em;
   padding-bottom: 0.4em;
-  border-bottom: 4px solid #fff;
+  border-bottom: 2px solid #fff;
 }
 
 
@@ -612,9 +613,11 @@ body
   clear: both;
   margin: 0 auto;
   padding: 1.5em;
-  padding-top: 2.5em;
   padding-bottom: 0;
   width: 960px;
+  -webkit-box-sizing: content-box;
+  -moz-box-sizing: content-box;
+  box-sizing: content-box;  
 }
 
 .container
@@ -629,7 +632,6 @@ body
 
 #homepage-splash
 {
-  padding: 2em; 
   padding-top: 2.5em; 
   padding-bottom: 2.5em; 
   color: #fff;
@@ -637,14 +639,16 @@ body
 
 #homepage-splash-header
 {
-  font-size: 40px; 
-  font-weight: bold; 
+  font-size: 3em;
+  line-height: 1.2em;
+  font-weight: 500; 
   margin-bottom: 0.1em;
 }
 
 #homepage-splash-subheader
 {
-  font-size: 19px; 
+  font-size: 1.5em; 
+  font-weight: 300;
   line-height: 27px; 
   color: #fff; 
   margin-top: 1em; 
@@ -683,7 +687,7 @@ body
   float: right; 
   width: 280px; 
   font-size: 18px; 
-  line-height: 35px;
+  line-height: 38px;
   margin-top: 0.5em;
 }
 
@@ -703,11 +707,17 @@ body
   color: #444;
 }
 
+#homepage-join-field {
+  padding-left: 10px;
+}
+
 #homepage-search input[type=text]
 {
   background-repeat: no-repeat; 
   background-position: 6px 3px; 
   padding-left: 36px; 
+  line-height: 20px;
+  margin-top: 4px;
 }
 
 #homepage-join-button
@@ -731,8 +741,7 @@ body
   padding-top: 0.5em;
   margin-top: 3.5em; 
   color: #fff;
-  font-size: 19px;
-  line-height: 27px;
+  font-size: 1em;
 }
 
 #homepage-subsplash .inner-box
@@ -772,50 +781,94 @@ body
 
 #homepage-about-questions
 {
+  margin-top: 0.5em;
   margin-left: 0;
-  font-size: 16px;
   font-style: italic;
+  line-height: 1.6em;
 }
 
 #homepage-subsplash-header
 {
-  font-size: 40px; 
+  font-size: 3em; 
+  line-height: 1.2em;
+  font-weight: 400;
   text-align: center; 
   margin-bottom: 1em;
   color: #fff;
-  font-weight: bold;
 }
+
+
+/* BOOTSTRAP NAVBAR */
+
+#top nav.navbar {
+  margin-bottom: 0;
+  border-radius: 0;
+  height: 51px;
+}
+
+#top nav.navbar li a { cursor: pointer; }
+#top nav.navbar .highlighted { font-weight: 500; }
+#top nav.navbar form.navbar-form { margin-top: 7px; }
+
+#top_content {
+  width: 960px;
+  margin: 0 auto;
+}
+
+#logo {
+  float: left;
+}
+
+#brand {
+  margin-top: 12px;
+  margin-right: 1em;
+}
+
+#brand img { width: 180px; }
+
+#menu {
+  float: left;
+  padding-top: 0.2em;
+}
+
+#menu .dropdown {
+  display: inline-block;
+}
+
+#menu .menu_dropdown_name { 
+  color: white;
+  cursor: pointer;
+  padding-left: 1em;
+  margin-left: 0.2em;
+}
+
+#menu .menu_dropdown_name &:hover { text-decoration: none; }
+#menu .menu_dropdown_name &.highlighted { color: #ffc; }
+#menu li a { color: $link_blue; }
+
+#top_social_icons {
+  padding-top: 13px;
+}
+
+#top_search {
+  width: 200px;
+}
+
+#top_search #search_button {
+  padding-top: 2px;
+  height: 24px;
+  -webkit-box-sizing: content-box;
+  -moz-box-sizing: content-box;
+  box-sizing: content-box;  
+}
+
+
+/* PAGE HEADER */
 
 #topcontent
 {
   margin: 0 auto;
   width: 960px;
-}
-
-#top
-{
-  background-color: #1C4767;
-  padding: 0.4em;
-  padding-top: 0.8em;
-  color: #bbb;
-}
-
-#top a
-{
-  color: #fff;
-}
-
-#top #logo
-{
-  color: #ddd;
-  font-weight: normal;
-}
-
-#top #login
-{
-  padding-top: 1.6em;
-  text-align: right; 
-  float: right;
 }
 
 #subtopcontent
@@ -911,13 +964,15 @@ body
 {
   margin: 0 auto;
   width: 960px;
-  margin-bottom: 0.5em;
+  padding-top: 1em;
+  padding-bottom: 1em;
+  border-bottom: 1px solid #e7e7e7;
 }
 
 #header_text
 {
-  font-size: 40px;
-  font-weight: bold;
+  font-size: 3em;
+  font-weight: 500;
   text-transform: none;
   padding-right: 0.5em;
 }
@@ -933,9 +988,9 @@ body
 
 #header_subtext
 {
-  font-size: 20px;
+  font-size: 1.5em;
+  font-weight: 300;
   padding-left: 0.1em;
-  height: 28px;
 }
 
 #header_right
@@ -943,13 +998,13 @@ body
   color: #444;
   font-size: 13px;
   float: right;
-  padding-top: 0.7em;
+  padding-top: 1.3em;
   width: 350px;
 }
 
 #header_actions
 {
-  margin-top: 1em;
+  margin-top: 1.2em;
 }
 
 #header_actions a
@@ -1556,8 +1611,11 @@ table.list_table td.list_table_nav
   border-bottom: 1px solid #CC5454;
   padding-top: 7px;
   padding-bottom: 5px;
-  height: 23px;
+  height: 24px;
   margin-bottom: 1em;
+  -webkit-box-sizing: content-box;
+  -moz-box-sizing: content-box;
+  box-sizing: content-box;  
 }
 
 .button_tabs span 
@@ -2015,7 +2073,7 @@ div.note_form textarea
 .entity-carousel-text
 {
   float: right;
-  width: 550px;
+  width: 600px;
   font-size: 17px;
   line-height: 25px;
   padding: 1.5em;
@@ -2026,6 +2084,10 @@ div.note_form textarea
 {
   font-size: 34px;
   line-height: 38px;
+}
+
+strong.entity-carousel-name {
+  font-weight: 500;
 }
 
 .entity-carousel-description
@@ -2221,7 +2283,7 @@ input#simple_search_terms
   height: 300px; 
   overflow: hidden; 
   position: relative; 
-  background-color: #fff;
+  background-color: #f8f8f8;
 }
 .littlesis-carousel .buttons { display: block; margin: 125px 0px 0 0; float: left; }
 .littlesis-carousel .next { margin: 125px 0 0 0px; }

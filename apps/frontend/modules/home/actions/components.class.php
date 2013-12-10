@@ -9,23 +9,19 @@ class homeComponents extends sfComponents
     if ($this->getUser()->isAuthenticated())
     {
       $name = $this->getUser()->getGuardUser()->getProfile()->public_name;
+      $network_name = LsListTable::getNameById(sfGuardUserTable::getHomeNetworkId());
+      $network_path = LsListTable::getDisplayNameById(sfGuardUserTable::getHomeNetworkId());
       
       $this->items[$name]['highlighted'] = true;
       $this->items[$name]['url'] = 'home/notes';
-      $this->items[$name]['items'][$this->getContext()->getI18N()->__('Groups')] = 'home/groups';    
       $this->items[$name]['items'][$this->getContext()->getI18N()->__('Notes')] = 'home/notes';
+      $this->items[$name]['items'][$this->getContext()->getI18N()->__('Groups')] = 'home/groups';    
       $this->items[$name]['items'][$this->getContext()->getI18N()->__('Edits')] = 'home/modifications';
+      $this->items[$name]['items']['divider1'] = 'divider';      
+      $this->items[$name]['items'][$network_name] = '@localHome?name=' . $network_path;
+      $this->items[$name]['items']['divider2'] = 'divider';
       $this->items[$name]['items'][$this->getContext()->getI18N()->__('Settings')] = 'home/settings';    
       $this->items[$name]['items'][$this->getContext()->getI18N()->__('Logout')] = '@sf_guard_signout';
-
-      $network_name = LsListTable::getNameById(sfGuardUserTable::getHomeNetworkId());
-      $network_path = LsListTable::getDisplayNameById(sfGuardUserTable::getHomeNetworkId());
-
-      $this->items[$network_name]['url'] = '@localHome?name=' . 
-        $network_path;
-      $this->items[$network_name]['highlighted'] = true;
-      $this->items[$network_name]['items'][$this->getContext()->getI18N()->__('Notes')] = 'local/notes?name=' . $network_path;
-      $this->items[$network_name]['items'][$this->getContext()->getI18N()->__('Analysts')] = 'local/analysts?name=' . $network_path;
 
       //recent views
       if ($this->getUser()->getGuardUser()->getProfile()->enable_recent_views && $entityIds = $this->getUser()->getAttribute('viewed_entity_ids'))
@@ -74,24 +70,24 @@ class homeComponents extends sfComponents
       $this->getContext()->getI18N()->__('Explore') => array(
         'items' => array(
           $this->getContext()->getI18N()->__('Lists') => 'list/list',
-          //'Top Analysts' => '@analysts',
-          $this->getContext()->getI18N()->__('Recent Updates') => 'modification/latest',
-          $this->getContext()->getI18N()->__('Analyst Notes') => '@notes',
-          $this->getContext()->getI18N()->__('Research Groups') => '@groups'
+          $this->getContext()->getI18N()->__('Groups') => '@groups',
+          $this->getContext()->getI18N()->__('Notes') => '@notes',
+          $this->getContext()->getI18N()->__('Users') => '@users',
+          $this->getContext()->getI18N()->__('Edits') => 'modification/latest'
         )
       ),
       $this->getContext()->getI18N()->__('Add') => null,
       $this->getContext()->getI18N()->__('Help') => array(
-        'url' => '@help',
         'items' => array(
-          $this->getContext()->getI18N()->__('beginner') => '@beginnerhelp',
-          $this->getContext()->getI18N()->__('advanced') => '@advancedhelp'
+          $this->getContext()->getI18n()->__('Search Help Pages') => '@help',
+          $this->getContext()->getI18N()->__('Beginner') => '@beginnerhelp',
+          $this->getContext()->getI18N()->__('Advanced') => '@advancedhelp'
 
         )
       ),
       $this->getContext()->getI18N()->__('About') => array(
-        'url' => '@about',
         'items' => array(
+          'LittleSis' => '@about',
           $this->getContext()->getI18N()->__('Features') => '@features',
           $this->getContext()->getI18N()->__('Our Team') => '@team',
           $this->getContext()->getI18N()->__('Blog') => 'http://blog.littlesis.org',
@@ -117,33 +113,10 @@ class homeComponents extends sfComponents
       $this->items[$this->getContext()->getI18N()->__('Add')] = array(
         'items' => array(
           $this->getContext()->getI18N()->__('Person') => 'entity/addPerson',
-          $this->getContext()->getI18N()->__('Organization') => 'entity/addOrg'
+          $this->getContext()->getI18N()->__('Organization') => 'entity/addOrg',
+          $this->getContext()->getI18N()->__('Add') => 'list/add'
         )
       );
-    }
-
-    if ($this->getUser()->hasCredential('lister'))
-    {
-      $this->items[$this->getContext()->getI18N()->__('Add')]['items'][$this->getContext()->getI18N()->__('List')] = 'list/add';
-    }
-
-    if ($this->getUser()->hasCredential('admin'))
-    {
-      $base = backend_base();
-      unset($this->items['Help']);
-      $this->items[$this->getContext()->getI18N()->__('About')]['items'][$this->getContext()->getI18N()->__('Blog')] = 'http://blog.littlesis.org';
-
-      /* hiding for now...
-      $this->items[$this->getContext()->getI18N()->__('Admin')] = array(
-        'url' => $base,
-        'items' => array(
-          $this->getContext()->getI18N()->__('Users') => $base . '/user/list',
-          $this->getContext()->getI18N()->__('Groups') => $base . '/sfGuardGroup',
-          $this->getContext()->getI18N()->__('Modifications') => $base . '/modification/list',
-          $this->getContext()->getI18N()->__('API') => $base . '/api/users'
-        )
-      );
-      */
     }
   }
   

@@ -8,9 +8,9 @@ default:
     keywords:     littlesis, little, sis, power, network, database, elite, money, profiles, people, corporations, companies, research, politics, corruption, relationships, business, government, politicians, elections, news, analysis, leadership, influence
     robots:       index, follow
 
-  stylesheets:    [main]
+  stylesheets:    [main, bootstrap]
 
-  javascripts:    []
+  javascripts:    ["jquery-2.0.3.min.js", bootstrap]
 
   has_layout:     on
   layout:         layout

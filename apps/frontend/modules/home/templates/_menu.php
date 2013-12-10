@@ -1,28 +1,22 @@
-<ul id="topmenu_links">
+<ul class="nav navbar-nav">
 <?php foreach ($items as $name => $ary) : ?>
   <?php if (!is_null($ary)) : ?>
-  <li>
-    <?php if (isset($ary['highlighted']) && $ary['highlighted']) : ?>
-      <span class="topmenu_highlight">
-    <?php endif; ?>
-    <?php if (isset($ary['url'])) : ?>
-      <?php echo link_to($name, $ary['url'], isset($ary['items']) ? '' : 'class=topmenu_direct_link') ?>
-    <?php else : ?>  
-      <?php if (isset($ary['disabled'])) : ?>
-        <a class="disabled" style="cursor: default;"><?php echo $name ?></a>      
-      <?php else : ?>
-        <a style="cursor: default;"><?php echo $name ?></a>
-      <?php endif; ?>
-    <?php endif; ?>
-    <?php if (isset($ary['highlighted']) && $ary['highlighted']) : ?>
-      </span>
-    <?php endif; ?>
-    <?php if (isset($ary['items'])) : ?>
-    <ul>
-    <?php foreach ($ary['items'] as $item => $url)  : ?>
-      <li><?php echo link_to($item, $url) ?></li>  
-    <?php endforeach; ?>
-    </ul>
+    <?php if (isset($ary['url']) && (!isset($ary['items']) || count($ary['items']) == 0)) : ?>
+      <li><?php echo link_to($name, $ary['url']) ?></li>
+    <?php else : ?>
+      <li class="dropdown">
+        <?php $class = @$ary['highlighted'] ? "dropdown-toggle highlighted" : "dropdown-toggle" ?>
+        <a class="<?php echo $class ?>" data-toggle="dropdown"><?php echo $name ?></a>
+        <ul class="dropdown-menu">
+          <?php foreach ($ary['items'] as $item => $url)  : ?>
+            <?php if ($url == 'divider') : ?>
+              <li class="divider"></li>
+            <?php else : ?>
+              <li><?php echo link_to($item, $url) ?></li>
+            <?php endif; ?>
+          <?php endforeach; ?>
+        </ul>
+      </li>
     <?php endif; ?>
   </li>
   <?php endif; ?>
