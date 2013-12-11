@@ -26,7 +26,7 @@
 <meta property="og:site_name"        content="LittleSis"/>
 
 </head>
-<body style="<?php echo (!$sf_request->getParameter("is_local") && $sf_request->getParameter('module') == 'home' && $sf_request->getParameter('action') == 'index') ? ('background-image: url(\'' . image_path('system/bg-lombardi.jpg') . '\');') : '' ?>">
+<body style="<?php echo (!$sf_request->getParameter("is_local") && $sf_request->getParameter('module') == 'home' && $sf_request->getParameter('action') == 'index') && false ? ('background-image: url(\'' . image_path('system/bg-lombardi-white.jpg') . '\');') : '' ?>">
 
 <!-- required for facebook social plugins -->
 <div id="fb-root"></div>
