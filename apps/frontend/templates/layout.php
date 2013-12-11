@@ -103,7 +103,7 @@
     </div>
     <?php endif; ?>
 
-    <?php if (has_slot('header_actions') || ((!$sf_user->isAuthenticated() && has_slot('share_text')))) : ?>
+    <?php if ((has_slot('header_actions') && get_slot('header_actions')) || ((!$sf_user->isAuthenticated() && has_slot('share_text')))) : ?>
     <div id="header_actions">
       <?php if (has_slot('header_actions')) : ?>
       <?php foreach (get_slot('header_actions') as $text => $ary) : ?>
@@ -131,7 +131,7 @@
         </div>
       <?php else : ?>
         <div style="display: inline; position: relative; top: -1px;">
-          <iframe scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:95px !important; height:21px;"></iframe>
+          <iframe scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:1px !important; height:21px;"></iframe>
         </div>
       <?php endif; ?>
     </div>
