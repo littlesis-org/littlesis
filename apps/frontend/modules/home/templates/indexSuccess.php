@@ -24,22 +24,20 @@
 &nbsp; &nbsp;&#10004;&nbsp; <?php echo link_to('Secretive Super PACs', $pac_list->getInternalUrl()) ?><br />
 &nbsp; &nbsp;&#10004;&nbsp; <?php echo link_to('Elite think tanks', $think_tank_list->getInternalUrl()) ?> <!--& <?php echo link_to('philanthropies', $philanthropy_list->getInternalUrl()) ?>-->
 </div>
-<div id="homepage-search">
   <form action="<?php echo url_for('search/simple') ?>">
-  <?php $existing = $sf_request->getParameter('q') && ($sf_request->getParameter('action') == 'simple') ?>
-  <input type="text" id="simple_search_terms" style="background-image: url('<?php echo image_path("system/search.png"); ?>');" class="<?php echo $existing ? '' : 'search_placeholder' ?>" name="q" 
-    value="<?php echo $existing ? $sf_request->getParameter('q') : 'search for a name' ?>" 
-    onfocus="if (this.value == 'search for a name') { this.className = ''; this.value = ''; }" 
-    onblur="if (this.value == '') { this.className = 'search_placeholder'; this.value = 'search for a name'; }" 
-    size="25" />
+    <div class="input-group" style="width: 250px;">
+      <input class="form-control" type="text" name="q" placeholder="search for a name" />
+      <span class="input-group-btn">
+        <button class="btn" style="color: white; background-color: #cc5454;" type="submit"><span class="glyphicon glyphicon-search"></span>&nbsp;</button>
+      </span>
+    </div>
   </form>
-</div>
 </div>
 
 
 <div style="margin-left: 0px; width: 600px;">
-<div id="homepage-splash-header">LittleSis<span style="color: #faa;">*</span> is a free database of who-knows-who at the heights of business and government.</div>
-<div style="font-size: 14px; color: #faa;">* opposite of Big Brother</div>
+<div id="homepage-splash-header">LittleSis<span style="color: #cc5454;">*</span> is a free database of who-knows-who at the heights of business and government.</div>
+<div style="font-weight: 300; font-size: 14px; color: #cc5454;"><span style="font-size: 16px; font-weight: bold;">*</span> opposite of Big Brother</div>
 
 <div id="homepage-splash-subheader">
 We're a grassroots watchdog network connecting the dots between the world's most powerful people and organizations.
@@ -47,21 +45,24 @@ We're a grassroots watchdog network connecting the dots between the world's most
 
 <div style="float: left; margin-right: 2em;">
 <form action="http://groups.google.com/group/littlesis/boxsubscribe">
-<input id="homepage-join-field" type="text" name="email"
-  value="<?php echo $existing ? $sf_request->getParameter('q') : 'your email' ?>" 
-  onfocus="if (this.value == 'your email') { this.className = ''; this.value = ''; }" 
-  onblur="if (this.value == '') { this.className = 'search_placeholder'; this.value = 'your email'; }"
-  size="25" />
-<input id="homepage-join-button" type="submit" name="sub" value="Join us!" />
+
+<div class="input-group" style="width: 300px;">
+  <input class="form-control" type="text" name="email"
+  placeholder="your email" size="25" />
+  <span class="input-group-btn">
+    <button class="btn" style="color: white; background-color: #cc5454;" type="submit" name="sub">Join Us!</button>
+  </span>
+</div>
+
 </form>
 </div>
 
-<div style="float: left; margin-right: 2em; padding-top: 11px;">
+<div style="float: left; margin-right: 2em; padding-top: 8px;">
 <a href="https://twitter.com/twittlesis" class="twitter-follow-button" data-show-count="false" data-dnt="true">Follow @twittlesis</a>
 <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
 </div>
 
-<div style="padding-top: 11px;">
+<div style="padding-top: 8px;">
 <div class="fb-like" data-href="https://www.facebook.com/LittleSis.org" data-send="false" data-layout="button_count" data-width="90" data-show-faces="false"></div>
 </div>
 
