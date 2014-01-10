@@ -18,5 +18,3 @@ Disallow: /*giving*page*
 Disallow: /*interlocks*page*
 Disallow: /*page
 Disallow: /search
-Disallow: /*interlocks
-Disallow: /*giving
