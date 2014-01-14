@@ -3001,8 +3001,10 @@ class entityActions extends sfActions
     
     $this->note_pager = NoteTable::getSphinxPager($s, null, Doctrine::HYDRATE_ARRAY);
   }
+
   
-  
+  /* DEPRECATED ACTION: see executeMatchDonations
+
   public function executeMatchDonors($request)
   {
     $this->checkEntity($request);
@@ -3228,6 +3230,7 @@ class entityActions extends sfActions
     $db = $databaseManager->getDatabase('main');
     Doctrine_Manager::connection($db->getParameter('dsn'));
   }
+  */
   
   
   public function executeMatchDonations($request)

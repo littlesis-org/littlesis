@@ -114,7 +114,7 @@ class homeComponents extends sfComponents
         'items' => array(
           $this->getContext()->getI18N()->__('Person') => 'entity/addPerson',
           $this->getContext()->getI18N()->__('Organization') => 'entity/addOrg',
-          $this->getContext()->getI18N()->__('Add') => 'list/add'
+          $this->getContext()->getI18N()->__('List') => 'list/add'
         )
       );
     }
