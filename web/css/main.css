@@ -2595,3 +2595,36 @@ svg .image {
 {
   padding-right: 8em;
 }
+
+body#bookmarklet {
+  padding-top: 0;
+}
+
+#entity1_results hr, #entity2_results hr {
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+html label {
+  font-weight: normal;
+}
+
+html strong label {
+  font-weight: bold;
+}
+
+html .form_label {
+  font-weight: bold;
+}
+
+html .form_label label {
+  font-weight: bold;
+}
+
+html .field label {
+  font-weight: bold;
+}
+
+input[type="radio"] {
+  margin-right: 5px;
+}
