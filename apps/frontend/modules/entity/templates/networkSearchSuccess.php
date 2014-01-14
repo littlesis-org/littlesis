@@ -20,7 +20,7 @@ The following search returns <strong>Entity X</strong>s with the most <strong>En
 
 <table style="width: auto;">
   <tr>
-    <td style="width:90px;">Relationship 1:</td>
+    <td style="width:100px;">Relationship 1:</td>
     <td>
       <?php foreach ($categories as $id => $name) : ?>
         <?php echo checkbox_tag('cat1_ids[]', $id, in_array($id, explode(',', $cat1_ids))) ?><?php echo $name ?>

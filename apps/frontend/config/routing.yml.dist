@@ -107,6 +107,10 @@ data:
   url:   /data
   param: { module: home, action: data }
 
+dashboard:
+  url:   /home/dashboard
+  param: { module: home, action: dashboard }
+  
 
 # SLUGS
 personPager:

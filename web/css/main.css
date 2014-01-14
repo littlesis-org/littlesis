@@ -2628,3 +2628,29 @@ html .field label {
 .form_field input[type="radio"] {
   margin-right: 3px;
 }
+
+#category_fields_all input[type="radio"] {
+  margin-right: 3px;
+}
+
+table.donor-table * {
+  -webkit-box-sizing: content-box;
+  -moz-box-sizing: content-box;
+  box-sizing: content-box;  
+}
+
+.datatable td.label {
+  display: table-cell;
+  font-size: 100%;
+  line-height: 1.1;
+}
+
+html div#content * {
+  -webkit-box-sizing: content-box;
+  -moz-box-sizing: content-box;
+  box-sizing: content-box;    
+}
+
+html div#content td input[type="checkbox"] {
+  margin-right: 3px;
+}
