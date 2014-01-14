@@ -50,7 +50,7 @@
           <span class="icon-bar"></span>
         </button>
         <div id="brand">
-          <?php echo link_to(image_tag('system/lilsis-logo-trans-200.png'), $sf_user->isAuthenticated() ? '@homepage' : '@homepage') ?>
+          <?php echo link_to(image_tag('system/lilsis-logo-trans-200.png'), $sf_user->isAuthenticated() ? '@dashboard' : '@homepage') ?>
         </div>
       </div>
       <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">

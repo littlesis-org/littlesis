@@ -39,10 +39,12 @@ class homeActions extends sfActions
 	{
     if ($this->getUser()->isAuthenticated())
     {
-      if ($network = Doctrine::getTable("LsList")->find($this->getUser()->getProfile()->home_network_id))
-      {
-        $this->redirect("@localHome?name=" . $network["display_name"]);
-      }
+      //if ($network = Doctrine::getTable("LsList")->find($this->getUser()->getProfile()->home_network_id))
+      //{
+      //  $this->redirect("@localHome?name=" . $network["display_name"]);
+      //}
+      
+      $this->redirect("@dashboard");
     }
 
     //get lists

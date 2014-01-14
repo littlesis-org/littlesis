@@ -2625,6 +2625,6 @@ html .field label {
   font-weight: bold;
 }
 
-input[type="radio"] {
-  margin-right: 5px;
+.form_field input[type="radio"] {
+  margin-right: 3px;
 }
