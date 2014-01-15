@@ -57,7 +57,7 @@
 <?php endif; ?>
 
 
-<?php if ($sf_user->hasCredential('editor')) : ?>
+<?php if (false && $sf_user->hasCredential('editor')) : ?>
 
 <?php sfContext::getInstance()->getResponse()->addJavascript(sfConfig::get('sf_prototype_web_dir').'/js/prototype'); ?>
 

@@ -14,6 +14,9 @@
 	<?php echo link_to(image_tag('system'.DIRECTORY_SEPARATOR.$file, array('alt' => 'Upload Image')), EntityTable::getInternalUrl($entity, 'uploadImage')) ?>
 <?php endif; ?>
 
+<?php if ($image['caption']) : ?>
+  <div class="image_caption"><?php echo $image['caption'] ?></div>
+<?php endif; ?>
 </div>
 </div>
 

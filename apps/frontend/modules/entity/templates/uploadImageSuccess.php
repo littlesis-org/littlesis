@@ -24,7 +24,7 @@ Images can have a maximum file size of 5MB.<br />
 	<?php include_partial('global/formspacer') ?>
 	<?php include_partial('global/formfield', array('field' => $upload_form['is_free'])) ?>
 	<?php include_partial('global/formfield', array('field' => $upload_form['title'], 'required' => true)) ?>
-	<?php include_partial('global/formfield', array('field' => $upload_form['caption'])) ?>
+	<?php include_partial('global/formfield', array('field' => $upload_form['caption'], 'label' => 'Caption and/or attribution')) ?>
 <?php if ($has_image) : ?>
 	<?php include_partial('global/formfield', array('field' => $upload_form['is_featured'])) ?>
 <?php endif; ?>

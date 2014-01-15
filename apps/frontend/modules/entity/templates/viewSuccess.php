@@ -39,30 +39,8 @@
 <script type="text/javascript">
 
 function toggle_rels(id) {
-  rels = $('related_entity_relationships_' + id);
-  visible = (rels.getStyle('display') == 'block');
-  
-  if (visible) {
-    Effect.BlindUp(rels.id, { duration: 0.2 });
-  } else {
-    Effect.BlindDown(rels.id, { duration: 0.2 });
-  }
-}
-
-
-function toggle_relationship(id) {
-  entity = $('related_entity_' + id);
-  more_link = $('related_toggle_' + id);
-  rels = $('related_relationships_' + id);
-  visible = (rels.getStyle('display') == 'block');
-  
-  if (visible) {
-    Effect.BlindUp(rels.id, { duration: 0.2 });
-    more_link.update('&#9660;');
-  } else {
-    Effect.BlindDown(rels.id, { duration: 0.2 });
-    more_link.update('&#9650;');
-  }
+  rels = $('#related_entity_relationships_' + id);
+  rels.toggle('blind');
 }
 
 </script>

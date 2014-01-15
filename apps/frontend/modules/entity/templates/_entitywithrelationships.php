@@ -1,4 +1,4 @@
-<?php $unique = microtime(true) . "_" . $related_entity["id"] ?>
+<?php $unique = uniqid() . "_" . $related_entity["id"] ?>
 <?php $entity_length = strlen($related_entity["name"]) ?>
 <?php $blurb_length = 85 - round($entity_length * 1.2) ?>
 

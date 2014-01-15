@@ -32,7 +32,7 @@ class ImageUploadForm extends sfForm
     ));
 
     $this->widgetSchema->setHelps(array(
-      'caption' => 'a short description',
+      'caption' => 'a short description and/or image credit',
       'is_featured' => 'put this image on the profile page'
     ));
 

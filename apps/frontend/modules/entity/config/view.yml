@@ -1,9 +1,6 @@
 matchDonationsSuccess:
   javascripts:    [%SF_PROTOTYPE_WEB_DIR%/js/prototype]
 
-matchDonorsSuccess:
-  javascripts:    [%SF_PROTOTYPE_WEB_DIR%/js/prototype]
-
 addBulkSuccess:
   javascripts:    [%SF_PROTOTYPE_WEB_DIR%/js/prototype, %SF_PROTOTYPE_WEB_DIR%/js/scriptaculous, %SF_PROTOTYPE_WEB_DIR%/js/effects]
 
@@ -16,9 +13,6 @@ editExternalKeysSuccess:
 editCustomFieldsSuccess:
   javascripts:    [%SF_PROTOTYPE_WEB_DIR%/js/prototype]
   
-viewSuccess:
-  javascripts:    [%SF_PROTOTYPE_WEB_DIR%/js/prototype, %SF_PROTOTYPE_WEB_DIR%/js/scriptaculous, %SF_PROTOTYPE_WEB_DIR%/js/effects]
-
 mapSuccess:
   javascripts:    [d3.v3.min.js, jquery.min.js, netmap.js]
 

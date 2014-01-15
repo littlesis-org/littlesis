@@ -5,7 +5,7 @@
   <td class="<?php echo isset($form_label_class) ? $form_label_class : 'form_label' ?>
              <?php if ($field->hasError() || $sf_request->hasError($fieldName)) { echo ' form_label_error'; } ?>"
       <?php echo isset($label_width) ? 'style="width: ' . $label_width . ';"' : '' ?>>
-    <?php echo $field->renderLabel() . ((isset($required) && $required) ? '*' : null) ?>
+    <?php echo (isset($label) ? $label : $field->renderLabel()) . ((isset($required) && $required) ? '*' : null) ?>
   </td>
   <td class="<?php echo isset($form_field_class) ? $form_field_class : 'form_field' ?>">
     <?php echo $field->render() ?>

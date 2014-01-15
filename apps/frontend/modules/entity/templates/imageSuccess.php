@@ -3,7 +3,7 @@
 
 <?php $data = array(
   $entity->getPrimaryExtension(true) => entity_link($entity),
-  'Caption' => $image->caption,
+  'Caption/credit' => $image->caption,
   'Free' => $image->is_free
 ) ?>
 

@@ -1287,6 +1287,11 @@ body
   padding-left: 0.5em;
 }
 
+.related_entity_relationship li, .related_entity_relationships li
+{
+  margin-left: 10px;
+}
+
 .related_entity_relationship a.toggler
 {
   background-color: #eee;
@@ -2653,4 +2658,9 @@ html div#content * {
 
 html div#content td input[type="checkbox"] {
   margin-right: 3px;
+}
+
+.image_caption {
+  font-size: 11px;
+  font-style: italic;
 }
