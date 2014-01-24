@@ -1,11 +1,21 @@
+default:
+  is_secure: on
+  credentials: importer
+  
 save:
   is_secure: on
-  credentials: admin
+  credentials: importer
 
 edit:
   is_secure: on
-  credentials: admin
+  credentials: importer
 
 delete:
   is_secure: on
-  credentials: admin
+  credentials: importer
+  
+list:
+  is_secure: on
+  credentials: importer
+
+
