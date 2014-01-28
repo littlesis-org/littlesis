@@ -42,8 +42,8 @@ network(s). <strong><?php echo link_to('Search all &raquo;', '@search', array('q
 
 <?php foreach ($groups as $group) : ?>
 
-<span class="text_big"><strong><?php echo group_link($group) ?></strong></span>&nbsp;
-<em><?php echo excerpt($group['blurb'], 100) ?></em>
+<span class="text_big"><strong><?php echo rails_group_link($group) ?></strong></span>&nbsp;
+<em><?php echo excerpt($group['tagline'], 100) ?></em>
 <br />
     
 <?php endforeach; ?>

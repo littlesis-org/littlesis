@@ -60,8 +60,18 @@ class searchActions extends sfActions
     if (strlen($terms) > 2)
     {
       $db = Doctrine_Manager::connection();
-      $sql = 'SELECT g.* FROM sf_guard_group g WHERE (g.display_name LIKE ? OR g.name LIKE ? OR g.blurb LIKE ?) AND g.is_working = 1 AND g.is_private = 0 ORDER BY g.display_name ASC';
-      $stmt = $db->execute($sql, array('%' . $terms . '%', '%' . $terms . '%', '%' . $terms . '%'));
+
+      if (sfConfig::get('app_rails_enabled'))
+      {
+        $sql = 'SELECT g.* FROM groups g WHERE (g.name LIKE ? OR g.tagline LIKE ? OR g.description LIKE ? OR g.slug LIKE ?) AND g.is_private = 0 ORDER BY g.name ASC';
+        $stmt = $db->execute($sql, array('%' . $terms . '%', '%' . $terms . '%', '%' . $terms . '%', '%' . $terms . '%'));
+      }
+      else 
+      {
+        $sql = 'SELECT g.* FROM sf_guard_group g WHERE (g.display_name LIKE ? OR g.name LIKE ? OR g.blurb LIKE ?) AND g.is_working = 1 AND g.is_private = 0 ORDER BY g.display_name ASC';
+        $stmt = $db->execute($sql, array('%' . $terms . '%', '%' . $terms . '%', '%' . $terms . '%'));
+      }
+
       $this->groups = $stmt->fetchAll(PDO::FETCH_ASSOC);      
     }
   }

@@ -231,6 +231,11 @@ function group_link($group)
   return link_to($group['display_name'], sfGuardGroupTable::getInternalUrl($group));
 }
 
+function rails_group_link($group)
+{
+  return link_to($group['name'], '/groups/' . $group['slug']);
+}
+
 
 function ls_image_tag($source, $options = array())
 {
