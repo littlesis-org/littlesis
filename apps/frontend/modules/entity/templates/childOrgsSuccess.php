@@ -1,3 +1,5 @@
+<?php include_partial('entity/basic', array('entity' => $entity)) ?>
+
 <?php include_partial('global/subsection', array(
   'title' => 'Child Organizations',
   'pager' => $children_pager,
@@ -10,4 +12,3 @@
   <br />
 <?php endforeach; ?>
 </div>
-<br />

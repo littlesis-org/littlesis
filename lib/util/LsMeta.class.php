@@ -33,7 +33,8 @@ class LsMeta
       'members' => 'members',
       'memberships' => 'memberships',
       'owners' => 'owners',
-      'students' => 'students'
+      'students' => 'students',
+      'childOrgs' => 'child orgs'
     );
 
     $userPages = array(
