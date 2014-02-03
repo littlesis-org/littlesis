@@ -757,11 +757,7 @@ class entityActions extends sfActions
         ->where('e.parent_id = ?', $this->entity['id']);
         
       $this->children_pager = new LsDoctrinePager($q, $page=1, $num=5);
-      $this->children_pager->setAjax(true);
-      $this->children_pager->setAjaxUpdateId('relationship_tabs_content');
-      $this->children_pager->setAjaxIndicatorId('indicator');
-      $this->children_pager->setAjaxHash('childOrgs');    
-    }    
+    }
   }
 
 
@@ -2974,10 +2970,6 @@ class entityActions extends sfActions
       ->where('e.parent_id = ?', $this->entity->id);
       
     $this->children_pager = new LsDoctrinePager($q, $page, $num);
-    $this->children_pager->setAjax(true);
-    $this->children_pager->setAjaxUpdateId('relationship_tabs_content');
-    $this->children_pager->setAjaxIndicatorId('indicator');
-    $this->children_pager->setAjaxHash('childOrgs');
   }
   
   
