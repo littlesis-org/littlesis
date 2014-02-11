@@ -71,7 +71,7 @@ class LsPDOSessionStorage extends sfDatabaseSessionStorage
     $db_time_col = $this->options['db_time_col'];
 
     // delete the record associated with this id
-    $sql = 'DELETE FROM '.$db_table.' WHERE '.$db_time_col.' < '.(time() - $lifetime);
+    $sql = 'DELETE FROM '.$db_table.' WHERE '.$db_time_col.' < \'' . $this->date(time() - $lifetime) . '\'';
 
     try
     {
@@ -96,6 +96,11 @@ class LsPDOSessionStorage extends sfDatabaseSessionStorage
    */
   public function sessionRead($id)
   {
+    if ($this->isBotRequest())
+    {
+      return false;
+    }
+
     // get table/columns
     $db_table    = $this->options['db_table'];
     $db_data_col = $this->options['db_data_col'];
@@ -121,7 +126,7 @@ class LsPDOSessionStorage extends sfDatabaseSessionStorage
         $stmt = $this->con->prepare($sql);
         $stmt->bindParam(1, $id, PDO::PARAM_STR);
         $stmt->bindValue(2, '', PDO::PARAM_STR);
-        $stmt->bindValue(3, time(), PDO::PARAM_INT);
+        $stmt->bindValue(3, $this->date(), PDO::PARAM_STR);
         $stmt->execute();
 
         return '';
@@ -145,13 +150,18 @@ class LsPDOSessionStorage extends sfDatabaseSessionStorage
    */
   public function sessionWrite($id, $data)
   {
+    if ($this->isBotRequest())
+    {
+      return false;
+    }
+
     // get table/column
     $db_table    = $this->options['db_table'];
     $db_data_col = $this->options['db_data_col'];
     $db_id_col   = $this->options['db_id_col'];
     $db_time_col = $this->options['db_time_col'];
 
-    $sql = 'UPDATE '.$db_table.' SET '.$db_data_col.' = ?, '.$db_time_col.' = '.time().' WHERE '.$db_id_col.'= ?';
+    $sql = 'UPDATE '.$db_table.' SET '.$db_data_col.' = ?, '.$db_time_col.' = \''.$this->date().'\' WHERE '.$db_id_col.'= ?';
 
     try
     {
@@ -166,5 +176,20 @@ class LsPDOSessionStorage extends sfDatabaseSessionStorage
     }
 
     return true;
+  }
+
+  public function date($time=null)
+  {
+    if (is_null($time))
+    {
+      $time = time();
+    }
+
+    return gmdate('Y-m-d H:i:s', $time);
+  }
+
+  public function isBotRequest()
+  {
+    return preg_match("/baidu|bing|bot|google|spider/i", $_SERVER['HTTP_USER_AGENT']);
   }
 }
