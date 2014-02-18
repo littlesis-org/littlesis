@@ -25,6 +25,7 @@ That is not to say that you will not find valuable and accurate information in L
 <a href="#nocontract">No contract; limited license</a><br />
 <a href="#trademarks">Trademarks</a><br />
 <a href="#jurisdiction">Jurisdiction</a><br />
+<a href="#dcma">DMCA Compliance</a></br />
 <br />
 <br />
 </span>
@@ -72,6 +73,26 @@ Any of the trademarks, service marks, collective marks, design rights, personali
 
 <span class="text_big">
 Publication of information found in LittleSis may be in violation of the laws of the country or jurisdiction from where you are viewing this information. The LittleSis database is stored on a server in the United States of America, and is maintained in reference to the protections afforded under local and federal law. Laws in your country or jurisdiction may not protect or allow the same kinds of speech or distribution. LittleSis does not encourage the violation of any laws; and cannot be responsible for any violations of such laws, should you link to this domain or use, reproduce, or republish the information contained herein.
+<br />
+<br />
+</span>
+
+
+<a name="dcma"></a>
+<h2>DMCA Compliance</h2>
+
+<span class="text_big">
+The Public Accountability Initiative (PAI) strives to ensure that the content hosted on LittleSis.org complies with copyright laws, and that users comply with copyright laws in uploading content to LittleSis.org. It is our policy to respond expeditiously to notices of alleged copyright infringement that comply with the US Digital Millennium Copyright Act.
+<br />
+<br />
+If PAI receives proper notification of copyright infringement, we will take steps to remove the infringing material. If you believe that your work has been copied in a way that constitutes infringement, or your intellectual property rights have otherwise been violated, you can request that the content be removed under the DMCA. To make such a request, please contact our designated agent:
+<br />
+<br />
+Kevin Connor<br />
+Email: <style type="text/css">span.codedirection { unicode-bidi:bidi-override; direction: rtl; }</style><span class="codedirection"><?php echo strrev("copyright@public-accountability.org") ?></span><br />
+Snail mail: Public Accountability Initiative, 89 Rhode Island St, Buffalo, NY 14213<br />
+<br /> 
+In accordance with Section 512(i)(1)(a) of the DMCA, PAI will, in appropriate circumstances, disable and/or terminate the accounts of users who are repeat infringers. 
 <br />
 <br />
 </span>
