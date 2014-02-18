@@ -33,7 +33,7 @@ Images can have a maximum file size of 5MB.<br />
 		<td class="form_submit">
 			<br />
 			By submitting this form, I am ensuring that this content does not violate any copyrights. <br />
-			Please see our <?php echo link_to("policy regarding copyright violations and repeat infringers", '@disclaimer') ?>. <br />
+			Please see our <?php echo link_to("policy regarding copyright violations and repeat infringers", '@disclaimer#dcma') ?>. <br />
 			<br />
 			<input type="submit" value="Upload" />
 		</td>

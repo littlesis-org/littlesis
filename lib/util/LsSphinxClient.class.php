@@ -15,7 +15,7 @@ class LsSphinxClient extends SphinxClient
     }
 
     $query = preg_replace('#(?<! )-&#', '\-', $query);
-    $query = preg_replace('#(?<!\\\)/#', '\/', $query);
+    //$query = preg_replace('#(?<!\\\)/#', '\/', $query);
 
     return $query;
   }
