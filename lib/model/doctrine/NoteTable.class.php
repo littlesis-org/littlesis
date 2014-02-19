@@ -339,7 +339,6 @@ class NoteTable extends Doctrine_Table
   {
     $str = preg_replace('#(<a [^>]+>)([^<]{51,})(</a>)#ie', "'\\1' . substr('\\2', 0, 41) . '...\\3'", $str);
     $str = stripslashes($str);
-    $str = nl2br($str);
 
     $breakPos = strpos($str, '<!--more-->');
     
