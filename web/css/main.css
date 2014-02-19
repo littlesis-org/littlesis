@@ -2459,7 +2459,7 @@ svg .image {
 {
   color: #555;
   list-style-type: none;
-  font-size: 12px;  
+  font-size: 1em;
   padding: 0.5em 0 0 0 ;
   margin: 0;
 }
