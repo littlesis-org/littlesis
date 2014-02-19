@@ -2458,8 +2458,8 @@ svg .image {
 .help_home_list
 {
   color: #555;
-  font-size: 1em;
   list-style-type: none;
+  font-size: 12px;  
   padding: 0.5em 0 0 0 ;
   margin: 0;
 }
