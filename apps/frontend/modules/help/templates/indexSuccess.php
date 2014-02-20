@@ -4,7 +4,7 @@
 <table width="80%" style="margin: auto">
 <tr>
 
-<td colspan="3" style="padding: 2em 0 2em 0; text-align: center">
+<td colspan="3" style="padding: 3em 0 4em 0; text-align: center">
 <?php include_partial("help/helpsearch") ?>
 </td>
 </tr>
