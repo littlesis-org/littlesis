@@ -55,7 +55,9 @@
           <div id ="newform-<?php echo $count ?>" class="newform" style="display:<?php echo $display ?>"; float: left; width:200px">
             <div style="display:block; padding:5px">
               <span style="float: left; width: 40px"><label>Name</label></span>
-              <span><?php echo input_tag("new_name_" . $count, EntityTable::cleanName($match['name'])) ?></span>
+              <span>
+                <input type="text" id="new_name_<?php echo $count ?>" name="new_name_<?php echo $count ?>" value="<?php echo EntityTable::cleanName($match['name']) ?>" />
+              </span>
             </div>
             <div style="display:block; padding:5px">
               <span style="float: left; width: 40px"><label >Blurb</label></span>

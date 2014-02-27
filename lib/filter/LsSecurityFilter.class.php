@@ -9,7 +9,7 @@ class LsSecurityFilter extends sfBasicSecurityFilter
     $firstCall = $this->isFirstCall();
 
     //attempt to log in user if they have the sfRemember cookie
-    if (sfconfig::get('app_login_enabled') && $firstCall && !$user->isAuthenticated())
+    if (sfconfig::get('app_login_enabled') && $firstCall && (!$user->isAuthenticated() || !$user->getGuardUser()))
     {
       if ($cookie = $context->getRequest()->getCookie(sfConfig::get('app_sf_guard_plugin_remember_cookie_name', 'sfRemember')))
       {

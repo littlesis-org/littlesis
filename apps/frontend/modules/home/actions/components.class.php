@@ -6,7 +6,7 @@ class homeComponents extends sfComponents
   {
     $this->items = array();
 
-    if ($this->getUser()->isAuthenticated())
+    if ($this->getUser()->isAuthenticated() && $this->getUser()->getGuardUser())
     {
       $name = $this->getUser()->getGuardUser()->getProfile()->public_name;
       $network_name = LsListTable::getNameById(sfGuardUserTable::getHomeNetworkId());

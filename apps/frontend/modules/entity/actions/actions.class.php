@@ -4429,7 +4429,6 @@ class entityActions extends sfActions
 										}
 									}
 									$this->matches[] = $match;
-									$this->getUser()->setAttribute('bulkadd_matches', $this->matches);
 								}
 							}
 						}
