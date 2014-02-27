@@ -1,4 +1,3 @@
-<?php //var_dump($entity['name']); die ?>
 <?php slot('header_text', $entity['name']) ?>
 <?php slot('header_link', EntityTable::getInternalUrl($entity)) ?>
 <?php slot('description_meta', EntityTable::generateMetaDescription($entity)) ?>
