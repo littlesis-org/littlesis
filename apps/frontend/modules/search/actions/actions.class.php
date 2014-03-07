@@ -74,6 +74,17 @@ class searchActions extends sfActions
 
       $this->groups = $stmt->fetchAll(PDO::FETCH_ASSOC);      
     }
+
+    //search campaigns
+    if (strlen($terms) > 2 && sfConfig::get('app_rails_enabled'))
+    {
+      $db = Doctrine_Manager::connection();
+
+      $sql = 'SELECT c.* FROM campaigns c WHERE (c.name LIKE ? OR c.tagline LIKE ? OR c.description LIKE ? OR c.slug LIKE ?) ORDER BY c.name ASC';
+      $stmt = $db->execute($sql, array('%' . $terms . '%', '%' . $terms . '%', '%' . $terms . '%', '%' . $terms . '%'));
+
+      $this->campaigns = $stmt->fetchAll(PDO::FETCH_ASSOC);      
+    }
   }
 
 
