@@ -32,6 +32,28 @@ network(s). <strong><?php echo link_to('Search all &raquo;', '@search', array('q
 <br />
 
 
+<?php if (isset($campaigns) && count($campaigns)) : ?>
+
+<?php use_helper('LsText') ?>
+
+<?php include_partial('global/section', array(
+  'title' => 'Research Hubs'
+))?>
+
+<?php foreach ($campaigns as $campaign) : ?>
+
+<span class="text_big"><strong><?php echo rails_campaign_link($campaign) ?></strong></span>&nbsp;
+<em><?php echo excerpt($campaign['tagline'], 100) ?></em>
+<br />
+    
+<?php endforeach; ?>
+
+<br />
+<br />
+
+<?php endif; ?>
+
+
 <?php if (isset($groups) && count($groups)) : ?>
 
 <?php use_helper('LsText') ?>

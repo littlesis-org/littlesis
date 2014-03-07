@@ -236,6 +236,11 @@ function rails_group_link($group)
   return link_to($group['name'], '/groups/' . $group['slug']);
 }
 
+function rails_campaign_link($campaign)
+{
+  return link_to($campaign['name'], '/hubs/' . $campaign['slug']);
+}
+
 
 function ls_image_tag($source, $options = array())
 {
