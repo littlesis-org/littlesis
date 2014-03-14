@@ -91,6 +91,7 @@ form div.recaptcha_input_area
 {
   color: black;
   font-size: 18px;
+  font-weight: 400;
   display: inline;
 }
 
@@ -141,9 +142,10 @@ form div.recaptcha_input_area
 
 .subsection
 {
-  font-weight: bold;
-  color: black;
+
   font-size: 18px;
+  font-weight: 500;
+  color: black;
   padding: 0.4em;
   padding-bottom: 0.2em;
   padding-left: 0.2em;
@@ -2358,15 +2360,15 @@ svg {
 }
 
 svg .line {
-  stroke: #ddd;
+  stroke: black;
 }
 
 svg .rel.selected .line {
-  stroke: #eed;
+  stroke: #f91409;
 }
 
 svg .entity.selected .image_rect {
-  fill: #ffe;
+  stroke: #ffe;
 }
 
 svg .entity .add_button text {

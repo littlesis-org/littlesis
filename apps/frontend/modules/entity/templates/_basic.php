@@ -30,7 +30,7 @@
     <div id="entity_blurb">
   <?php endif; ?>
 
-  <span class="entity_blurb"><?php echo excerpt($entity['blurb'], 90) ?></span>
+  <span class="entity_blurb"><?php echo $entity['blurb'] ?></span>
   
   <?php if ($sf_user->hasCredential('editor')) : ?>
     <a href="javascript:void(0);" id="entity_blurb_edit" style="display: none;" onClick="showEditBlurbForm('<?php echo str_replace("'", "\'", $entity['blurb']) ?>');">
@@ -57,9 +57,8 @@
 <?php endif; ?>
 
 
-<?php if (false && $sf_user->hasCredential('editor')) : ?>
+<?php if ($sf_user->hasCredential('editor')) : ?>
 
-<?php sfContext::getInstance()->getResponse()->addJavascript(sfConfig::get('sf_prototype_web_dir').'/js/prototype'); ?>
 
 <script>
 
@@ -75,14 +74,15 @@ function showEditBlurbForm(val)
 function submitEditBlurbForm()
 {
   blurb_input = document.getElementById('entity_blurb_input');
-  new Ajax.Request('<?php echo url_for('entity/editBlurbInline') ?>', {
-    method: 'post',
-    parameters: {blurb: blurb_input.value, id: <?php echo $entity['id'] ?>},
-    onSuccess: function(transport) {
-      var response = transport.responseText;
+  $.ajax({
+    url: '<?php echo url_for('entity/editBlurbInline') ?>',
+    type: 'POST',
+    data: {blurb: blurb_input.value, id: <?php echo $entity['id'] ?>},
+    success: function(response) {
+      
       document.getElementById('entity_blurb_container').innerHTML = response;
     },
-    onFailure: function() { alert('Something went wrong...'); }
+    error: function() { alert('Something went wrong...'); }
   });
 }
 

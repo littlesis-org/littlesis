@@ -9,7 +9,7 @@
     <?php $people = EntityTable::getMultipleById(explode(',', $object['degree1_ids'])) ?>
     <?php $people_links = array() ?>
     <?php foreach ($people as $person) : ?>
-      <?php $people_links[] = entity_link($person, null) ?>
+      <?php $people_links[] = entity_link($person, null,false) ?>
     <?php endforeach; ?>  
     <?php echo implode(', ', $people_links) ?>
   </td>

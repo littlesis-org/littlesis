@@ -1834,7 +1834,8 @@ class EntityTable extends Doctrine_Table
         "entity2_id" => $rel["entity2_id"],
         "category_id" => $rel["category_id"],
         "category_ids" => $rel["category_ids"],
-        "is_current" => $rel["is_current"],        
+        "is_current" => $rel["is_current"],
+        "end_date" => $rel["end_date"],       
         "value" => 1, 
         "label" => $rel["label"],
         "url" => $url      
@@ -1847,7 +1848,7 @@ class EntityTable extends Doctrine_Table
   public static function getRelsForMap($entity_ids, $include_cats=array(), $exclude_cats=array(), $exclude_ids=array())
   {
     $db = Doctrine_Manager::connection();
-    $sql = "SELECT r.id, r.entity1_id, r.entity2_id, r.category_id, r.is_current, r.is_deleted, " . 
+    $sql = "SELECT r.id, r.entity1_id, r.entity2_id, r.category_id, r.is_current, r.end_date, r.is_deleted, " . 
            "GROUP_CONCAT(DISTINCT(rc.name) SEPARATOR ', ') AS label, " . 
            "GROUP_CONCAT(DISTINCT(r.category_id) SEPARATOR ',') AS category_ids, " . 
            "COUNT(r.id) AS  num " . 

@@ -14,6 +14,8 @@ class LsMeta
     $header = isset($slots['header_text']) ? $slots['header_text'] : null;
 
     $entityPages = array(
+      'political' => 'political donations',
+      'interlocks' => 'interlocks & connections',
       'giving' => 'campaign contributions',
       'family' => 'family',
       'friends' => 'friends & colleagues',
@@ -34,7 +36,9 @@ class LsMeta
       'memberships' => 'memberships',
       'owners' => 'owners',
       'students' => 'students',
-      'childOrgs' => 'child orgs'
+      'childOrgs' => 'child orgs',
+      'notes' => '- notes',
+      'images' => '- images'
     );
 
     $userPages = array(
@@ -51,10 +55,10 @@ class LsMeta
       }
       else
       {
-        $detail = "power network";
+        $detail = "network";
       }
 
-      $header = rtrim($header, " .") . "'s " . $detail;
+      $header = rtrim($header, " .") . " -  " . $detail;
       $response->setSlot('share_text', $header);
     }
 
