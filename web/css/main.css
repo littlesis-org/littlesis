@@ -2325,6 +2325,23 @@ input#simple_search_terms
   float: right;
 }
 
+#netmap_controls input[type=button] {
+  position: relative;
+  font-size: 14px;
+  top: -6px;
+  color: #444;
+  background-color: #fff;
+  border: 1px solid #e0e0e0;
+  padding: 4px;
+  padding-left: 8px;
+  padding-right: 8px;
+  margin-right: 3px;
+  -moz-border-radius:10px;
+  border-radius: 10px;
+  width: 50px;
+  margin-bottom: 4px;
+}
+
 #map_description {
   float: left;
   width: 850px;
@@ -2368,7 +2385,7 @@ svg .rel.selected .line {
 }
 
 svg .entity.selected .image_rect {
-  stroke: #ffe;
+  stroke: #FAFAFA;
 }
 
 svg .entity .add_button text {

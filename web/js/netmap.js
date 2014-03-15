@@ -286,8 +286,10 @@
         }
         r.is_current_with_null = r.is_current;
         r.is_current = Number(r.is_current);
-        r.x1 =null;
-        r.y1=null;
+        if (typeof r.x1 == 'undefined') {
+          r.x1 =null;
+          r.y1=null;
+        }
         r.source = this._data.entities[entity_index[Number(r.entity1_id)]];
         _results.push(r.target = this._data.entities[entity_index[Number(r.entity2_id)]]);
         //alert(JSON.stringify(r));
@@ -444,6 +446,7 @@
           e.y = position != null ? position[1] : t.height / 2 + 200 * (0.5 - Math.random());
           return e;
         });
+
         new_data = {
           "entities": t.data().entities.concat(data.entities),
           "rels": t.data().rels.concat(data.rels)
@@ -1125,12 +1128,12 @@
         return d.image;
       }).attr("x", -25).attr("y", -25).attr("width", 50).attr("height", 50);
       
-      groups.append("circle").attr("class", "image_rect").attr("fill", "none").attr("opacity", 1).attr("r", 30).attr("x", -29).attr("y", -29).attr("stroke", "white").attr("stroke-width", 12);
+      groups.append("circle").attr("class", "image_rect").attr("fill", "none").attr("opacity", 1).attr("r", 26).attr("x", -29).attr("y", -29).attr("stroke", "white").attr("stroke-width", 18);
       buttons = groups.append("a").attr("class", "add_button");
       buttons.append("text").attr("dx", 20).attr("dy", -15).text("+").on("click", function(d) {
         return t.toggle_add_related_entities_form(d.id);
       });
-      groups.insert("rect", ":first-child").attr("class", "add_button_rect").attr("x", 29).attr("y", -29).attr("fill", this.entity_background_color).attr("opacity", this.entity_background_opacity).attr("width", 10).attr("height", 10);
+      //groups.insert("rect", ":first-child").attr("class", "add_button_rect").attr("x", 29).attr("y", -29).attr("fill", this.entity_background_color).attr("opacity", this.entity_background_opacity).attr("width", 10).attr("height", 10);
       links = groups.append("a").attr("class", "entity_link").attr("xlink:href", function(d) {
         return d.url;
       }).attr("title", function(d) {
