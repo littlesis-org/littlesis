@@ -167,7 +167,7 @@ class Netmap
     $(@parent_selector).append(form)
     $("#netmap_add_related_entities_entity_id").val(entity_id)
     form.css("left", entity.x + @zoom.translate()[0] + 40 + "px")
-    form.css("top", entity.y + @zoom.translate()[1] - 30 + "px")
+    form.css("top", (entity.y + @zoom.translate()[1] - 30) | 0 + "px")
     form.css("display", if form.css("display") == "none" then "block" else "none")
                     
   set_data: (data, center_entity_id = null) ->
@@ -187,7 +187,11 @@ class Netmap
       r.category_id = Number(r.category_id)
       r.category_ids = r.category_ids.split(",") if r.category_ids? and typeof r.category_ids == "string"
       r.category_ids = r.category_ids.map(Number) if r.category_ids instanceof Array
+      r.is_current_with_null = r.is_current
       r.is_current = Number(r.is_current)
+      if typeof r.x1 == "undefined"
+        r.x1 = null
+        r.y1 = null
       r.source = @_data.entities[entity_index[Number(r.entity1_id)]]
       r.target = @_data.entities[entity_index[Number(r.entity2_id)]]
     
@@ -483,15 +487,35 @@ class Netmap
     d3.selectAll(".entity").attr("transform", (d) -> "translate(" + d.x + "," + d.y + ")")
     d3.selectAll(".rel").attr("transform", (d) -> "translate(" + (d.source.x + d.target.x)/2 + "," + (d.source.y + d.target.y)/2 + ")")
     d3.selectAll(".line")
-      .attr("x1", (d) -> d.source.x - (d.source.x + d.target.x)/2)
-      .attr("y1", (d) -> d.source.y - (d.source.y + d.target.y)/2)
-      .attr("x2", (d) -> d.target.x - (d.source.x + d.target.x)/2)
-      .attr("y2", (d) -> d.target.y - (d.source.y + d.target.y)/2)  
-    d3.selectAll(".rel text")
+      .attr("d", (d) ->
+        dx = d.target.x - d.source.x
+        dy = d.target.y - d.source.y 
+        dr = Math.sqrt(dx * dx + dy * dy)
+        m = "M" + (d.source.x - (d.source.x + d.target.x) / 2) + "," + (d.source.y - (d.source.y + d.target.y) / 2)
+        a = "A" + dr + "," + dr + " 0 0,1 " + (d.target.x - (d.source.x + d.target.x) / 2) + "," + (d.target.y - (d.source.y + d.target.y) / 2)
+
+        xa = (d.source.x - (d.source.x + d.target.x) / 2)
+        ya = (d.source.y - (d.source.y + d.target.y) / 2)
+        xb = (d.target.x - (d.source.x + d.target.x) / 2)
+        yb = (d.target.y - (d.source.y + d.target.y) / 2)
+
+        c = Math.sqrt(Math.pow(xa - xb, 2) + Math.pow(ya - yb, 2))
+        x1 = d.x1
+        y1 = d.y1
+
+        if (d.x1 == null)
+          x1 = (xa + xb)/2 - (ya - yb)/2 * (Math.sqrt(Math.pow(1.1 * dr/c, 2) - 1))
+          y1 = (ya + yb)/2 + (xa - xb)/2 * (Math.sqrt(Math.pow(1.1 * dr/c, 2) - 1))
+
+        q = "Q" + x1 + "," + y1 + "," + xb + "," + yb
+
+        m + q
+      )
+    d3.selectAll(".rel textpath")
       .attr("transform", (d) ->
-        x_delta = d.target.x - d.source.x
-        y_delta = d.target.y - d.source.y
-        angle = Math.atan2(y_delta, x_delta) * 180 / Math.PI
+        dx = d.target.x - d.source.x
+        dy = d.target.y - d.source.y
+        angle = Math.atan2(dy, dx) * 180 / Math.PI
         angle += 180 if d.source.x >= d.target.x
         "rotate(" + angle + ")"
       )    
@@ -499,6 +523,9 @@ class Netmap
   use_force: ->
     for e, i in @_data.entities
       delete @_data.entities[i]["fixed"]
+    for r, j in @_data.rels
+      @_data.rels[j]["x1"] = null
+      @_data.rels[j]["y1"] = null
     @force_enabled = true
     @force = d3.layout.force()
       .gravity(.3)
@@ -553,27 +580,66 @@ class Netmap
     rels = zoom.selectAll(".rel")
       .data(@_data["rels"], (d) -> return d.id)
 
+    rel_drag = d3.behavior.drag()
+      .on("dragstart", (d, i) ->
+        t.alpha = t.force.alpha() if t.force_enabled
+        t.force.stop() if t.force_enabled
+        t.drag = false
+        d3.event.sourceEvent.preventDefault()
+        d3.event.sourceEvent.stopPropagation()
+      )
+      .on("drag", (d, i) -> 
+        d.x1 += d3.event.dx
+        d.y1 += d3.event.dy
+        t.update_positions()
+        t.drag = true
+      )
+      .on("dragend", (d, i) ->
+        d.fixed = true
+        t.force.alpha(t.alpha) if t.force_enabled
+      )
+
     groups = rels.enter().append("g")
       .attr("class", "rel")
       .attr("id", (d) -> d.id)
+      .call(rel_drag)
 
-    # begin with lines
-    groups.append("line")
+    #begin with paths
+    groups.append("path")
+      .attr("id", (d) -> "path2" + d.id)
+      .attr("class", "line")
+      .attr("opacity", 0)
+      .attr("fill", "none")
+      .style("stroke-width", 15)
+
+    groups.append("path")
+      .attr("id", (d) -> "path" + d.id)
       .attr("class", "line")
       .attr("opacity", 0.6)
+      .attr("fill", "none")
       .style("stroke-width", (d) ->
-        Math.sqrt(d.value) * 12;
+        Math.sqrt(d.value) * 1;
       )
 
     # anchor tags around category labels
     groups.append("a")
       .attr("xrel:href", (d) -> d.url)
       .append("text")
-      .attr("dy", (d) -> Math.sqrt(d.value) * 10 / 2 - 1)
-      .attr("text-anchor", "middle") 
+      .attr("dy", -6)
+      .attr("text-anchor", "middle")
+      .append("textPath")
+      .attr("startOffset", "50%")
+      .attr("xlink:href", (d) -> "#path" + d.id)
       .text((d) -> d.label)
 
     rels.exit().remove()
+
+    d3.selectAll(".line")
+      .style("stroke-dasharray", (d) ->
+        return "5,2" if (d.is_current_with_null == 0 || d.end_date != null)
+        return "10,3" if d.is_current_with_null == null
+        ""
+      )
 
     # hide hidden rels
     rels.style("display", (d) -> if d.hidden == true then "none" else null)
@@ -640,17 +706,14 @@ class Netmap
       d.image.indexOf("anon") == -1
 
     # a solid rectangle behind the entity's image
-    groups.append("rect")
+    groups.append("circle")
       .attr("class", "image_rect")
       .attr("fill", @entity_background_color)
       .attr("opacity", 1)
-      # .attr("rx", @entity_background_corner_radius)
-      # .attr("ry", @entity_background_corner_radius)
-      .attr("width", 58) # (d) -> if has_image(d) then 58 else 43)
-      .attr("height", 58) # (d) -> if has_image(d) then 58 else 43)
-      .attr("x", -29) # (d) -> if has_image(d) then -29 else -21)
-      .attr("y", -29) # (d) -> if has_image(d) then -29 else -29)
-      .attr("stroke", "#f8f8f8")
+      .attr("r", 24)
+      .attr("x", -29)
+      .attr("y", -29)
+      .attr("stroke", "none")
       .attr("stroke-width", 1)
 
     # profile image or default silhouette
@@ -664,24 +727,35 @@ class Netmap
       .attr("width", 50) # (d) -> if has_image(d) then 50 else 35)
       .attr("height", 50) # (d) -> if has_image(d) then 50 else 35)
 
+    groups.append("circle")
+      .attr("class", "image_rect")
+      .attr("fill", "none")
+      .attr("opacity", 1)
+      .attr("r", 26)
+      .attr("x", -29)
+      .attr("y", -29)
+      .attr("stroke", "white")
+      .attr("stroke-width", 18)
+
     # add related entities button and background squares
     buttons = groups.append("a")
       .attr("class", "add_button")
     buttons.append("text")
-      .attr("dx", 30)
-      .attr("dy", -20)
+      .attr("dx", 20)
+      .attr("dy", -15)
       .text("+")
       .on("click", (d) ->
         t.toggle_add_related_entities_form(d.id)
       )      
-    groups.insert("rect", ":first-child")
-      .attr("class", "add_button_rect")
-      .attr("x", 29)
-      .attr("y", -29)
-      .attr("fill", @entity_background_color)
-      .attr("opacity", @entity_background_opacity)
-      .attr("width", 10)
-      .attr("height", 10)
+    
+    # groups.insert("rect", ":first-child")
+    #   .attr("class", "add_button_rect")
+    #   .attr("x", 29)
+    #   .attr("y", -29)
+    #   .attr("fill", @entity_background_color)
+    #   .attr("opacity", @entity_background_opacity)
+    #   .attr("width", 10)
+    #   .attr("height", 10)
           
     # anchor tags around entity name
     links = groups.append("a")
@@ -691,13 +765,13 @@ class Netmap
     
     links.append("text")
       .attr("dx", 0)
-      .attr("dy", 40) # (d) -> if has_image(d) then 40 else 25)
+      .attr("dy", 30) # (d) -> if has_image(d) then 40 else 25)
       .attr("text-anchor","middle")
       .text((d) -> t.split_name(d.name)[0])
 
     links.append("text")
       .attr("dx", 0)
-      .attr("dy", 55) # (d) -> if has_image(d) then 55 else 40)
+      .attr("dy", 45) # (d) -> if has_image(d) then 55 else 40)
       .attr("text-anchor","middle")
       .text((d) -> t.split_name(d.name)[1])
 
@@ -705,14 +779,14 @@ class Netmap
     groups.filter((d) -> t.split_name(d.name)[0] != d.name)
       .insert("rect", ":first-child")
       .attr("fill", @entity_background_color)
-      .attr("opacity", @entity_background_opacity)
+      .attr("opacity", 0.8)
       .attr("rx", @entity_background_corner_radius)
       .attr("ry", @entity_background_corner_radius)
       .attr("x", (d) -> 
         -$(this.parentNode).find(".entity_link text:nth-child(2)").width()/2 - 3
       )
       .attr("y", (d) ->
-        image_offset = $(this.parentNode).find("image").attr("height")/2
+        image_offset = 16
         text_offset = $(this.parentNode).find(".entity_link text").height()
         extra_offset = 2 # if has_image(d) then 2 else -5
         image_offset + text_offset + extra_offset
@@ -722,14 +796,14 @@ class Netmap
 
     groups.insert("rect", ":first-child")
       .attr("fill", @entity_background_color)
-      .attr("opacity", @entity_background_opacity)
+      .attr("opacity", 0.8)
       .attr("rx", @entity_background_corner_radius)
       .attr("ry", @entity_background_corner_radius)
       .attr("x", (d) ->
         -$(this.parentNode).find(".entity_link text").width()/2 - 3
       )
       .attr("y", (d) ->
-        image_offset = $(this.parentNode).find("image").attr("height")/2
+        image_offset = 16
         extra_offset = 1 # if has_image(d) then 1 else -6
         image_offset + extra_offset
       )

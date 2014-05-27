@@ -286,13 +286,12 @@
         }
         r.is_current_with_null = r.is_current;
         r.is_current = Number(r.is_current);
-        if (typeof r.x1 == 'undefined') {
-          r.x1 =null;
-          r.y1=null;
+        if (typeof r.x1 === "undefined") {
+          r.x1 = null;
+          r.y1 = null;
         }
         r.source = this._data.entities[entity_index[Number(r.entity1_id)]];
         _results.push(r.target = this._data.entities[entity_index[Number(r.entity2_id)]]);
-        //alert(JSON.stringify(r));
       }
       return _results;
     };
@@ -446,7 +445,6 @@
           e.y = position != null ? position[1] : t.height / 2 + 200 * (0.5 - Math.random());
           return e;
         });
-
         new_data = {
           "entities": t.data().entities.concat(data.entities),
           "rels": t.data().rels.concat(data.rels)
@@ -847,57 +845,55 @@
       d3.selectAll(".rel").attr("transform", function(d) {
         return "translate(" + (d.source.x + d.target.x) / 2 + "," + (d.source.y + d.target.y) / 2 + ")";
       });
-      // d3.selectAll(".line").attr("x1", function(d) {
-//         return d.source.x - (d.source.x + d.target.x) / 2;
-//       }).attr("y1", function(d) {
-//         return d.source.y - (d.source.y + d.target.y) / 2;
-//       }).attr("x2", function(d) {
-//         return d.target.x - (d.source.x + d.target.x) / 2;
-//       }).attr("y2", function(d) {
-//         return d.target.y - (d.source.y + d.target.y) / 2;
-//       }).interpolate("basis");
-       d3.selectAll(".line").attr("d", function(d) {
-          var dx = d.target.x - d.source.x,
-          dy = d.target.y - d.source.y,
-          dr = Math.sqrt(dx * dx + dy * dy);
-          m = "M" + (d.source.x - (d.source.x + d.target.x) / 2) + "," + (d.source.y - (d.source.y + d.target.y) / 2);
-          a = "A" + dr + "," + dr + " 0 0,1 " + (d.target.x - (d.source.x + d.target.x) / 2) + "," + (d.target.y - (d.source.y + d.target.y) / 2);
-          //M266.25,120.60717555544863A584.585847572323,584.585847572323 0 0,1 -266.25,-120.60717555544863
-          xa = (d.source.x - (d.source.x + d.target.x) / 2);
-          ya = (d.source.y - (d.source.y + d.target.y) / 2);
-          xb = (d.target.x - (d.source.x + d.target.x) / 2);
-          yb = (d.target.y - (d.source.y + d.target.y) / 2);
+      d3.selectAll(".line").attr("d", function(d) {
+        var a, c, dr, dx, dy, m, q, x1, xa, xb, y1, ya, yb;
 
-          c = Math.sqrt(Math.pow(xa-xb,2)+Math.pow(ya-yb,2));
-          x1 = d.x1;
-          y1 = d.y1;
-          if (d.x1 === null)
-          {
-            x1 = (xa+xb)/2 - (ya-yb)/2*(Math.sqrt(Math.pow(1.1*dr/c,2)-1));
-            y1 = (ya+yb)/2 + (xa-xb)/2*(Math.sqrt(Math.pow(1.1*dr/c,2)-1));
-          }
-          
-          q = "Q" + x1 + "," + y1 + "," + xb + "," + yb;
-        return m+q;
+        dx = d.target.x - d.source.x;
+        dy = d.target.y - d.source.y;
+        dr = Math.sqrt(dx * dx + dy * dy);
+        m = "M" + (d.source.x - (d.source.x + d.target.x) / 2) + "," + (d.source.y - (d.source.y + d.target.y) / 2);
+        a = "A" + dr + "," + dr + " 0 0,1 " + (d.target.x - (d.source.x + d.target.x) / 2) + "," + (d.target.y - (d.source.y + d.target.y) / 2);
+        xa = d.source.x - (d.source.x + d.target.x) / 2;
+        ya = d.source.y - (d.source.y + d.target.y) / 2;
+        xb = d.target.x - (d.source.x + d.target.x) / 2;
+        yb = d.target.y - (d.source.y + d.target.y) / 2;
+        c = Math.sqrt(Math.pow(xa - xb, 2) + Math.pow(ya - yb, 2));
+        x1 = d.x1;
+        y1 = d.y1;
+        if (d.x1 === null) {
+          x1 = (xa + xb) / 2 - (ya - yb) / 2 * (Math.sqrt(Math.pow(1.1 * dr / c, 2) - 1));
+          y1 = (ya + yb) / 2 + (xa - xb) / 2 * (Math.sqrt(Math.pow(1.1 * dr / c, 2) - 1));
+        }
+        q = "Q" + x1 + "," + y1 + "," + xb + "," + yb;
+        return m + q;
       });
-      
+      return d3.selectAll(".rel textpath").attr("transform", function(d) {
+        var angle, dx, dy;
+
+        dx = d.target.x - d.source.x;
+        dy = d.target.y - d.source.y;
+        angle = Math.atan2(dy, dx) * 180 / Math.PI;
+        if (d.source.x >= d.target.x) {
+          angle += 180;
+        }
+        return "rotate(" + angle + ")";
+      });
     };
 
     Netmap.prototype.use_force = function() {
-      var e, i, t, _i, _len, _ref;
+      var e, i, j, r, t, _i, _j, _len, _len1, _ref, _ref1;
 
       _ref = this._data.entities;
       for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
         e = _ref[i];
         delete this._data.entities[i]["fixed"];
       }
-      _ref = this._data.rels;
-      for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
-        e = _ref[i];
-        this._data.rels[i]["x1"] = null;
-        this._data.rels[i]["y1"] = null;
+      _ref1 = this._data.rels;
+      for (j = _j = 0, _len1 = _ref1.length; _j < _len1; j = ++_j) {
+        r = _ref1[j];
+        this._data.rels[j]["x1"] = null;
+        this._data.rels[j]["y1"] = null;
       }
-      
       this.force_enabled = true;
       this.force = d3.layout.force().gravity(.3).distance(this.distance).charge(-5000).friction(0.7).size([this.width, this.height]).nodes(this._data.entities, function(d) {
         return d.id;
@@ -980,14 +976,13 @@
     };
 
     Netmap.prototype.build_rels = function() {
-      var groups, rels, t, zoom, rel_drag;
+      var groups, rel_drag, rels, t, zoom;
 
       t = this;
       zoom = d3.select("#zoom");
       rels = zoom.selectAll(".rel").data(this._data["rels"], function(d) {
         return d.id;
       });
-      
       rel_drag = d3.behavior.drag().on("dragstart", function(d, i) {
         if (t.force_enabled) {
           t.alpha = t.force.alpha();
@@ -1009,7 +1004,6 @@
           return t.force.alpha(t.alpha);
         }
       });
-      
       groups = rels.enter().append("g").attr("class", "rel").attr("id", function(d) {
         return d.id;
       }).call(rel_drag);
@@ -1023,22 +1017,20 @@
       });
       groups.append("a").attr("xrel:href", function(d) {
         return d.url;
-      }).append("text").attr("dy", -6).attr("text-anchor","middle").append("textPath")
-          .attr("startOffset","50%")
-          .attr("xlink:href",function(d) {
-            return "#path" + d.id;
+      }).append("text").attr("dy", -6).attr("text-anchor", "middle").append("textPath").attr("startOffset", "50%").attr("xlink:href", function(d) {
+        return "#path" + d.id;
       }).text(function(d) {
         return d.label;
       });
       rels.exit().remove();
       d3.selectAll(".line").style("stroke-dasharray", function(d) {
-        if (d.is_current_with_null == 0 || d.end_date != null) {
+        if (d.is_current_with_null === 0 || d.end_date !== null) {
           return "5,2";
-        } else if (d.is_current_with_null == null) {
-          return "10,3";
-        } else {
-          return "";
         }
+        if (d.is_current_with_null === null) {
+          return "10,3";
+        }
+        return "";
       });
       rels.style("display", function(d) {
         if (d.hidden === true) {
@@ -1115,8 +1107,6 @@
       has_image = function(d) {
         return d.image.indexOf("anon") === -1;
       };
-      
-      
       groups.append("circle").attr("class", "image_rect").attr("fill", this.entity_background_color).attr("opacity", 1).attr("r", 24).attr("x", -29).attr("y", -29).attr("stroke", "none").attr("stroke-width", 1);
       groups.append("image").attr("class", "image").attr("opacity", function(d) {
         if (has_image(d)) {
@@ -1127,13 +1117,11 @@
       }).attr("xlink:href", function(d) {
         return d.image;
       }).attr("x", -25).attr("y", -25).attr("width", 50).attr("height", 50);
-      
       groups.append("circle").attr("class", "image_rect").attr("fill", "none").attr("opacity", 1).attr("r", 26).attr("x", -29).attr("y", -29).attr("stroke", "white").attr("stroke-width", 18);
       buttons = groups.append("a").attr("class", "add_button");
       buttons.append("text").attr("dx", 20).attr("dy", -15).text("+").on("click", function(d) {
         return t.toggle_add_related_entities_form(d.id);
       });
-      //groups.insert("rect", ":first-child").attr("class", "add_button_rect").attr("x", 29).attr("y", -29).attr("fill", this.entity_background_color).attr("opacity", this.entity_background_opacity).attr("width", 10).attr("height", 10);
       links = groups.append("a").attr("class", "entity_link").attr("xlink:href", function(d) {
         return d.url;
       }).attr("title", function(d) {
