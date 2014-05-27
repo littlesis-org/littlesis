@@ -487,17 +487,28 @@ class Netmap
     d3.selectAll(".entity").attr("transform", (d) -> "translate(" + d.x + "," + d.y + ")")
     d3.selectAll(".rel").attr("transform", (d) -> "translate(" + (d.source.x + d.target.x)/2 + "," + (d.source.y + d.target.y)/2 + ")")
     d3.selectAll(".line")
-      .attr("d", (d) ->
+      .attr("d", (d) ->        
         dx = d.target.x - d.source.x
         dy = d.target.y - d.source.y 
         dr = Math.sqrt(dx * dx + dy * dy)
-        m = "M" + (d.source.x - (d.source.x + d.target.x) / 2) + "," + (d.source.y - (d.source.y + d.target.y) / 2)
+
+        if (d.source.x < d.target.x)
+          m = "M" + (d.source.x - (d.source.x + d.target.x) / 2) + "," + (d.source.y - (d.source.y + d.target.y) / 2)
+        else 
+          m = "M" + (d.target.x - (d.target.x + d.source.x) / 2) + "," + (d.target.y - (d.target.y + d.source.y) / 2)
+
         a = "A" + dr + "," + dr + " 0 0,1 " + (d.target.x - (d.source.x + d.target.x) / 2) + "," + (d.target.y - (d.source.y + d.target.y) / 2)
 
-        xa = (d.source.x - (d.source.x + d.target.x) / 2)
-        ya = (d.source.y - (d.source.y + d.target.y) / 2)
-        xb = (d.target.x - (d.source.x + d.target.x) / 2)
-        yb = (d.target.y - (d.source.y + d.target.y) / 2)
+        if (d.source.x < d.target.x)
+          xa = (d.source.x - (d.source.x + d.target.x) / 2)
+          ya = (d.source.y - (d.source.y + d.target.y) / 2)
+          xb = (d.target.x - (d.source.x + d.target.x) / 2)
+          yb = (d.target.y - (d.source.y + d.target.y) / 2)
+        else
+          xa = (d.target.x - (d.target.x + d.source.x) / 2)
+          ya = (d.target.y - (d.target.y + d.source.y) / 2)
+          xb = (d.source.x - (d.target.x + d.source.x) / 2)
+          yb = (d.source.y - (d.target.y + d.source.y) / 2)
 
         c = Math.sqrt(Math.pow(xa - xb, 2) + Math.pow(ya - yb, 2))
         x1 = d.x1
@@ -511,15 +522,18 @@ class Netmap
 
         m + q
       )
-    d3.selectAll(".rel textpath")
-      .attr("transform", (d) ->
-        dx = d.target.x - d.source.x
-        dy = d.target.y - d.source.y
-        angle = Math.atan2(dy, dx) * 180 / Math.PI
-        angle += 180 if d.source.x >= d.target.x
-        "rotate(" + angle + ")"
-      )    
-                
+    d3.selectAll(".path1, .path2")
+      .attr("xlink:href", (d) ->
+        id = "#path" + (if d.source.x >= d.target.x then "2" else "") + "_" + d.id
+        return id
+
+        # dx = d.target.x - d.source.x
+        # dy = d.target.y - d.source.y
+        # angle = Math.atan2(dy, dx) * 180 / Math.PI
+        # angle += 180 if d.source.x >= d.target.x
+        # "rotate(" + angle + ")"
+      )
+
   use_force: ->
     for e, i in @_data.entities
       delete @_data.entities[i]["fixed"]
@@ -606,15 +620,17 @@ class Netmap
 
     #begin with paths
     groups.append("path")
-      .attr("id", (d) -> "path2" + d.id)
-      .attr("class", "line")
+      .attr("id", (d) -> "path2_" + d.id)
+      .attr("class", "line path2")
       .attr("opacity", 0)
       .attr("fill", "none")
-      .style("stroke-width", 15)
+      .style("stroke-width", (d) ->
+        Math.sqrt(d.value) * 1;
+      )
 
     groups.append("path")
-      .attr("id", (d) -> "path" + d.id)
-      .attr("class", "line")
+      .attr("id", (d) -> "path_" + d.id)
+      .attr("class", "line path1")
       .attr("opacity", 0.6)
       .attr("fill", "none")
       .style("stroke-width", (d) ->
@@ -629,7 +645,9 @@ class Netmap
       .attr("text-anchor", "middle")
       .append("textPath")
       .attr("startOffset", "50%")
-      .attr("xlink:href", (d) -> "#path" + d.id)
+      .attr("xlink:href", (d) -> 
+        "#path" + (if d.source.x >= d.target.x then "2" else "") + "_" + d.id
+      )
       .text((d) -> d.label)
 
     rels.exit().remove()
@@ -653,6 +671,11 @@ class Netmap
         window.location.href = d.url
       )
     @svg.selectAll(".rel text")
+      .data(@_data["rels"], (d) -> return d.id)
+
+    @svg.selectAll(".path1")
+      .data(@_data["rels"], (d) -> return d.id)
+    @svg.selectAll(".path2")
       .data(@_data["rels"], (d) -> return d.id)
     
     @svg.selectAll(".rel").on("click", (d, i) ->

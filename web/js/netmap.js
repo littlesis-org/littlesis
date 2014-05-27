@@ -851,12 +851,23 @@
         dx = d.target.x - d.source.x;
         dy = d.target.y - d.source.y;
         dr = Math.sqrt(dx * dx + dy * dy);
-        m = "M" + (d.source.x - (d.source.x + d.target.x) / 2) + "," + (d.source.y - (d.source.y + d.target.y) / 2);
+        if (d.source.x < d.target.x) {
+          m = "M" + (d.source.x - (d.source.x + d.target.x) / 2) + "," + (d.source.y - (d.source.y + d.target.y) / 2);
+        } else {
+          m = "M" + (d.target.x - (d.target.x + d.source.x) / 2) + "," + (d.target.y - (d.target.y + d.source.y) / 2);
+        }
         a = "A" + dr + "," + dr + " 0 0,1 " + (d.target.x - (d.source.x + d.target.x) / 2) + "," + (d.target.y - (d.source.y + d.target.y) / 2);
-        xa = d.source.x - (d.source.x + d.target.x) / 2;
-        ya = d.source.y - (d.source.y + d.target.y) / 2;
-        xb = d.target.x - (d.source.x + d.target.x) / 2;
-        yb = d.target.y - (d.source.y + d.target.y) / 2;
+        if (d.source.x < d.target.x) {
+          xa = d.source.x - (d.source.x + d.target.x) / 2;
+          ya = d.source.y - (d.source.y + d.target.y) / 2;
+          xb = d.target.x - (d.source.x + d.target.x) / 2;
+          yb = d.target.y - (d.source.y + d.target.y) / 2;
+        } else {
+          xa = d.target.x - (d.target.x + d.source.x) / 2;
+          ya = d.target.y - (d.target.y + d.source.y) / 2;
+          xb = d.source.x - (d.target.x + d.source.x) / 2;
+          yb = d.source.y - (d.target.y + d.source.y) / 2;
+        }
         c = Math.sqrt(Math.pow(xa - xb, 2) + Math.pow(ya - yb, 2));
         x1 = d.x1;
         y1 = d.y1;
@@ -867,16 +878,11 @@
         q = "Q" + x1 + "," + y1 + "," + xb + "," + yb;
         return m + q;
       });
-      return d3.selectAll(".rel textpath").attr("transform", function(d) {
-        var angle, dx, dy;
+      return d3.selectAll(".path1, .path2").attr("xlink:href", function(d) {
+        var id;
 
-        dx = d.target.x - d.source.x;
-        dy = d.target.y - d.source.y;
-        angle = Math.atan2(dy, dx) * 180 / Math.PI;
-        if (d.source.x >= d.target.x) {
-          angle += 180;
-        }
-        return "rotate(" + angle + ")";
+        id = "#path" + (d.source.x >= d.target.x ? "2" : "") + "_" + d.id;
+        return id;
       });
     };
 
@@ -1008,17 +1014,19 @@
         return d.id;
       }).call(rel_drag);
       groups.append("path").attr("id", function(d) {
-        return "path2" + d.id;
-      }).attr("class", "line").attr("opacity", 0).attr("fill", "none").style("stroke-width", 15);
+        return "path2_" + d.id;
+      }).attr("class", "line path2").attr("opacity", 0).attr("fill", "none").style("stroke-width", function(d) {
+        return Math.sqrt(d.value) * 1;
+      });
       groups.append("path").attr("id", function(d) {
-        return "path" + d.id;
-      }).attr("class", "line").attr("opacity", 0.6).attr("fill", "none").style("stroke-width", function(d) {
+        return "path_" + d.id;
+      }).attr("class", "line path1").attr("opacity", 0.6).attr("fill", "none").style("stroke-width", function(d) {
         return Math.sqrt(d.value) * 1;
       });
       groups.append("a").attr("xrel:href", function(d) {
         return d.url;
       }).append("text").attr("dy", -6).attr("text-anchor", "middle").append("textPath").attr("startOffset", "50%").attr("xlink:href", function(d) {
-        return "#path" + d.id;
+        return "#path" + (d.source.x >= d.target.x ? "2" : "") + "_" + d.id;
       }).text(function(d) {
         return d.label;
       });
@@ -1048,6 +1056,12 @@
         return window.location.href = d.url;
       });
       this.svg.selectAll(".rel text").data(this._data["rels"], function(d) {
+        return d.id;
+      });
+      this.svg.selectAll(".path1").data(this._data["rels"], function(d) {
+        return d.id;
+      });
+      this.svg.selectAll(".path2").data(this._data["rels"], function(d) {
         return d.id;
       });
       return this.svg.selectAll(".rel").on("click", function(d, i) {
