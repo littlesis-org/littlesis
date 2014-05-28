@@ -100,6 +100,28 @@ class Netmap
       .attr("id", "zoom")
       .attr("fill", "#ffe")
 
+    marker1 = @svg.append("marker")
+      .attr("id", "marker1")
+      .attr("viewBox", "0 -5 10 10")
+      .attr("refX", 10)
+      .attr("refY", 0)
+      .attr("markerWidth", 6)
+      .attr("markerHeight", 6)
+      .attr("orient", "auto")
+      .append("path")
+      .attr("d", "M0,-5L10,0L0,5")
+
+    marker2 = @svg.append("marker")
+      .attr("id", "marker2")
+      .attr("viewBox", "-10 -5 10 10")
+      .attr("refX", -10)
+      .attr("refY", 0)
+      .attr("markerWidth", 6)
+      .attr("markerHeight", 6)
+      .attr("orient", "auto")
+      .append("path")
+      .attr("d", "M0,-5L-10,0L0,5")
+
     @zoom = d3.behavior.zoom()
     @zoom.scaleExtent([0.5, 5])
     zoom_func = ->
@@ -176,36 +198,27 @@ class Netmap
     @set_center_entity_id(center_entity_id) if center_entity_id?
     entity_index = []
     for e, i in @_data.entities
-      e.id = Number(e.id)
       e.px = e.x unless e.px?
       e.py = e.y unless e.py?
-      entity_index[Number(e.id)] = i
+      entity_index[e.id] = i
     for r in @_data.rels
-      r.id = Number(r.id)
-      r.entity1_id = Number(r.entity1_id)
-      r.entity2_id = Number(r.entity2_id)
-      r.category_id = Number(r.category_id)
-      r.category_ids = r.category_ids.split(",") if r.category_ids? and typeof r.category_ids == "string"
-      r.category_ids = r.category_ids.map(Number) if r.category_ids instanceof Array
-      r.is_current_with_null = r.is_current
-      r.is_current = Number(r.is_current)
       if typeof r.x1 == "undefined"
         r.x1 = null
         r.y1 = null
-      r.source = @_data.entities[entity_index[Number(r.entity1_id)]]
-      r.target = @_data.entities[entity_index[Number(r.entity2_id)]]
+      r.source = @_data.entities[entity_index[r.entity1_id]]
+      r.target = @_data.entities[entity_index[r.entity2_id]]
     
   data: ->
     @_data
 
   entity_ids: ->
-    @_data.entities.map((e) -> Number(e.id))
+    @_data.entities.map((e) -> e.id)
 
   entities: ->
     @_data.entities
 
   rel_ids: ->
-    @_data.rels.map((r) -> Number(r.id))
+    @_data.rels.map((r) -> r.id)
 
   rels: ->
     @_data.rels
@@ -323,12 +336,12 @@ class Netmap
   limit_to_cats: (cat_ids) ->
     for rel in @_data.rels
       if rel.category_ids?
-        if rel.category_ids.filter((id) -> cat_ids.indexOf(Number(id)) > -1).length > 0
+        if rel.category_ids.filter((id) -> cat_ids.indexOf(id) > -1).length > 0
           rel.hidden = false
         else
           rel.hidden = true      
       else
-        rel.hidden = cat_ids.indexOf(Number(rel.category_id)) == -1
+        rel.hidden = cat_ids.indexOf(rel.category_id) == -1
     @build()
 
   limit_to_current: ->
@@ -411,12 +424,12 @@ class Netmap
     for entity, i in @_data["entities"]
       if parseInt(entity.id) == center_entity_id
         @_data["entities"][i].x = @width/2
-        @_data["entities"][i].y = 30
+        @_data["entities"][i].y = 80
       else        
         range = Math.PI * 2/3
         angle = Math.PI + (Math.PI / (@_data["entities"].length-2)) * count
         @_data["entities"][i].x = 70 + (@width-140)/2 + ((@width-140)/2) * Math.cos(angle)
-        @_data["entities"][i].y = 30 - ((@width-140)/2) * Math.sin(angle)  
+        @_data["entities"][i].y = 80 - ((@width-140)/2) * Math.sin(angle)  
         count++
     @update_positions()
 
@@ -438,14 +451,25 @@ class Netmap
   interlocks: (degree0_id, degree1_ids, degree2_ids) ->
     d0 = @entity_by_id(degree0_id)
     d0.x = @width/2
-    d0.y = 30    
+    d0.y = 30
     for id, i in degree1_ids
       range = Math.PI * 1/2
-      angle = (Math.PI * 3/2) + i * (range / (degree1_ids.length-1)) - range/2
+
+      if degree1_ids.length > 1
+        angle = (Math.PI * 3/2) + i * (range / (degree1_ids.length-1)) - range/2
+      else
+        angle = 0
+
       radius = (@width-100)/2
       d1 = @entity_by_id(id)
-      d1.x = 70 + i * (@width-140)/(degree1_ids.length-1)
-      d1.y = @height/2 + 250 + (radius) * Math.sin(angle)
+
+      if degree1_ids.length > 1
+        d1.x = 70 + i * (@width-140)/(degree1_ids.length-1)
+        d1.y = @height/2 + 250 + (radius) * Math.sin(angle)
+      else 
+        d1.x = 70 + (@width-140)/2
+        d1.y = @height/2 - 50
+
     for id, i in degree2_ids
       range = Math.PI * 1/3
       angle = (Math.PI * 3/2) + i * (range / (degree2_ids.length-1)) - range/2
@@ -484,6 +508,7 @@ class Netmap
     true
 
   update_positions: ->
+    t = this
     d3.selectAll(".entity").attr("transform", (d) -> "translate(" + d.x + "," + d.y + ")")
     d3.selectAll(".rel").attr("transform", (d) -> "translate(" + (d.source.x + d.target.x)/2 + "," + (d.source.y + d.target.y)/2 + ")")
     d3.selectAll(".line")
@@ -492,23 +517,19 @@ class Netmap
         dy = d.target.y - d.source.y 
         dr = Math.sqrt(dx * dx + dy * dy)
 
-        if (d.source.x < d.target.x)
-          m = "M" + (d.source.x - (d.source.x + d.target.x) / 2) + "," + (d.source.y - (d.source.y + d.target.y) / 2)
-        else 
-          m = "M" + (d.target.x - (d.target.x + d.source.x) / 2) + "," + (d.target.y - (d.target.y + d.source.y) / 2)
-
-        a = "A" + dr + "," + dr + " 0 0,1 " + (d.target.x - (d.source.x + d.target.x) / 2) + "," + (d.target.y - (d.source.y + d.target.y) / 2)
+        ax = (d.source.x + d.target.x) / 2
+        ay = (d.source.y + d.target.y) / 2
 
         if (d.source.x < d.target.x)
-          xa = (d.source.x - (d.source.x + d.target.x) / 2)
-          ya = (d.source.y - (d.source.y + d.target.y) / 2)
-          xb = (d.target.x - (d.source.x + d.target.x) / 2)
-          yb = (d.target.y - (d.source.y + d.target.y) / 2)
+          xa = d.source.x - ax
+          ya = d.source.y - ay
+          xb = d.target.x - ax
+          yb = d.target.y - ay
         else
-          xa = (d.target.x - (d.target.x + d.source.x) / 2)
-          ya = (d.target.y - (d.target.y + d.source.y) / 2)
-          xb = (d.source.x - (d.target.x + d.source.x) / 2)
-          yb = (d.source.y - (d.target.y + d.source.y) / 2)
+          xa = d.target.x - ax
+          ya = d.target.y - ay
+          xb = d.source.x - ax
+          yb = d.source.y - ay
 
         c = Math.sqrt(Math.pow(xa - xb, 2) + Math.pow(ya - yb, 2))
         x1 = d.x1
@@ -518,21 +539,34 @@ class Netmap
           x1 = (xa + xb)/2 - (ya - yb)/2 * (Math.sqrt(Math.pow(1.1 * dr/c, 2) - 1))
           y1 = (ya + yb)/2 + (xa - xb)/2 * (Math.sqrt(Math.pow(1.1 * dr/c, 2) - 1))
 
-        q = "Q" + x1 + "," + y1 + "," + xb + "," + yb
+        spacing = 5
+        node_radius = 25 + spacing
 
+        # offsets for markers
+        dxm1 = xa - x1
+        dym1 = ya - y1
+        rm1 = Math.sqrt(dxm1 * dxm1 + dym1 * dym1)
+        dxm2 = xb - x1
+        dym2 = yb - y1
+        rm2 = Math.sqrt(dxm2 * dxm2 + dym2 * dym2)
+        xm1 = node_radius * dxm1 / rm1
+        ym1 = node_radius * dym1 / rm1
+        xm2 = node_radius * dxm2 / rm2
+        ym2 = node_radius * dym2 / rm2
+
+        m = "M" + (xa - xm1) + "," + (ya - ym1)
+        q = "Q" + x1 + "," + y1 + "," + (xb - xm2) + "," + (yb - ym2)
         m + q
       )
-    d3.selectAll(".path1, .path2")
-      .attr("xlink:href", (d) ->
-        id = "#path" + (if d.source.x >= d.target.x then "2" else "") + "_" + d.id
-        return id
 
-        # dx = d.target.x - d.source.x
-        # dy = d.target.y - d.source.y
-        # angle = Math.atan2(dy, dx) * 180 / Math.PI
-        # angle += 180 if d.source.x >= d.target.x
-        # "rotate(" + angle + ")"
+    d3.selectAll(".line:not(.highlight)")
+      .attr("marker-end", (d) -> 
+        if (t.rel_is_directional(d) and d.source.x < d.target.x) then "url(#marker1)" else ""
       )
+      .attr("marker-start", (d) -> 
+        if (t.rel_is_directional(d) and d.source.x >= d.target.x) then "url(#marker2)" else ""
+      )
+
 
   use_force: ->
     for e, i in @_data.entities
@@ -620,21 +654,25 @@ class Netmap
 
     #begin with paths
     groups.append("path")
-      .attr("id", (d) -> "path2_" + d.id)
-      .attr("class", "line path2")
-      .attr("opacity", 0)
+      .attr("id", (d) -> "path-highlight-" + d.id)
+      .attr("class", "line highlight")
+      .attr("opacity", 0.6)
       .attr("fill", "none")
-      .style("stroke-width", (d) ->
-        Math.sqrt(d.value) * 1;
-      )
+      .style("stroke-width", 4)
 
     groups.append("path")
-      .attr("id", (d) -> "path_" + d.id)
-      .attr("class", "line path1")
+      .attr("id", (d) -> "path-" + d.id)
+      .attr("class", "line")
       .attr("opacity", 0.6)
       .attr("fill", "none")
       .style("stroke-width", (d) ->
         Math.sqrt(d.value) * 1;
+      )
+      .attr("marker-end", (d) -> 
+        if d.source.x < d.target.x then "url(#marker)" else ""
+      )
+      .attr("marker-start", (d) -> 
+        if d.source.x >= d.target.x then "url(#marker)" else ""
       )
 
     # anchor tags around category labels
@@ -646,7 +684,7 @@ class Netmap
       .append("textPath")
       .attr("startOffset", "50%")
       .attr("xlink:href", (d) -> 
-        "#path" + (if d.source.x >= d.target.x then "2" else "") + "_" + d.id
+        "#path-" + d.id
       )
       .text((d) -> d.label)
 
@@ -654,8 +692,8 @@ class Netmap
 
     d3.selectAll(".line")
       .style("stroke-dasharray", (d) ->
-        return "5,2" if (d.is_current_with_null == 0 || d.end_date != null)
-        return "10,3" if d.is_current_with_null == null
+        return "5,2" if (d.is_current == 0 || d.end_date)
+        return "10,3" if d.is_current == null
         ""
       )
 
@@ -671,11 +709,6 @@ class Netmap
         window.location.href = d.url
       )
     @svg.selectAll(".rel text")
-      .data(@_data["rels"], (d) -> return d.id)
-
-    @svg.selectAll(".path1")
-      .data(@_data["rels"], (d) -> return d.id)
-    @svg.selectAll(".path2")
       .data(@_data["rels"], (d) -> return d.id)
     
     @svg.selectAll(".rel").on("click", (d, i) ->
@@ -726,18 +759,17 @@ class Netmap
       .call(entity_drag)
 
     has_image = (d) -> 
-      d.image.indexOf("anon") == -1
+      d.image.indexOf("netmap") == -1
 
-    # a solid rectangle behind the entity's image
-    groups.append("circle")
-      .attr("class", "image_rect")
-      .attr("fill", @entity_background_color)
+    # circle for clipping image
+    groups.append("clipPath")
+      .attr("id", (d) -> "image-clip-" + d.id)
+      .append("circle")
+      .attr("class", "image-clip")
       .attr("opacity", 1)
-      .attr("r", 24)
+      .attr("r", 25)
       .attr("x", -29)
       .attr("y", -29)
-      .attr("stroke", "none")
-      .attr("stroke-width", 1)
 
     # profile image or default silhouette
     groups.append("image")
@@ -745,10 +777,11 @@ class Netmap
       # because the default pics are too dark:
       .attr("opacity", (d) -> if has_image(d) then 1 else 0.5) 
       .attr("xlink:href", (d) -> d.image)
-      .attr("x", -25) # (d) -> if has_image(d) then -25 else -17)
-      .attr("y", -25) # (d) -> if has_image(d) then -25 else -25)
-      .attr("width", 50) # (d) -> if has_image(d) then 50 else 35)
-      .attr("height", 50) # (d) -> if has_image(d) then 50 else 35)
+      .attr("x", (d) -> if has_image(d) then -40 else -25) # (d) -> if has_image(d) then -25 else -17)
+      .attr("y", (d) -> if has_image(d) then -40 else -25) # (d) -> if has_image(d) then -25 else -25)
+      .attr("width", (d) -> if has_image(d) then 80 else 50) # (d) -> if has_image(d) then 50 else 35)
+      .attr("height", (d) -> if has_image(d) then 80 else 50) # (d) -> if has_image(d) then 50 else 35)
+      .attr("clip-path", (d) -> "url(#image-clip-" + d.id + ")" )
 
     groups.append("circle")
       .attr("class", "image_rect")
@@ -758,7 +791,7 @@ class Netmap
       .attr("x", -29)
       .attr("y", -29)
       .attr("stroke", "white")
-      .attr("stroke-width", 18)
+      .attr("stroke-width", 0)
 
     # add related entities button and background squares
     buttons = groups.append("a")
@@ -770,15 +803,6 @@ class Netmap
       .on("click", (d) ->
         t.toggle_add_related_entities_form(d.id)
       )      
-    
-    # groups.insert("rect", ":first-child")
-    #   .attr("class", "add_button_rect")
-    #   .attr("x", 29)
-    #   .attr("y", -29)
-    #   .attr("fill", @entity_background_color)
-    #   .attr("opacity", @entity_background_opacity)
-    #   .attr("width", 10)
-    #   .attr("height", 10)
           
     # anchor tags around entity name
     links = groups.append("a")
@@ -788,13 +812,13 @@ class Netmap
     
     links.append("text")
       .attr("dx", 0)
-      .attr("dy", 30) # (d) -> if has_image(d) then 40 else 25)
+      .attr("dy", 38) # (d) -> if has_image(d) then 40 else 25)
       .attr("text-anchor","middle")
       .text((d) -> t.split_name(d.name)[0])
 
     links.append("text")
       .attr("dx", 0)
-      .attr("dy", 45) # (d) -> if has_image(d) then 55 else 40)
+      .attr("dy", 55) # (d) -> if has_image(d) then 55 else 40)
       .attr("text-anchor","middle")
       .text((d) -> t.split_name(d.name)[1])
 
@@ -802,16 +826,16 @@ class Netmap
     groups.filter((d) -> t.split_name(d.name)[0] != d.name)
       .insert("rect", ":first-child")
       .attr("fill", @entity_background_color)
-      .attr("opacity", 0.8)
+      .attr("opacity", @entity_background_opacity)
       .attr("rx", @entity_background_corner_radius)
       .attr("ry", @entity_background_corner_radius)
       .attr("x", (d) -> 
         -$(this.parentNode).find(".entity_link text:nth-child(2)").width()/2 - 3
       )
       .attr("y", (d) ->
-        image_offset = 16
+        image_offset = 24
         text_offset = $(this.parentNode).find(".entity_link text").height()
-        extra_offset = 2 # if has_image(d) then 2 else -5
+        extra_offset = 5 # if has_image(d) then 2 else -5
         image_offset + text_offset + extra_offset
       )
       .attr("width", (d) -> $(this.parentNode).find(".entity_link text:nth-child(2)").width() + 6)
@@ -819,14 +843,14 @@ class Netmap
 
     groups.insert("rect", ":first-child")
       .attr("fill", @entity_background_color)
-      .attr("opacity", 0.8)
+      .attr("opacity", @entity_background_opacity)
       .attr("rx", @entity_background_corner_radius)
       .attr("ry", @entity_background_corner_radius)
       .attr("x", (d) ->
         -$(this.parentNode).find(".entity_link text").width()/2 - 3
       )
       .attr("y", (d) ->
-        image_offset = 16
+        image_offset = 24
         extra_offset = 1 # if has_image(d) then 1 else -6
         image_offset + extra_offset
       )
@@ -849,7 +873,7 @@ class Netmap
     g.attr("class", klass)
     
     # toggle selection for entity's relationships (so that they're selected
-    selected = g.attr("class") == "entity selected"
+    selected = (g.attr("class") == "entity selected")
     for r in @rels_by_entity(id)
       @toggle_selected_rel(r.id, selected)
   
@@ -880,6 +904,9 @@ class Netmap
     parts = name.split(/\s+/)
     half = Math.ceil(parts.length / 2)
     [parts.slice(0, half).join(" "), parts.slice(half).join(" ")]
+
+  rel_is_directional: (r) ->
+    [1..8].indexOf(r.category_id) > -1
       
 if typeof module != "undefined" && module.exports
   # on a server

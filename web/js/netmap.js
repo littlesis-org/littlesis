@@ -142,10 +142,12 @@
     }
 
     Netmap.prototype.init_svg = function() {
-      var zoom, zoom_func;
+      var marker1, marker2, zoom, zoom_func;
 
       this.svg = d3.select(this.parent_selector).append("svg").attr("id", "svg").attr("width", this.width).attr("height", this.height);
       zoom = this.svg.append('g').attr("id", "zoom").attr("fill", "#ffe");
+      marker1 = this.svg.append("marker").attr("id", "marker1").attr("viewBox", "0 -5 10 10").attr("refX", 10).attr("refY", 0).attr("markerWidth", 6).attr("markerHeight", 6).attr("orient", "auto").append("path").attr("d", "M0,-5L10,0L0,5");
+      marker2 = this.svg.append("marker").attr("id", "marker2").attr("viewBox", "-10 -5 10 10").attr("refX", -10).attr("refY", 0).attr("markerWidth", 6).attr("markerHeight", 6).attr("orient", "auto").append("path").attr("d", "M0,-5L-10,0L0,5");
       this.zoom = d3.behavior.zoom();
       this.zoom.scaleExtent([0.5, 5]);
       zoom_func = function() {
@@ -261,37 +263,24 @@
       _ref = this._data.entities;
       for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
         e = _ref[i];
-        e.id = Number(e.id);
         if (e.px == null) {
           e.px = e.x;
         }
         if (e.py == null) {
           e.py = e.y;
         }
-        entity_index[Number(e.id)] = i;
+        entity_index[e.id] = i;
       }
       _ref1 = this._data.rels;
       _results = [];
       for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
         r = _ref1[_j];
-        r.id = Number(r.id);
-        r.entity1_id = Number(r.entity1_id);
-        r.entity2_id = Number(r.entity2_id);
-        r.category_id = Number(r.category_id);
-        if ((r.category_ids != null) && typeof r.category_ids === "string") {
-          r.category_ids = r.category_ids.split(",");
-        }
-        if (r.category_ids instanceof Array) {
-          r.category_ids = r.category_ids.map(Number);
-        }
-        r.is_current_with_null = r.is_current;
-        r.is_current = Number(r.is_current);
         if (typeof r.x1 === "undefined") {
           r.x1 = null;
           r.y1 = null;
         }
-        r.source = this._data.entities[entity_index[Number(r.entity1_id)]];
-        _results.push(r.target = this._data.entities[entity_index[Number(r.entity2_id)]]);
+        r.source = this._data.entities[entity_index[r.entity1_id]];
+        _results.push(r.target = this._data.entities[entity_index[r.entity2_id]]);
       }
       return _results;
     };
@@ -302,7 +291,7 @@
 
     Netmap.prototype.entity_ids = function() {
       return this._data.entities.map(function(e) {
-        return Number(e.id);
+        return e.id;
       });
     };
 
@@ -312,7 +301,7 @@
 
     Netmap.prototype.rel_ids = function() {
       return this._data.rels.map(function(r) {
-        return Number(r.id);
+        return r.id;
       });
     };
 
@@ -550,14 +539,14 @@
         rel = _ref[_i];
         if (rel.category_ids != null) {
           if (rel.category_ids.filter(function(id) {
-            return cat_ids.indexOf(Number(id)) > -1;
+            return cat_ids.indexOf(id) > -1;
           }).length > 0) {
             rel.hidden = false;
           } else {
             rel.hidden = true;
           }
         } else {
-          rel.hidden = cat_ids.indexOf(Number(rel.category_id)) === -1;
+          rel.hidden = cat_ids.indexOf(rel.category_id) === -1;
         }
       }
       return this.build();
@@ -730,12 +719,12 @@
         entity = _ref[i];
         if (parseInt(entity.id) === center_entity_id) {
           this._data["entities"][i].x = this.width / 2;
-          this._data["entities"][i].y = 30;
+          this._data["entities"][i].y = 80;
         } else {
           range = Math.PI * 2 / 3;
           angle = Math.PI + (Math.PI / (this._data["entities"].length - 2)) * count;
           this._data["entities"][i].x = 70 + (this.width - 140) / 2 + ((this.width - 140) / 2) * Math.cos(angle);
-          this._data["entities"][i].y = 30 - ((this.width - 140) / 2) * Math.sin(angle);
+          this._data["entities"][i].y = 80 - ((this.width - 140) / 2) * Math.sin(angle);
           count++;
         }
       }
@@ -772,11 +761,20 @@
       for (i = _i = 0, _len = degree1_ids.length; _i < _len; i = ++_i) {
         id = degree1_ids[i];
         range = Math.PI * 1 / 2;
-        angle = (Math.PI * 3 / 2) + i * (range / (degree1_ids.length - 1)) - range / 2;
+        if (degree1_ids.length > 1) {
+          angle = (Math.PI * 3 / 2) + i * (range / (degree1_ids.length - 1)) - range / 2;
+        } else {
+          angle = 0;
+        }
         radius = (this.width - 100) / 2;
         d1 = this.entity_by_id(id);
-        d1.x = 70 + i * (this.width - 140) / (degree1_ids.length - 1);
-        d1.y = this.height / 2 + 250 + radius * Math.sin(angle);
+        if (degree1_ids.length > 1) {
+          d1.x = 70 + i * (this.width - 140) / (degree1_ids.length - 1);
+          d1.y = this.height / 2 + 250 + radius * Math.sin(angle);
+        } else {
+          d1.x = 70 + (this.width - 140) / 2;
+          d1.y = this.height / 2 - 50;
+        }
       }
       for (i = _j = 0, _len1 = degree2_ids.length; _j < _len1; i = ++_j) {
         id = degree2_ids[i];
@@ -839,6 +837,9 @@
     };
 
     Netmap.prototype.update_positions = function() {
+      var t;
+
+      t = this;
       d3.selectAll(".entity").attr("transform", function(d) {
         return "translate(" + d.x + "," + d.y + ")";
       });
@@ -846,27 +847,23 @@
         return "translate(" + (d.source.x + d.target.x) / 2 + "," + (d.source.y + d.target.y) / 2 + ")";
       });
       d3.selectAll(".line").attr("d", function(d) {
-        var a, c, dr, dx, dy, m, q, x1, xa, xb, y1, ya, yb;
+        var ax, ay, c, dr, dx, dxm1, dxm2, dy, dym1, dym2, m, node_radius, q, rm1, rm2, spacing, x1, xa, xb, xm1, xm2, y1, ya, yb, ym1, ym2;
 
         dx = d.target.x - d.source.x;
         dy = d.target.y - d.source.y;
         dr = Math.sqrt(dx * dx + dy * dy);
+        ax = (d.source.x + d.target.x) / 2;
+        ay = (d.source.y + d.target.y) / 2;
         if (d.source.x < d.target.x) {
-          m = "M" + (d.source.x - (d.source.x + d.target.x) / 2) + "," + (d.source.y - (d.source.y + d.target.y) / 2);
+          xa = d.source.x - ax;
+          ya = d.source.y - ay;
+          xb = d.target.x - ax;
+          yb = d.target.y - ay;
         } else {
-          m = "M" + (d.target.x - (d.target.x + d.source.x) / 2) + "," + (d.target.y - (d.target.y + d.source.y) / 2);
-        }
-        a = "A" + dr + "," + dr + " 0 0,1 " + (d.target.x - (d.source.x + d.target.x) / 2) + "," + (d.target.y - (d.source.y + d.target.y) / 2);
-        if (d.source.x < d.target.x) {
-          xa = d.source.x - (d.source.x + d.target.x) / 2;
-          ya = d.source.y - (d.source.y + d.target.y) / 2;
-          xb = d.target.x - (d.source.x + d.target.x) / 2;
-          yb = d.target.y - (d.source.y + d.target.y) / 2;
-        } else {
-          xa = d.target.x - (d.target.x + d.source.x) / 2;
-          ya = d.target.y - (d.target.y + d.source.y) / 2;
-          xb = d.source.x - (d.target.x + d.source.x) / 2;
-          yb = d.source.y - (d.target.y + d.source.y) / 2;
+          xa = d.target.x - ax;
+          ya = d.target.y - ay;
+          xb = d.source.x - ax;
+          yb = d.source.y - ay;
         }
         c = Math.sqrt(Math.pow(xa - xb, 2) + Math.pow(ya - yb, 2));
         x1 = d.x1;
@@ -875,14 +872,34 @@
           x1 = (xa + xb) / 2 - (ya - yb) / 2 * (Math.sqrt(Math.pow(1.1 * dr / c, 2) - 1));
           y1 = (ya + yb) / 2 + (xa - xb) / 2 * (Math.sqrt(Math.pow(1.1 * dr / c, 2) - 1));
         }
-        q = "Q" + x1 + "," + y1 + "," + xb + "," + yb;
+        spacing = 5;
+        node_radius = 25 + spacing;
+        dxm1 = xa - x1;
+        dym1 = ya - y1;
+        rm1 = Math.sqrt(dxm1 * dxm1 + dym1 * dym1);
+        dxm2 = xb - x1;
+        dym2 = yb - y1;
+        rm2 = Math.sqrt(dxm2 * dxm2 + dym2 * dym2);
+        xm1 = node_radius * dxm1 / rm1;
+        ym1 = node_radius * dym1 / rm1;
+        xm2 = node_radius * dxm2 / rm2;
+        ym2 = node_radius * dym2 / rm2;
+        m = "M" + (xa - xm1) + "," + (ya - ym1);
+        q = "Q" + x1 + "," + y1 + "," + (xb - xm2) + "," + (yb - ym2);
         return m + q;
       });
-      return d3.selectAll(".path1, .path2").attr("xlink:href", function(d) {
-        var id;
-
-        id = "#path" + (d.source.x >= d.target.x ? "2" : "") + "_" + d.id;
-        return id;
+      return d3.selectAll(".line:not(.highlight)").attr("marker-end", function(d) {
+        if (t.rel_is_directional(d) && d.source.x < d.target.x) {
+          return "url(#marker1)";
+        } else {
+          return "";
+        }
+      }).attr("marker-start", function(d) {
+        if (t.rel_is_directional(d) && d.source.x >= d.target.x) {
+          return "url(#marker2)";
+        } else {
+          return "";
+        }
       });
     };
 
@@ -1014,28 +1031,38 @@
         return d.id;
       }).call(rel_drag);
       groups.append("path").attr("id", function(d) {
-        return "path2_" + d.id;
-      }).attr("class", "line path2").attr("opacity", 0).attr("fill", "none").style("stroke-width", function(d) {
-        return Math.sqrt(d.value) * 1;
-      });
+        return "path-highlight-" + d.id;
+      }).attr("class", "line highlight").attr("opacity", 0.6).attr("fill", "none").style("stroke-width", 4);
       groups.append("path").attr("id", function(d) {
-        return "path_" + d.id;
-      }).attr("class", "line path1").attr("opacity", 0.6).attr("fill", "none").style("stroke-width", function(d) {
+        return "path-" + d.id;
+      }).attr("class", "line").attr("opacity", 0.6).attr("fill", "none").style("stroke-width", function(d) {
         return Math.sqrt(d.value) * 1;
+      }).attr("marker-end", function(d) {
+        if (d.source.x < d.target.x) {
+          return "url(#marker)";
+        } else {
+          return "";
+        }
+      }).attr("marker-start", function(d) {
+        if (d.source.x >= d.target.x) {
+          return "url(#marker)";
+        } else {
+          return "";
+        }
       });
       groups.append("a").attr("xrel:href", function(d) {
         return d.url;
       }).append("text").attr("dy", -6).attr("text-anchor", "middle").append("textPath").attr("startOffset", "50%").attr("xlink:href", function(d) {
-        return "#path" + (d.source.x >= d.target.x ? "2" : "") + "_" + d.id;
+        return "#path-" + d.id;
       }).text(function(d) {
         return d.label;
       });
       rels.exit().remove();
       d3.selectAll(".line").style("stroke-dasharray", function(d) {
-        if (d.is_current_with_null === 0 || d.end_date !== null) {
+        if (d.is_current === 0 || d.end_date) {
           return "5,2";
         }
-        if (d.is_current_with_null === null) {
+        if (d.is_current === null) {
           return "10,3";
         }
         return "";
@@ -1056,12 +1083,6 @@
         return window.location.href = d.url;
       });
       this.svg.selectAll(".rel text").data(this._data["rels"], function(d) {
-        return d.id;
-      });
-      this.svg.selectAll(".path1").data(this._data["rels"], function(d) {
-        return d.id;
-      });
-      this.svg.selectAll(".path2").data(this._data["rels"], function(d) {
         return d.id;
       });
       return this.svg.selectAll(".rel").on("click", function(d, i) {
@@ -1119,9 +1140,11 @@
         return d.id;
       }).call(entity_drag);
       has_image = function(d) {
-        return d.image.indexOf("anon") === -1;
+        return d.image.indexOf("netmap") === -1;
       };
-      groups.append("circle").attr("class", "image_rect").attr("fill", this.entity_background_color).attr("opacity", 1).attr("r", 24).attr("x", -29).attr("y", -29).attr("stroke", "none").attr("stroke-width", 1);
+      groups.append("clipPath").attr("id", function(d) {
+        return "image-clip-" + d.id;
+      }).append("circle").attr("class", "image-clip").attr("opacity", 1).attr("r", 25).attr("x", -29).attr("y", -29);
       groups.append("image").attr("class", "image").attr("opacity", function(d) {
         if (has_image(d)) {
           return 1;
@@ -1130,8 +1153,34 @@
         }
       }).attr("xlink:href", function(d) {
         return d.image;
-      }).attr("x", -25).attr("y", -25).attr("width", 50).attr("height", 50);
-      groups.append("circle").attr("class", "image_rect").attr("fill", "none").attr("opacity", 1).attr("r", 26).attr("x", -29).attr("y", -29).attr("stroke", "white").attr("stroke-width", 18);
+      }).attr("x", function(d) {
+        if (has_image(d)) {
+          return -40;
+        } else {
+          return -25;
+        }
+      }).attr("y", function(d) {
+        if (has_image(d)) {
+          return -40;
+        } else {
+          return -25;
+        }
+      }).attr("width", function(d) {
+        if (has_image(d)) {
+          return 80;
+        } else {
+          return 50;
+        }
+      }).attr("height", function(d) {
+        if (has_image(d)) {
+          return 80;
+        } else {
+          return 50;
+        }
+      }).attr("clip-path", function(d) {
+        return "url(#image-clip-" + d.id + ")";
+      });
+      groups.append("circle").attr("class", "image_rect").attr("fill", "none").attr("opacity", 1).attr("r", 26).attr("x", -29).attr("y", -29).attr("stroke", "white").attr("stroke-width", 0);
       buttons = groups.append("a").attr("class", "add_button");
       buttons.append("text").attr("dx", 20).attr("dy", -15).text("+").on("click", function(d) {
         return t.toggle_add_related_entities_form(d.id);
@@ -1141,34 +1190,34 @@
       }).attr("title", function(d) {
         return d.description;
       });
-      links.append("text").attr("dx", 0).attr("dy", 30).attr("text-anchor", "middle").text(function(d) {
+      links.append("text").attr("dx", 0).attr("dy", 38).attr("text-anchor", "middle").text(function(d) {
         return t.split_name(d.name)[0];
       });
-      links.append("text").attr("dx", 0).attr("dy", 45).attr("text-anchor", "middle").text(function(d) {
+      links.append("text").attr("dx", 0).attr("dy", 55).attr("text-anchor", "middle").text(function(d) {
         return t.split_name(d.name)[1];
       });
       groups.filter(function(d) {
         return t.split_name(d.name)[0] !== d.name;
-      }).insert("rect", ":first-child").attr("fill", this.entity_background_color).attr("opacity", 0.8).attr("rx", this.entity_background_corner_radius).attr("ry", this.entity_background_corner_radius).attr("x", function(d) {
+      }).insert("rect", ":first-child").attr("fill", this.entity_background_color).attr("opacity", this.entity_background_opacity).attr("rx", this.entity_background_corner_radius).attr("ry", this.entity_background_corner_radius).attr("x", function(d) {
         return -$(this.parentNode).find(".entity_link text:nth-child(2)").width() / 2 - 3;
       }).attr("y", function(d) {
         var extra_offset, image_offset, text_offset;
 
-        image_offset = 16;
+        image_offset = 24;
         text_offset = $(this.parentNode).find(".entity_link text").height();
-        extra_offset = 2;
+        extra_offset = 5;
         return image_offset + text_offset + extra_offset;
       }).attr("width", function(d) {
         return $(this.parentNode).find(".entity_link text:nth-child(2)").width() + 6;
       }).attr("height", function(d) {
         return $(this.parentNode).find(".entity_link text:nth-child(2)").height() + 4;
       });
-      groups.insert("rect", ":first-child").attr("fill", this.entity_background_color).attr("opacity", 0.8).attr("rx", this.entity_background_corner_radius).attr("ry", this.entity_background_corner_radius).attr("x", function(d) {
+      groups.insert("rect", ":first-child").attr("fill", this.entity_background_color).attr("opacity", this.entity_background_opacity).attr("rx", this.entity_background_corner_radius).attr("ry", this.entity_background_corner_radius).attr("x", function(d) {
         return -$(this.parentNode).find(".entity_link text").width() / 2 - 3;
       }).attr("y", function(d) {
         var extra_offset, image_offset;
 
-        image_offset = 16;
+        image_offset = 24;
         extra_offset = 1;
         return image_offset + extra_offset;
       }).attr("width", function(d) {
@@ -1238,6 +1287,10 @@
       parts = name.split(/\s+/);
       half = Math.ceil(parts.length / 2);
       return [parts.slice(0, half).join(" "), parts.slice(half).join(" ")];
+    };
+
+    Netmap.prototype.rel_is_directional = function(r) {
+      return [1, 2, 3, 4, 5, 6, 7, 8].indexOf(r.category_id) > -1;
     };
 
     return Netmap;

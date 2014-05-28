@@ -2381,11 +2381,21 @@ svg .line {
 }
 
 svg .rel.selected .line {
-  stroke: #f91409;
+  /* stroke: #f91409; */
+}
+
+svg .rel .line.highlight {
+  stroke: none;
+}
+
+svg .rel.selected .line.highlight {
+  stroke: #ffff80;
 }
 
 svg .entity.selected .image_rect {
-  stroke: #FAFAFA;
+  stroke: #ffff80;
+  stroke-width: 5;
+  opacity: 0.5;
 }
 
 svg .entity .add_button text {
