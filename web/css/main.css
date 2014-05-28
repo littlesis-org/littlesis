@@ -2385,17 +2385,42 @@ svg .rel.selected .line {
 }
 
 svg .rel .line.highlight {
-  stroke: none;
+  stroke: #ffff80;
+  opacity: 0;
 }
 
 svg .rel.selected .line.highlight {
   stroke: #ffff80;
+  opacity: 0.6;
 }
 
-svg .entity.selected .image_rect {
+svg .rel .label {
+  display: none;
+}
+
+svg .rel:hover .label {
+  display: block;
+}
+
+svg .rel.selected .label {
+  display: block;
+}
+
+svg .rel.hovered .label {
+  display: block;
+}
+
+svg .entity .image-bg {
+}
+
+svg .entity.selected .image-bg {
   stroke: #ffff80;
   stroke-width: 5;
   opacity: 0.5;
+}
+
+svg .entity.selected .text_rect {
+  /* fill: #ffff80; */
 }
 
 svg .entity .add_button text {

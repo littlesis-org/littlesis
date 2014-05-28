@@ -1814,32 +1814,11 @@ class EntityTable extends Doctrine_Table
 
   public static function mapRelsFromRows($rows)
   {
-    sfLoader::loadHelpers(array("Asset", "Url"));
     $rels = array();
 
     foreach ($rows as $rel)
     {
-      try 
-      {
-        $url = url_for(RelationshipTable::generateRoute($rel));
-      } 
-      catch (Exception $e)
-      {
-        $url = "http://littlesis.org/relationship/view/id/" . $rel['id'];
-      }
-      
-      $rels[] = array(
-       "id" => self::integerize($rel["id"]),
-        "entity1_id" => self::integerize($rel["entity1_id"]),
-        "entity2_id" => self::integerize($rel["entity2_id"]),
-        "category_id" => self::integerize($rel["category_id"]),
-        "category_ids" => self::integerize($rel["category_ids"]),
-        "is_current" => self::integerize($rel["is_current"]),
-        "end_date" => $rel["end_date"],       
-        "value" => 1, 
-        "label" => $rel["label"],
-        "url" => $url      
-      );
+      $rels[] = NetworkMapTable::prepareRelData($rel);
     }
     
     return $rels;  
@@ -1972,61 +1951,8 @@ class EntityTable extends Doctrine_Table
            "WHERE e.id = ?";
     $params = array($entity_id);
     $stmt = $db->execute($sql, $params);      
-    $entity = $stmt->fetch(PDO::FETCH_ASSOC);      
+    $entity = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    if (!$entity["filename"])
-    {
-      $image_path = $entity["primary_ext"] == "Person" ? image_path("system/netmap-person.png") : image_path("system/netmap-org.png");
-    } 
-    else 
-    {      
-      $image_path = image_path(ImageTable::getPath($entity['filename'], 'profile'));
-    }
-
-    try 
-    {
-      $url = url_for(self::generateRoute($entity, "map"));
-    } 
-    catch (Exception $e) 
-    {
-      $url = 'http://littlesis.org/' . strtolower($entity['primary_ext']) . '/' . $entity['id'] . '/' . LsSlug::convertNameToSlug($entity['name']) . '/map';
-    }
-    
-    return array(
-      "id" => self::integerize($entity_id), 
-      "name" => $entity["name"], 
-      "image" => $image_path, 
-      "url" => $url, 
-      "description" => $entity["blurb"]
-    );  
-  }
-
-  public static function integerize($val)
-  {
-    if ($val === null)
-    {
-      return null;
-    }
-
-    if (is_array($val))
-    {
-      return array_map(array('EntityTable', 'integerize'), $val);
-    }
-
-    if (is_string($val) && strpos($val, ',') !== false)
-    {
-      return self::integerize(explode(',', $val));
-    }
-
-    $int = (int) $val;
-
-    if ($int === 0 && $val !== "0")
-    {
-      return null;
-    }
-    else
-    {
-      return $int;
-    }
+    return NetworkMapTable::prepareEntityData($entity);
   }
 }

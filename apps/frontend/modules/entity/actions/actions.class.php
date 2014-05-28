@@ -4718,7 +4718,7 @@ class entityActions extends sfActions
     if ($request->getParameter("use_interlocks", "0") == "0")
     {
       //excluding donations from starting entity map right now
-      $this->data = json_encode(EntityTable::getRelatedEntitiesAndRelsForMap($this->entity->id, $num,array(),array(5)));
+      $this->data = json_encode(EntityTable::getRelatedEntitiesAndRelsForMap($this->entity->id, $num, array(), array(5)));
     }
     else
     {

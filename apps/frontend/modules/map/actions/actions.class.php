@@ -14,6 +14,11 @@ class mapActions extends sfActions
     $sql = "SELECT * FROM network_map WHERE id = ? AND is_deleted = 0";
     $stmt = $db->execute($sql, array($request->getParameter("id")));
     $this->map = $stmt->fetch(PDO::FETCH_ASSOC);
+    $data = json_decode($this->map["data"], true);
+    $this->map["data"] = json_encode(array(
+      "entities" => array_map(array('NetworkMapTable', 'prepareEntityData'), $data["entities"]),
+      "rels" => array_map(array('NetworkMapTable', 'prepareRelData'), $data["rels"]),
+    ));
     $this->forward404Unless($this->map);
   }
   

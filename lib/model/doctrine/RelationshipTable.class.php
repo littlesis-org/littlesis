@@ -223,7 +223,7 @@ class RelationshipTable extends Doctrine_Table
       $action = 'view';
     }
 
-    if ($relationship['is_deleted'] && $action == 'view')
+    if (@$relationship['is_deleted'] && $action == 'view')
     {
       $action = 'modifications';
     }

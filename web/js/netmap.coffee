@@ -78,7 +78,7 @@ class LittlesisApi
     
 class Netmap
 
-  constructor: (width, height, parent_selector, key) ->
+  constructor: (width, height, parent_selector, key, clean_mode = true) ->
     @width = width
     @height = height
     @parent_selector = parent_selector
@@ -89,6 +89,7 @@ class Netmap
     @entity_background_corner_radius = 5
     @distance = 225
     @api = new LittlesisApi(key)
+    @clean_mode = clean_mode
     @init_callbacks()
 
   init_svg: ->
@@ -649,7 +650,7 @@ class Netmap
 
     groups = rels.enter().append("g")
       .attr("class", "rel")
-      .attr("id", (d) -> d.id)
+      .attr("id", (d) -> "rel-" + d.id)
       .call(rel_drag)
 
     #begin with paths
@@ -679,6 +680,7 @@ class Netmap
     groups.append("a")
       .attr("xrel:href", (d) -> d.url)
       .append("text")
+      .attr("class", "label")
       .attr("dy", -6)
       .attr("text-anchor", "middle")
       .append("textPath")
@@ -716,12 +718,12 @@ class Netmap
     )
 
   toggle_selected_rel: (id, value = null) ->
-    rel = $("#" + id + ".rel")
-    if value?
-      klass = if value then "rel selected" else "rel"
-    else
-      klass = if rel.attr("class") == "rel" then "rel selected" else "rel"    
-    rel.attr("class", klass)
+    rel = d3.select("#rel-" + id + ".rel")
+    rel.classed("selected", value)
+
+  toggle_hovered_rel: (id, value = null) ->
+    rel = d3.select("#rel-" + id + ".rel")
+    rel.classed("hovered", value)
 
   build_entities: ->
     t = this
@@ -757,9 +759,27 @@ class Netmap
       .attr("class", "entity")
       .attr("id", (d) -> d.id)
       .call(entity_drag)
+      .on("mouseover", (d) ->
+        for r in t.rels_by_entity(d.id)
+          t.toggle_hovered_rel(r.id, true)
+      )
+      .on("mouseout", (d) ->
+        for r in t.rels_by_entity(d.id)
+          t.toggle_hovered_rel(r.id, false)
+      )
 
     has_image = (d) -> 
       d.image.indexOf("netmap") == -1
+
+    # circle for background and highlighting
+    groups.append("circle")
+      .attr("class", "image-bg")
+      .attr("opacity", 1)
+      .attr("r", 25)
+      .attr("x", -29)
+      .attr("y", -29)
+      .attr("stroke", "white")
+      .attr("stroke-width", 0)
 
     # circle for clipping image
     groups.append("clipPath")
@@ -774,24 +794,12 @@ class Netmap
     # profile image or default silhouette
     groups.append("image")
       .attr("class", "image")
-      # because the default pics are too dark:
-      .attr("opacity", (d) -> if has_image(d) then 1 else 0.5) 
       .attr("xlink:href", (d) -> d.image)
-      .attr("x", (d) -> if has_image(d) then -40 else -25) # (d) -> if has_image(d) then -25 else -17)
-      .attr("y", (d) -> if has_image(d) then -40 else -25) # (d) -> if has_image(d) then -25 else -25)
-      .attr("width", (d) -> if has_image(d) then 80 else 50) # (d) -> if has_image(d) then 50 else 35)
-      .attr("height", (d) -> if has_image(d) then 80 else 50) # (d) -> if has_image(d) then 50 else 35)
+      .attr("x", (d) -> if has_image(d) then -40 else -25)
+      .attr("y", (d) -> if has_image(d) then -40 else -25)
+      .attr("width", (d) -> if has_image(d) then 80 else 50)
+      .attr("height", (d) -> if has_image(d) then 80 else 50)
       .attr("clip-path", (d) -> "url(#image-clip-" + d.id + ")" )
-
-    groups.append("circle")
-      .attr("class", "image_rect")
-      .attr("fill", "none")
-      .attr("opacity", 1)
-      .attr("r", 26)
-      .attr("x", -29)
-      .attr("y", -29)
-      .attr("stroke", "white")
-      .attr("stroke-width", 0)
 
     # add related entities button and background squares
     buttons = groups.append("a")
@@ -805,7 +813,7 @@ class Netmap
       )      
           
     # anchor tags around entity name
-    links = groups.append("a")
+    links = if @clean_mode then groups else groups.append("a")
       .attr("class", "entity_link")
       .attr("xlink:href", (d) -> d.url)
       .attr("title", (d) -> d.description)
@@ -825,6 +833,7 @@ class Netmap
     # one or two rectangles behind the entity name
     groups.filter((d) -> t.split_name(d.name)[0] != d.name)
       .insert("rect", ":first-child")
+      .attr("class", "text_rect")
       .attr("fill", @entity_background_color)
       .attr("opacity", @entity_background_opacity)
       .attr("rx", @entity_background_corner_radius)
@@ -842,6 +851,7 @@ class Netmap
       .attr("height", (d) -> $(this.parentNode).find(".entity_link text:nth-child(2)").height() + 4)
 
     groups.insert("rect", ":first-child")
+      .attr("class", "text_rect")
       .attr("fill", @entity_background_color)
       .attr("opacity", @entity_background_opacity)
       .attr("rx", @entity_background_corner_radius)
@@ -906,7 +916,9 @@ class Netmap
     [parts.slice(0, half).join(" "), parts.slice(half).join(" ")]
 
   rel_is_directional: (r) ->
-    [1..8].indexOf(r.category_id) > -1
+    r.category_ids.map((cat_id) ->
+      [1, 2, 3, 5, 10].indexOf(cat_id)
+    ).indexOf(-1) == -1
       
 if typeof module != "undefined" && module.exports
   # on a server

@@ -16,7 +16,7 @@ var center_entity_id = <?php echo $entity->id ?>;
 var width = <?php echo sfConfig::get('app_netmap_default_width') ?>;
 var height = <?php echo sfConfig::get('app_netmap_default_height') ?>;
 var key = '<?php echo sfConfig::get("app_netmap_api_key") ?>';
-var netmap = new Netmap(width, height, "#netmap", key);
+var netmap = new Netmap(width, height, "#netmap", key, false);
 netmap.set_user_id(<?php echo $sf_user->isAuthenticated() ? $sf_user->getGuardUser()->id : "" ?>);
 netmap.set_data(data, center_entity_id);
 netmap.build();
