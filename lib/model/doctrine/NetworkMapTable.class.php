@@ -4,6 +4,14 @@
  */
 class NetworkMapTable extends Doctrine_Table
 {
+  public function prepareData($data)
+  {
+    return array(
+      'entities' => array_map(array('NetworkMapTable', 'prepareEntityData'), $data['entities']),
+      'rels' => array_map(array('NetworkMapTable', 'prepareRelData'), $data['rels'])
+    );
+  }
+
   public static function prepareEntityData($entity)
   {
     sfLoader::loadHelpers(array("Asset", "Url"));

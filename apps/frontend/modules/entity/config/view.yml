@@ -14,7 +14,7 @@ editCustomFieldsSuccess:
   javascripts:    [%SF_PROTOTYPE_WEB_DIR%/js/prototype]
   
 mapSuccess:
-  javascripts:    [d3.v3.min.js, jquery.min.js, netmap.js]
+  javascripts:    [d3.v3.min.js, jquery.min.js, oligrapher/netmap.js]
 
 interlocksMapSuccess:
-  javascripts:    [d3.v3.min.js, jquery.min.js, netmap.js]
+  javascripts:    [d3.v3.min.js, jquery.min.js, oligrapher/netmap.js]
