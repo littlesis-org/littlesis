@@ -218,9 +218,9 @@ categoryOrgs:
 
 
 # MAPS
-viewMap:
-  url: /map/:id
-  param: { module: map, action: view }
+listMaps:
+  url: /map/list
+  param: { module: map, action: list }
 
 editMap:
   url: /map/:id/edit
@@ -232,9 +232,19 @@ deleteMap:
   param: { module: map, action: delete }
   methods: [POST]
 
-listMaps:
-  url: /map/list
-  param: { module: map, action: list }
+createMap:
+  url: /map/create
+  param: { module: map, action: create }
+  methods: [POST]
+
+updateMap:
+  url: /map/:id/update
+  param: { module: map, action: update }
+  methods: [POST]
+
+viewMap:
+  url: /map/:id
+  param: { module: map, action: view }
 
 
 # HELP
