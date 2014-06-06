@@ -34,7 +34,7 @@ class mapActions extends sfActions
 
       LsCache::clearNetworkMapCacheById($this->map->id);
       
-      $this->redirect("map/view?id=" . $this->map->id);
+      $this->redirect("@editMap?id=" . $this->map->id);
     }    
   }
 

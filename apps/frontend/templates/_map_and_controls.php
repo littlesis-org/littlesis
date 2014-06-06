@@ -55,7 +55,10 @@ Current:
 <?php if ($sf_user->hasCredential('admin')) : ?>
 <br />
 <?php if (isset($id)) : ?>
-  <?php echo button_to('edit', "map/edit?id=" . $id) ?><br />
+  <?php echo button_to('view', "@railsMap?id=" . $id) ?><br />
+<?php endif; ?>
+<?php if (isset($id)) : ?>
+  <?php echo button_to('meta', "@railsMapEditMeta?id=" . $id) ?><br />
 <?php endif; ?>
 <input id="netmap_save" type="button" value="save" /><br />
 <?php endif; ?>
@@ -137,7 +140,7 @@ $("#netmap_save").on("click", function() {
     type: "POST",
     data: netmap.data_for_save(),
     success: function(data) { 
-      window.location.href = '<?php echo url_for("map/view?id=999999") ?>'.replace("999999", data.id);    
+      window.location.href = '<?php echo url_for("@editMap?id=999999") ?>'.replace("999999", data.id);
     },
     error: function() { 
       alert("There was an error saving the map"); 
