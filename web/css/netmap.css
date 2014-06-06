@@ -1,6 +1,7 @@
 #netmap {
   position: relative;
-  border: 1px solid #ddd; }
+  border: 1px solid #ddd;
+  overflow: hidden; }
   #netmap.raw {
     height: 100%;
     width: 100%; }
@@ -8,10 +9,14 @@
     text-decoration: none; }
 
 svg {
-  border: 0px solid #ddd; }
+  border: 0px solid #ddd;
+  background-color: white; }
 
 svg .line {
   stroke: black; }
+
+svg .entity a text, svg .rel a text {
+  font-family: Helvetica, Arial, sans-serif; }
 
 svg .rel.selected .line {
   /* stroke: #f91409; */ }
@@ -30,6 +35,9 @@ svg .label {
 #netmap:hover .label {
   display: none; }
 
+#netmap svg .rel .label {
+  cursor: pointer; }
+
 #netmap svg .rel:hover .label {
   display: block; }
 
@@ -38,6 +46,9 @@ svg .rel.selected .label {
 
 #netmap svg .rel.hovered .label {
   display: block; }
+
+svg .entity .image-bg {
+  fill: #fff; }
 
 svg .entity.selected .image-bg {
   stroke: #ffff80;
@@ -86,10 +97,6 @@ svg .image {
 .map-date {
   color: #888; }
 
-.map-littlesis {
-  color: #888;
-  text-align: right; }
-
 .map-header {
   margin-bottom: 20px; }
 
@@ -99,15 +106,39 @@ h1.map-title {
   margin-bottom: 0;
   margin-top: 10px; }
 
-.map-description {
-  font-size: 20px;
-  color: #888;
-  font-weight: 300; }
+#container .map-header {
+  margin-bottom: 0px; }
+#container .map-top-row {
+  margin-bottom: 10px; }
+#container h1.map-title {
+  margin-top: 0; }
+
+#map-description {
+  margin-top: 20px;
+  padding: 10px;
+  font-size: 18px; }
+  #map-description p {
+    margin-bottom: 20px; }
 
 #fullscreen-link {
+  display: inline-block;
+  font-size: 12px;
+  margin-left: 10px; }
+
+#embed-link {
+  display: inline-block;
+  font-size: 12px;
+  margin-left: 10px; }
+
+#embed-code {
+  display: none;
+  position: absolute;
+  z-index: 100;
   text-align: right;
-  margin-top: 5px;
-  font-size: 12px; }
+  margin-top: 5px; }
+  #embed-code textarea {
+    width: 500px;
+    height: 80px; }
 
 .zoom-button {
   background-color: #eee;
@@ -115,8 +146,10 @@ h1.map-title {
   height: 20px;
   width: 20px;
   line-height: 16px;
-  font-size: 10px;
+  font-size: 12px;
   padding: 0; }
+  .zoom-button:focus {
+    outline: none; }
 
 #zoom-in {
   position: absolute;
@@ -128,8 +161,27 @@ h1.map-title {
   top: 35px;
   left: 10px; }
 
+#save {
+  position: absolute;
+  top: 60px;
+  left: 10px;
+  display: none; }
+
 #netmap-logo {
   position: absolute;
   bottom: 0px;
   left: 10px;
   width: 100px; }
+  #netmap-logo:hover {
+    cursor: pointer; }
+
+.map-share-buttons {
+  text-align: right; }
+  .map-share-buttons .fb-share-button {
+    position: relative;
+    top: -5px; }
+    .map-share-buttons .fb-share-button iframe {
+      margin-left: 3px; }
+  .map-share-buttons .google-share-button {
+    display: inline-block;
+    margin-left: 5px; }
