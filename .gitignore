@@ -24,7 +24,10 @@ tmp/
 web/.htaccess
 web/crossdomain.xml
 web/google*
-web/images/
+web/images/large/
+web/images/profile/
+web/images/small/
+web/images/square/
 web/*sitemap*.xml
 web/*cret.php
 web/uploads/
