@@ -222,11 +222,6 @@ listMaps:
   url: /map/list
   param: { module: map, action: list }
 
-editMap:
-  url: /map/:id/edit
-  param: { module: map, action: edit }
-  methods: [GET,POST]
-
 deleteMap:
   url: /map/:id/delete
   param: { module: map, action: delete }
@@ -242,8 +237,20 @@ updateMap:
   param: { module: map, action: update }
   methods: [POST]
 
-viewMap:
-  url: /map/:id
+editMap:
+  url: /maps/:id/edit
+  param: { module: map, action: view }
+
+editMapOld:
+  url: /map/:id/edit
+  param: { module: map, action: view }
+
+railsMap:
+  url: /maps/:id
+  param: { module: map, action: view }
+
+railsMapEditMeta:
+  url: /maps/:id/edit_meta
   param: { module: map, action: view }
 
 
