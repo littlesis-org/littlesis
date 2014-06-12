@@ -56,9 +56,7 @@
 </span>
 <?php endif; ?>
 
-
 <?php if ($sf_user->hasCredential('editor')) : ?>
-
 
 <script>
 
@@ -131,3 +129,4 @@ function hideBlurbEdit()
 
 
 <?php endif; ?>
+

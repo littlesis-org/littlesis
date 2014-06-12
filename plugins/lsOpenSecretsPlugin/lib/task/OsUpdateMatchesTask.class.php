@@ -565,7 +565,7 @@ class OsUpdateMatchesTask extends LsTask
   protected function safeToRun()
   {
     $proc_id = getmypid();
-    exec('ps aux -ww | grep symfony | grep :process-matches | grep -v ' . $proc_id . ' | grep -v grep', $status_arr);
+    exec('ps aux -ww | grep symfony | grep :update-matches | grep -v ' . $proc_id . ' | grep -v grep', $status_arr);
 
     foreach ($status_arr as $status)
     {
