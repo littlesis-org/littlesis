@@ -1,5 +1,5 @@
 <tr>
-  <td style="width: 28%; padding-bottom: 0.6em">
+  <td style="width: 30%; padding-bottom: 0.6em">
     <?php echo entity_link($object, null) ?><br>
   </td>
   <td style="padding-bottom: 0.6em">

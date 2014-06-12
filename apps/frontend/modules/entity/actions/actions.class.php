@@ -4713,11 +4713,12 @@ class entityActions extends sfActions
   public function executeMap($request)
   {
     $this->checkEntity($request, false, false);
-    $num = $request->getParameter("num", 14);
+    $num = $request->getParameter("num", 12);
 
     if ($request->getParameter("use_interlocks", "0") == "0")
     {
-      $this->data = json_encode(EntityTable::getRelatedEntitiesAndRelsForMap($this->entity->id, $num));
+      //excluding donations from starting entity map right now
+      $this->data = json_encode(EntityTable::getRelatedEntitiesAndRelsForMap($this->entity->id, $num,array(),array(5)));
     }
     else
     {

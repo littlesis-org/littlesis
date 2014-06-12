@@ -91,6 +91,7 @@ form div.recaptcha_input_area
 {
   color: black;
   font-size: 18px;
+  font-weight: 400;
   display: inline;
 }
 
@@ -141,9 +142,10 @@ form div.recaptcha_input_area
 
 .subsection
 {
-  font-weight: bold;
-  color: black;
+
   font-size: 18px;
+  font-weight: 500;
+  color: black;
   padding: 0.4em;
   padding-bottom: 0.2em;
   padding-left: 0.2em;
@@ -2323,6 +2325,23 @@ input#simple_search_terms
   float: right;
 }
 
+#netmap_controls input[type=button] {
+  position: relative;
+  font-size: 14px;
+  top: -6px;
+  color: #444;
+  background-color: #fff;
+  border: 1px solid #e0e0e0;
+  padding: 4px;
+  padding-left: 8px;
+  padding-right: 8px;
+  margin-right: 3px;
+  -moz-border-radius:10px;
+  border-radius: 10px;
+  width: 50px;
+  margin-bottom: 4px;
+}
+
 #map_description {
   float: left;
   width: 850px;
@@ -2358,15 +2377,15 @@ svg {
 }
 
 svg .line {
-  stroke: #ddd;
+  stroke: black;
 }
 
 svg .rel.selected .line {
-  stroke: #eed;
+  stroke: #f91409;
 }
 
 svg .entity.selected .image_rect {
-  fill: #ffe;
+  stroke: #FAFAFA;
 }
 
 svg .entity .add_button text {

@@ -55,7 +55,7 @@
       </div>
       <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
         <?php include_component('home', 'menu') ?>
-        <form action="/search" method="get" class="navbar-form navbar-right" role="search">
+        <form action="<?php echo url_for('search/simple') ?>" method="get" class="navbar-form navbar-right" role="search">
           <div id="top_search" class="input-group">
             <input type="text" name="q" class="form-control" placeholder="Search LittleSis" />
             <span class="input-group-btn">
@@ -85,9 +85,9 @@
     <div id="header_text">
       <?php use_helper('LsText') ?>
       <?php if (has_slot('header_link')) : ?>
-        <?php echo link_to(excerpt(get_slot('header_text'), 50), get_slot('header_link')) ?>
+        <?php echo link_to(excerpt(get_slot('header_text'), 100), get_slot('header_link')) ?>
       <?php else : ?>
-        <?php echo excerpt(get_slot('header_text'), 50) ?>
+        <?php echo excerpt(get_slot('header_text'), 100) ?>
       <?php endif; ?>
     </div>
 
