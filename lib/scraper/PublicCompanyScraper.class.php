@@ -427,13 +427,13 @@ class PublicCompanyScraper extends Scraper
         ->whereIn('r.id', $board_rel_ids)
         ->execute();
   
-      $board_checked = $this->checkBoardPage($board_rels);
+      /*$board_checked = $this->checkBoardPage($board_rels);
       if ($board_checked == -1)
       {
         $this->printDebug("PROBLEMS ACCESSING GOOGLE"); 
-        die;
-      }
-      else if ($board_checked == 0)
+        //die;
+      }*/
+      if (1)//else if ($board_checked == 0)
       {
         $this->printDebug("GOOD BOARD PAGE NOT FOUND"); 
         foreach ($board_rels as $rel)
@@ -711,7 +711,7 @@ class PublicCompanyScraper extends Scraper
     $results = array();
 
     //form type
-    $type = trim($xml->documentType);    
+    $type = trim($xml->documentType);
     $results['formName'] = ($type == '3') ? 'Form 3' : 'Form 4';
 
 		//person & org
@@ -719,12 +719,12 @@ class PublicCompanyScraper extends Scraper
 		$results['personCik'] = trim($xml->reportingOwner->reportingOwnerId->rptOwnerCik);
 		$results['personName'] = trim($xml->reportingOwner->reportingOwnerId->rptOwnerName);
 		$results['signatureName'] = trim($xml->ownerSignature->signatureName);
-
+                $results['remarks'] = trim($xml->remarks);
 		//sometimes /CT/ (or /NY, /VA, etc) appears at the end of the person's name
 		$results['personName'] = preg_replace('/\/\p{L}+\/?$/','',$results['personName']);
 
     //if Inc, LLC, or Trust appears in owner name, it's an org
-    if (preg_match('#(^| )(inc|llc|llp|trust|corp|group|holdings|company|limited|ltd|fund|l\.p\.)($| |\.|,|/)#i', $results['personName']))
+    if (preg_match('#(^| )(inc|llc|llp|trust|l\.l\.c\.|corp|group|holdings|company|limited|ltd|fund|l\.p\.|)($| |\.|,|/)#i', $results['personName']))
     {
       $results['primaryExt'] = 'Org';
       $org = new Entity;
@@ -774,7 +774,8 @@ class PublicCompanyScraper extends Scraper
 		}
 
 		$results['officerTitle'] = trim($xml->reportingOwner->reportingOwnerRelationship->officerTitle);
-		$results['otherText'] = trim($xml->reportingOwner->reportingOwnerRelationship->otherText);
+                if (strtolower($results['officerTitle']) == 'see remarks') $results['officerTitle'] = $results['remarks'];
+                $results['otherText'] = trim($xml->reportingOwner->reportingOwnerRelationship->otherText);
 
 
     //ownership
@@ -1111,7 +1112,7 @@ class PublicCompanyScraper extends Scraper
       $rel->is_current = $current;
       $rel->is_board = 0;
       $rel->is_executive = 1;
-      $rel->description1 = $title;
+      if ($title != '') $rel->description1 = $title;
 
       //Form 3s let us set a start date
       if ($person_arr['formName'] == 'Form 3' && $person_arr['date'])
@@ -1390,7 +1391,11 @@ class PublicCompanyScraper extends Scraper
   	$str = str_replace('.', ' ', $str);
   	$str = preg_replace('/\s{2,}/', ' ', $str);
     $str = preg_replace('/\s+,(?=\s)/', ',', $str);
-      	
+      	    $str = preg_replace('/\)\s*$/','', $str);
+    if (strtolower($str) == 'see remarks')
+    {
+      $str = '';
+    }
   	/*
   	if ($entity)
   	{
