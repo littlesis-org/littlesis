@@ -1842,7 +1842,7 @@ class EntityTable extends Doctrine_Table
            (count($exclude_ids) ? "AND r.id NOT IN (" . join(",", $exclude_ids) . ") " : "") .
            (count($include_cats) ? "AND r.category_id IN (" . join(",", $include_cats) . ") " : "") .
            (count($exclude_cats) ? "AND r.category_id NOT IN (" . join(",", $exclude_cats) . ") " : "") .
-           "GROUP BY r.entity1_id, r.entity2_id";
+           "GROUP BY LEAST(r.entity1_id, r.entity2_id), GREATEST(r.entity1_id, r.entity2_id), r.category_id";
     $stmt = $db->execute($sql);
     $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
     
@@ -1868,7 +1868,7 @@ class EntityTable extends Doctrine_Table
            "AND e1.is_deleted = 0 AND e2.is_deleted = 0 " .
            (count($include_cats) ? "AND r.category_id IN (" . join(",", $include_cats) . ") " : "") .
            (count($exclude_cats) ? "AND r.category_id NOT IN (" . join(",", $exclude_cats) . ") " : "") .
-           "GROUP BY r.entity1_id, r.entity2_id";
+           "GROUP BY LEAST(r.entity1_id, r.entity2_id), GREATEST(r.entity1_id, r.entity2_id), r.category_id";
     $stmt = $db->execute($sql);
     $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
