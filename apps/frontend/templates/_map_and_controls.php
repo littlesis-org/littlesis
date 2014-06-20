@@ -52,7 +52,7 @@ Cats:
 Current:
 <input id="netmap_current_only" type="checkbox" /><br />
 
-<?php if ($sf_user->hasCredential('admin')) : ?>
+<?php if ($sf_user->hasCredential('admin') || $sf_user->hasCredential('importer')) : ?>
 <br />
 <?php if (isset($id)) : ?>
   <?php echo button_to('view', "@railsMap?id=" . $id) ?><br />

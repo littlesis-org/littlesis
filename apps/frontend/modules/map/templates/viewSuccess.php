@@ -1,10 +1,13 @@
 <?php decorate_with('layout') ?>
+<?php use_helper('Date') ?>
 
 <?php include_partial('map/header', array('map' => $map)) ?>
 
 <div id="map_description"><?php echo $map["description"] ?></div>
 
 <?php include_partial('global/map_and_controls', array('id' => $map["id"])) ?>
+
+saved by <?php echo user_link($user) ?> <?php echo time_ago_in_words(strtotime($map['updated_at'])) ?> ago
 
 <script>
 var data = <?php echo $map["data"] ?>;

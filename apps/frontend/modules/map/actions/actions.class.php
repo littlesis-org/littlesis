@@ -8,6 +8,15 @@ class mapActions extends sfActions
     $this->forward404Unless($this->map);  
   }
 
+  protected function checkMapOwner($request)
+  {
+    if (!$this->getUser()->hasCredential('admin') && ($this->map['user_id'] !== $this->getUser()->getGuardUser()->id))
+    {
+      $this->forward('error', 'credentials');
+    }
+  }
+
+
   public function executeView($request)
   {
     $db = Doctrine_Manager::connection();
@@ -20,11 +29,14 @@ class mapActions extends sfActions
       "rels" => array_map(array('NetworkMapTable', 'prepareRelData'), $data["rels"]),
     ));
     $this->forward404Unless($this->map);
+    $this->checkMapOwner($request);
+    $this->user = Doctrine::getTable('sfGuardUser')->find($this->map['user_id']);
   }
   
   public function executeEdit($request)
   {
     $this->checkMap($request);
+    $this->checkMapOwner($request);
 
     if ($request->isMethod('post'))
     {
@@ -67,22 +79,22 @@ class mapActions extends sfActions
   {
     if ($request->isMethod('post'))
     {
-      $map = Doctrine::getTable("NetworkMap")->find($request->getParameter("id"));
-      $this->forward404Unless($map);
+      $this->checkMap($request);
+      $this->checkMapOwner($request);
 
       $data = $request->getParameter("data");
       $decoded = json_decode($data);
 
-      $map->width = $request->getParameter("width");
-      $map->height = $request->getParameter("height");
-      $map->data = $data;
-      $map->entity_ids = implode(",", array_values(array_map(function($e) { return $e->id; }, $decoded->entities)));
-      $map->rel_ids = implode(",", array_values(array_map(function($e) { return $e->id; }, $decoded->rels)));
-      $map->save();
+      $this->map->width = $request->getParameter("width");
+      $this->map->height = $request->getParameter("height");
+      $this->map->data = $data;
+      $this->map->entity_ids = implode(",", array_values(array_map(function($e) { return $e->id; }, $decoded->entities)));
+      $this->map->rel_ids = implode(",", array_values(array_map(function($e) { return $e->id; }, $decoded->rels)));
+      $this->map->save();
 
-      LsCache::clearNetworkMapCacheById($map->id);
+      LsCache::clearNetworkMapCacheById($this->map->id);
 
-      $response = $map->toArray();
+      $response = $this->map->toArray();
       $response["data"] = json_decode($response["data"]);
 
       return $this->renderText(json_encode($response));
@@ -104,6 +116,7 @@ class mapActions extends sfActions
     if ($request->isMethod('post'))
     {
       $this->checkMap($request);    
+      $this->checkMapOwner($request);
       $this->map->delete();    
 
       LsCache::clearNetworkMapCacheById($this->map->id);
