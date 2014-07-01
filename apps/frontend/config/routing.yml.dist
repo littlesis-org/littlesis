@@ -253,6 +253,10 @@ railsMapEditMeta:
   url: /maps/:id/edit_meta
   param: { module: map, action: view }
 
+railsEditTwitter:
+  url: /entities/:id/edit_twitter
+  param: { module: entity, action: edit_twitter }
+
 
 # HELP
 help:
