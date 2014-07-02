@@ -17,6 +17,7 @@ class homeComponents extends sfComponents
       $this->items[$name]['items'][$this->getContext()->getI18N()->__('Notes')] = 'home/notes';
       $this->items[$name]['items'][$this->getContext()->getI18N()->__('Groups')] = 'home/groups';    
       $this->items[$name]['items'][$this->getContext()->getI18N()->__('Edits')] = 'home/modifications';
+      $this->items[$name]['items'][$this->getContext()->getI18N()->__('Maps')] = 'home/maps';
       $this->items[$name]['items']['divider1'] = 'divider';      
       $this->items[$name]['items'][$network_name] = '@localHome?name=' . $network_path;
       $this->items[$name]['items']['divider2'] = 'divider';
