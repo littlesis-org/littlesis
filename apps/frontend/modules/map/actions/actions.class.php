@@ -8,14 +8,13 @@ class mapActions extends sfActions
     $this->forward404Unless($this->map);  
   }
 
-  protected function checkMapOwner($request)
+  protected function checkMapOwner()
   {
     if (!$this->getUser()->hasCredential('admin') && ($this->map['user_id'] !== $this->getUser()->getGuardUser()->id))
     {
       $this->forward('error', 'credentials');
     }
   }
-
 
   public function executeView($request)
   {
@@ -36,7 +35,7 @@ class mapActions extends sfActions
   public function executeEdit($request)
   {
     $this->checkMap($request);
-    $this->checkMapOwner($request);
+    $this->checkMapOwner();
 
     if ($request->isMethod('post'))
     {
@@ -80,7 +79,7 @@ class mapActions extends sfActions
     if ($request->isMethod('post'))
     {
       $this->checkMap($request);
-      $this->checkMapOwner($request);
+      $this->checkMapOwner();
 
       $data = $request->getParameter("data");
       $decoded = json_decode($data);
@@ -116,7 +115,7 @@ class mapActions extends sfActions
     if ($request->isMethod('post'))
     {
       $this->checkMap($request);    
-      $this->checkMapOwner($request);
+      $this->checkMapOwner();
       $this->map->delete();    
 
       LsCache::clearNetworkMapCacheById($this->map->id);

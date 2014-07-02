@@ -1,3 +1,7 @@
+view:
+  is_secure: on
+  credentials: importer
+
 save:
   is_secure: on
   credentials: importer

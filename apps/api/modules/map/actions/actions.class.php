@@ -116,7 +116,7 @@ class mapActions extends LsApiActions
     $num = $request->getParameter("num", 10);
     $entity_ids = $request->getParameter("entity_ids");
     $rel_ids = $request->getParameter("rel_ids");
-    $include_cat_ids = $request->getParameter("include_cat_ids");
+    $include_cat_ids = (array) $request->getParameter("include_cat_ids");
 
     $data = EntityTable::getAddRelatedEntitiesAndRelsForMap($entity_id, $num, $entity_ids, $rel_ids, $include_cat_ids);    
     $data = NetworkMapTable::prepareData($data);
