@@ -130,17 +130,22 @@ $("#netmap_save").on("click", function() {
 
   var id = netmap.get_network_map_id();
   if (id) {
-    var url = '<?php echo url_for("map/update?id=999999") ?>'.replace("999999", id);
+    var url = "/maps/" + id;
   } else {
-    var url = '<?php echo url_for("map/create") ?>';
+    var url = "/maps";
   }
+
+  var method = id ? "PATCH" : "POST";
+  var data = netmap.data_for_save();
+  data.title = "<?php echo $entity['name'] ?>";
+  data.zoom = netmap.get_scale();
 
   $.ajax({
     url: url,
-    type: "POST",
-    data: netmap.data_for_save(),
+    type: method,
+    data: { map: data },
     success: function(data) { 
-      window.location.href = '<?php echo url_for("@editMap?id=999999") ?>'.replace("999999", data.id);
+      window.location.href = '/maps/' + data.id;
     },
     error: function() { 
       alert("There was an error saving the map"); 
