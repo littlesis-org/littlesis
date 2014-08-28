@@ -560,6 +560,10 @@ class Entity extends BaseEntity
       }
       
 
+      //set delta field for sphinx indexing (in rails)
+      $this->delta = true;
+
+
       //save entity
       $ret = parent::save($conn);
 

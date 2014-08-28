@@ -18,6 +18,7 @@ abstract class BaseEntity extends sfDoctrineRecord
     $this->hasColumn('parent_id', 'integer', null, array('type' => 'integer'));
     $this->hasColumn('primary_ext', 'string', 50, array('type' => 'string', 'notnull' => true, 'length' => '50'));
     $this->hasColumn('merged_id', 'integer', null, array('type' => 'integer'));
+    $this->hasColumn('delta', 'boolean', null, array('type' => 'boolean', 'notnull' => true, 'default' => 1));
 
     $this->option('collate', 'utf8_unicode_ci');
     $this->option('charset', 'utf8');

@@ -1826,6 +1826,9 @@ class EntityTable extends Doctrine_Table
 
   public static function getRelsForMap($entity_ids, $include_cats=array(), $exclude_cats=array(), $exclude_ids=array())
   {
+    $entity1_ids = EntityTable::removeCustomIds($entity1_ids);
+    $exclude_ids = EntityTable::removeCustomIds($exclude_ids);
+
     $db = Doctrine_Manager::connection();
     $sql = "SELECT r.id, r.entity1_id, r.entity2_id, r.category_id, r.is_current, r.end_date, r.is_deleted, " . 
            "GROUP_CONCAT(DISTINCT(rc.name) SEPARATOR ', ') AS label, " . 
@@ -1851,6 +1854,9 @@ class EntityTable extends Doctrine_Table
 
   public static function getRelsForMapBetween($entity1_ids, $entity2_ids, $include_cats=array(), $exclude_cats=array())
   {
+    $entity1_ids = EntityTable::removeCustomIds($entity1_ids);
+    $entity2_ids = EntityTable::removeCustomIds($entity2_ids);
+
     $db = Doctrine_Manager::connection();
     $sql = "SELECT r.id, r.entity1_id, r.entity2_id, r.category_id, r.is_current, r.is_deleted, " . 
            "GROUP_CONCAT(DISTINCT(rc.name) SEPARATOR ', ') AS label, " . 
@@ -1878,6 +1884,8 @@ class EntityTable extends Doctrine_Table
   public static function getRelsForNewMapEntity($entity_id, $entity_ids=array(), $include_cats=array(), $exclude_cats=array())
   {
     if (!$entity_ids) $entity_ids = array();
+
+    $entity_ids = EntityTable::removeCustomIds($entity_ids);
 
     if (!in_array($entity_id, $entity_ids))
     {
@@ -1927,6 +1935,8 @@ class EntityTable extends Doctrine_Table
 
   public static function getRelatedEntityIdsForMap($entity_id, $num=10, $include_cats=array(), $exclude_cats=array(), $exclude_ids=array())
   {
+    $exclude_ids = EntityTable::removeCustomIds($exclude_ids);
+
     $db = Doctrine_Manager::connection();
     $sql = "SELECT l.entity2_id, COUNT(l.id) AS num " . 
            "FROM link l " . 
@@ -1954,5 +1964,15 @@ class EntityTable extends Doctrine_Table
     $entity = $stmt->fetch(PDO::FETCH_ASSOC);
 
     return NetworkMapTable::prepareEntityData($entity);
+  }
+
+  public static function isIntegerId($id)
+  {
+    preg_match("/^\d+$/", $id) === 1;
+  }
+
+  public static function removeCustomIds($ids)
+  {
+    return array_filter($ids, array('EntityTable', 'isIntegerId'));
   }
 }
