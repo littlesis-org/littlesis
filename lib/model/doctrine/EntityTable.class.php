@@ -1968,7 +1968,7 @@ class EntityTable extends Doctrine_Table
 
   public static function isIntegerId($id)
   {
-    preg_match("/^\d+$/", $id) === 1;
+    return preg_match("/^\d+$/", $id) === 1;
   }
 
   public static function removeCustomIds($ids)
