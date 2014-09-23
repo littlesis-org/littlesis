@@ -625,7 +625,6 @@ class listActions extends sfActions
       'cat_ids' => RelationshipTable::DONATION_CATEGORY,
       'order' => 2,
       'degree1_type' => 'Person',
-      'degree2_type' => 'Person',
       'page' => $page,
       'num' => $num
     );
