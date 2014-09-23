@@ -1891,28 +1891,30 @@ class EntityTable extends Doctrine_Table
     {
       $entity_ids[] = $entity_id;
     }
-    
-    $db = Doctrine_Manager::connection();
-    $sql = "SELECT r.id, r.entity1_id, r.entity2_id, r.category_id, r.is_current, r.is_deleted, " . 
-           "GROUP_CONCAT(DISTINCT(rc.name) SEPARATOR ', ') AS label, " . 
-           "GROUP_CONCAT(DISTINCT(r.category_id) SEPARATOR ',') AS category_ids, " . 
-           "COUNT(r.id) AS  num " . 
-           "FROM relationship r LEFT JOIN relationship_category rc ON (rc.id = r.category_id) " . 
-           "LEFT JOIN entity e1 ON (e1.id = r.entity1_id) " .
-           "LEFT JOIN entity e2 ON (e2.id = r.entity2_id) " .
-           "WHERE r.entity1_id IN (" . join(",", $entity_ids) . ") " . 
-           "AND r.entity2_id IN (" . join(",", $entity_ids) . ") " . 
-           "AND (r.entity1_id = ? OR r.entity2_id = ?) " .
-           "AND r.is_deleted = 0 " .
-           "AND r.entity1_id <> r.entity2_id " .
-           "AND e1.is_deleted = 0 AND e2.is_deleted = 0 " .
-           (count($include_cats) ? "AND r.category_id IN (" . join(",", $include_cats) . ") " : "") .
-           (count($exclude_cats) ? "AND r.category_id NOT IN (" . join(",", $exclude_cats) . ") " : "") .
-           "GROUP BY r.entity1_id, r.entity2_id";
-    $stmt = $db->execute($sql, array($entity_id, $entity_id));
-    $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    return self::mapRelsFromRows($rows);    
+    return self::getRelsForMapBetween($entity_ids, $entity_ids, $include_cats, $exclude_cats);
+    
+    // $db = Doctrine_Manager::connection();
+    // $sql = "SELECT r.id, r.entity1_id, r.entity2_id, r.category_id, r.is_current, r.is_deleted, " . 
+    //        "GROUP_CONCAT(DISTINCT(rc.name) SEPARATOR ', ') AS label, " . 
+    //        "GROUP_CONCAT(DISTINCT(r.category_id) SEPARATOR ',') AS category_ids, " . 
+    //        "COUNT(r.id) AS  num " . 
+    //        "FROM relationship r LEFT JOIN relationship_category rc ON (rc.id = r.category_id) " . 
+    //        "LEFT JOIN entity e1 ON (e1.id = r.entity1_id) " .
+    //        "LEFT JOIN entity e2 ON (e2.id = r.entity2_id) " .
+    //        "WHERE r.entity1_id IN (" . join(",", $entity_ids) . ") " . 
+    //        "AND r.entity2_id IN (" . join(",", $entity_ids) . ") " . 
+    //        "AND (r.entity1_id = ? OR r.entity2_id = ?) " .
+    //        "AND r.is_deleted = 0 " .
+    //        "AND r.entity1_id <> r.entity2_id " .
+    //        "AND e1.is_deleted = 0 AND e2.is_deleted = 0 " .
+    //        (count($include_cats) ? "AND r.category_id IN (" . join(",", $include_cats) . ") " : "") .
+    //        (count($exclude_cats) ? "AND r.category_id NOT IN (" . join(",", $exclude_cats) . ") " : "") .
+    //        "GROUP BY r.entity1_id, r.entity2_id";
+    // $stmt = $db->execute($sql, array($entity_id, $entity_id));
+    // $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // return self::mapRelsFromRows($rows);    
   }
 
   public static function getEntitiesForMap($entity_ids)
