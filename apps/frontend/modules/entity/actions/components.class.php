@@ -515,55 +515,89 @@ class entityComponents extends sfComponents
       }
 
       $page = $this->page;
+      $num = $request->getParameter('num', 10);
 
       $options = array('cat_ids' => $request->getParameter('cat_ids', '1'));
 
       //get all chains
       $chains = SearchApi::getEntitiesChains($this->entity['id'], $id2, $options);      
 
-      //expand one chain
-      $chain = null;    
-      $count = 1;
-      
+      $offset = ($page - 1) * $num;
+
+      $flat_chains = array();
+
       foreach ($chains as $degree => $ary)
       {
         foreach ($ary as $ids)
         {
-          if ($count == $page)
-          {
-            $chain = SearchApi::buildRelationshipChain($ids, explode(',', $options['cat_ids']));
-            break 2;
-          }
-  
-          $count++;        
+          $flat_chains[]= $ids;
         }
       }
 
-      //count total number of chains
-      $total = 0;
-      
-      foreach ($chains as $degree => $ary)
-      {
-        $total += count($ary);
-      }
+      $page_chains = array_slice($flat_chains, $offset, $num);
+      $full_chains = array();
 
-      //get entities for chain  
-      if ($chain)
+      foreach ($page_chains as $ids)
       {
-        $this->entities = array();
-    
+        $full = array();
+        $chain = SearchApi::buildRelationshipChain($ids, explode(',', $options['cat_ids']));
+
         foreach ($chain as $id => $rels)
         {
           $entity = EntityApi::get($id);
           $entity['Relationships'] = count($rels) ? BatchApi::getRelationships($rels, array()) : array();
-          $this->entities[] = $entity;
+          $full[]= $entity;
         }
 
-        $chainAry = array_fill(0, $total, null);
-        $chainAry[$page-1] = $this->entities;
-
-        $this->chain_pager = new LsDoctrinePager($chainAry, $page, $num=1);        
+        $full_chains[] = $full;
       }
+
+      // foreach ($page_chains as $degree => $ary)
+      // {
+      //   foreach ($ary as $ids)
+      //   {
+      //     if ($count == $page)
+      //     {
+      //       $chain = SearchApi::buildRelationshipChain($ids, explode(',', $options['cat_ids']));
+      //       break 2;
+      //     }
+  
+      //     $count++;        
+      //   }
+      // }
+
+      // count total number of chains
+      // $total = 0;
+      
+      // foreach ($chains as $degree => $ary)
+      // {
+      //   $total += count($ary);
+      // }
+
+      $total = count($flat_chains);
+      
+      $chainAry = array_fill(0, $total, null);
+      array_splice($chainAry, $offset, $num, $full_chains);
+
+      $this->chain_pager = new LsDoctrinePager($chainAry, $page, $num);        
+
+      // get entities for chain  
+      // if ($chain)
+      // {
+      //   $this->entities = array();
+    
+      //   foreach ($chain as $id => $rels)
+      //   {
+      //     $entity = EntityApi::get($id);
+      //     $entity['Relationships'] = count($rels) ? BatchApi::getRelationships($rels, array()) : array();
+      //     $this->entities[] = $entity;
+      //   }
+
+      //   $chainAry = array_fill(0, $total, null);
+      //   $chainAry[$page-1] = $this->entities;
+
+      //   $this->chain_pager = new LsDoctrinePager($chainAry, $page, $num);        
+      // }
     }
     else
     {

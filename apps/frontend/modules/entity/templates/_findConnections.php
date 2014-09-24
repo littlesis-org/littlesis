@@ -27,7 +27,9 @@ Keep in mind that two people who sat on the same board at different times may no
 
 <br />
 
-<?php foreach ($entities as $n => $entity) : ?>
+<?php foreach ($chain_pager->execute() as $chain) : ?>
+
+<?php foreach ($chain as $n => $entity) : ?>
 
   <?php if (count($entity['Relationships'])) : ?>
     &rarr;
@@ -36,7 +38,7 @@ Keep in mind that two people who sat on the same board at different times may no
     <?php foreach ($entity['Relationships'] as $rel) : ?>
       <?php $titles[] = trim(get_partial('relationship/oneliner', array(
         'relationship' => $rel,
-        'profiled_entity' => $entities[$n - 1],
+        'profiled_entity' => $chain[$n - 1],
         'related_entity' => $entity
       ))) ?>
     <?php endforeach; ?>
@@ -47,6 +49,11 @@ Keep in mind that two people who sat on the same board at different times may no
   <?php endif; ?>
 
   <?php echo entity_link($entity) ?>
+
+<?php endforeach; ?>
+
+<br>
+<br>
 
 <?php endforeach; ?>
 
