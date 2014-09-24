@@ -33,10 +33,10 @@ all:
     auto_approve:         on
     
   mail:
-    join_sender_address:        join@littlesis.org
+    join_sender_address:        accounts@littlesis.org
     join_sender_name:           LittleSis
 
-    password_sender_address:    admin@littlesis.org
+    password_sender_address:    accounts@littlesis.org
     password_sender_name:       LittleSis
     
     contact_sender_address:     admin@littlesis.org
