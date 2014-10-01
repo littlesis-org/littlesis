@@ -1876,7 +1876,7 @@ class EntityTable extends Doctrine_Table
            (count($include_cats) ? "AND r.category_id IN (" . join(",", $include_cats) . ") " : "") .
            (count($exclude_cats) ? "AND r.category_id NOT IN (" . join(",", $exclude_cats) . ") " : "") .
            "GROUP BY LEAST(r.entity1_id, r.entity2_id), GREATEST(r.entity1_id, r.entity2_id), r.category_id";
-    $params = $entity_id ? array($entity_id, $entity_id) : null;
+    $params = $entity_id ? array($entity_id, $entity_id) : array();
     $stmt = $db->execute($sql, $params);
     $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
