@@ -501,6 +501,29 @@ class EntityApi
       $select = 'l2.entity2_id AS degree2_id, GROUP_CONCAT(DISTINCT l2.entity1_id) AS degree1_ids, COUNT(DISTINCT l2.entity1_id) AS num';
       $from = 'link l1 LEFT JOIN link l2 ON (l2.entity1_id = l1.entity2_id)';
       $where = 'l1.entity1_id = ? AND l2.entity2_id <> ?';
+
+      if ($mapId = $options['map_id']) 
+      {
+        $sql = 'SELECT * FROM network_map WHERE id = ? AND is_deleted = 0';
+        $stmt = $db->execute($sql, array($mapId));
+        $map = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($map) 
+        {
+          $entityIds = explode(',', $map['entity_ids']);
+
+          if (count($entityIds) > 0)
+          {
+            $isInt = function($int) {
+              return ($int + 0 > 0);
+            };
+
+            $entityIds = array_filter($entityIds, $isInt);
+            $where .= ' AND l2.entity2_id IN (' . implode(',', $entityIds) . ')';
+          }
+        }
+      }
+
       $group = 'l2.entity2_id';
       $params = array($id, $id);
 

@@ -269,9 +269,10 @@ class entityComponents extends sfComponents
       'cat2_ids' => RelationshipTable::POSITION_CATEGORY . ',' . RelationshipTable::MEMBERSHIP_CATEGORY,
       'order2' => $order2,
       'page' => $this->page,
-      'num' => $this->num
+      'num' => $this->num,
+      'map_id' => $this->map_id
     );
-    
+
     $entities = EntityApi::getSecondDegreeNetwork($this->entity['id'], $options);      
     $count = EntityApi::getSecondDegreeNetwork($this->entity['id'], $options, $countOnly=true);
 

@@ -2044,13 +2044,15 @@ class entityActions extends sfActions
 
     $this->page = $request->getParameter('page', 1);
     $this->num = $request->getParameter('num', 20);
+    $this->mapId = $request->getParameter('map_id', null);
 
     if ($request->isXmlHttpRequest())
     {
       return $this->renderComponent('entity', 'interlocks', array(
         'entity' => $this->entity,
         'page' => $this->page,
-        'num' => $this->num
+        'num' => $this->num,
+        'mapId' => $this->mapId
       ));
     }
 

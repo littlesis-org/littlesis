@@ -24,7 +24,8 @@
       'title' => isset($title) ? $title : null,
       'pager' => isset($pager) ? $pager : null,
       'more_action' => isset($more_action) ? $more_action : null,
-      'pointer' => isset($pointer) ? $pointer : null
+      'pointer' => isset($pointer) ? $pointer : null,
+      'map_id' => isset($mapId) ? $mapId : null
     )) ?>
   <?php endif; ?>
 
