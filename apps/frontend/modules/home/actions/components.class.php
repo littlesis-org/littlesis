@@ -74,7 +74,7 @@ class homeComponents extends sfComponents
           $this->getContext()->getI18N()->__('Groups') => '@groups',
           $this->getContext()->getI18N()->__('Notes') => '@notes',
           $this->getContext()->getI18N()->__('Users') => '@users',
-          $this->getContext()->getI18N()->__('Edits') => 'modification/latest'
+          $this->getContext()->getI18N()->__('Edits') => 'edits'
         )
       ),
       $this->getContext()->getI18N()->__('Add') => null,
