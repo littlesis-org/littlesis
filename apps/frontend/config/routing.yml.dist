@@ -110,7 +110,11 @@ data:
 dashboard:
   url:   /home/dashboard
   param: { module: home, action: dashboard }
-  
+
+edits:
+  url:   /edits
+  param: { module: modification, action: latest }  
+
 
 # SLUGS
 personPager:
