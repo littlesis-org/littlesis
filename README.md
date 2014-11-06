@@ -136,6 +136,17 @@ Create tmp directory:
     mkdir tmp
     chmod -R 777 tmp
 
+Create image directories:
+
+    mkdir web/images/small
+    chmod 777 web/images/small
+    mkdir web/images/profile
+    chmod 777 web/images/profile
+    mkdir web/images/large
+    chmod 777 web/images/large
+    mkdir web/images/square
+    chmod 777 web/images/square
+
 Create cookies file:
 
     mkdir -p data/sfWebBrowserPlugin/sfCurlAdapter
