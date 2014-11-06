@@ -129,6 +129,19 @@ You can check that LittleSis is up and running by visiting http://localhost/litt
  * **Admin** [username: admin@example.org, password: admin]
 
 
+### Misc
+
+Create tmp directory:
+
+    mkdir tmp
+    chmod -R 777 tmp
+
+Create cookies file:
+
+    mkdir -p data/sfWebBrowserPlugin/sfCurlAdapter
+    touch data/sfWebBrowserPlugin/sfCurlAdapter/cookies.txt
+
+
 ### Setup Search
 
 However, at this point search on LittleSis will not work. For this you will need to install and configure [Sphinx](http://www.sphinxsearch.com/).
