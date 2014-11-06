@@ -4154,7 +4154,7 @@ class entityActions extends sfActions
          
           $filename = 'uploaded_'.sha1($file->getOriginalName());
           $extension = $file->getExtension($file->getOriginalExtension());
-          $filePath = sfConfig::get('sf_upload_dir').'/'.$filename.$extension;
+          $filePath = sfConfig::get('sf_temp_dir').'/'.$filename.$extension;
           $file->save($filePath);
           
           if ($filePath)
