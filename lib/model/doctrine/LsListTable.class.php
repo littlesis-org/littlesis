@@ -215,7 +215,7 @@ class LsListTable extends Doctrine_Table
     $s = new LsSphinxClient();
     $s->SetServer('localhost', 3312);
     $s->SetMatchMode(SPH_MATCH_EXTENDED);
-    $s->setFilter('is_admin', array($admin));
+    $s->setFilter('is_admin', array(false, $admin));
 
     $query = $s->buildListQuery($query);
     $result = $s->Query($query, 'lists lists-delta');

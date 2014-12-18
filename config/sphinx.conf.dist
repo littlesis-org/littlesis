@@ -90,7 +90,7 @@ source lists
                     AND l.updated_at <= ( SELECT updated_at FROM sphinx_index WHERE name = 'lists' );
                
     sql_attr_bool  = is_admin
-    sql_query_info = SELECT * FROM list WHERE id=$id
+    sql_query_info = SELECT * FROM ls_list WHERE id=$id
 }
 
 
@@ -116,7 +116,7 @@ source lists-delta : lists
                     AND l.updated_at > ( SELECT updated_at FROM sphinx_index WHERE name = 'lists' );
 
     sql_attr_bool  = is_admin
-    sql_query_info = SELECT * FROM list WHERE id=$id
+    sql_query_info = SELECT * FROM ls_list WHERE id=$id
 }
 
 
