@@ -209,4 +209,38 @@ class LsListTable extends Doctrine_Table
     $entity_ids = self::getEntityIdsById($list_id, $num);
     return array_map(function($entity_id) { return EntityTable::getEntityForMap($entity_id); }, $entity_ids);  
   }
+
+  static function getSphinxHits($query, $admin=false)
+  {
+    $s = new LsSphinxClient();
+    $s->SetServer('localhost', 3312);
+    $s->SetMatchMode(SPH_MATCH_EXTENDED);
+    $s->setFilter('is_admin', array($admin));
+
+    $query = $s->buildListQuery($query);
+    $result = $s->Query($query, 'lists lists-delta');
+
+    return $result;
+  }
+
+  static function getListsFromSphinxSearch($query, $admin=false)
+  {
+    $result = self::getSphinxHits($query, $admin);
+
+    $lists = array();
+
+    if ($result['total_found'] > 0 && isset($result['matches']))
+    {
+      $ids = array_keys($result['matches']);
+
+      $db = Doctrine_Manager::connection();
+      $sql = 'SELECT l.*, FIELD(l.id, ' . implode(',', $ids) . ') AS field ' . 
+             'FROM ls_list l WHERE l.id IN (' . implode(',', $ids) . ') AND l.is_deleted = 0 ' .
+             'ORDER BY field';
+      $stmt = $db->execute($sql);      
+      $lists = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    return $lists;
+  }
 }

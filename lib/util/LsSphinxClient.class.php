@@ -36,6 +36,13 @@ class LsSphinxClient extends SphinxClient
     return $fields . $terms . $ext;
   }
   
+  public function buildListQuery($terms)
+  {
+    $terms = self::cleanQuery($terms);    
+    $terms = $this->EscapeString($terms);
+
+    return $terms;
+  }
   
   public function __construct($page=1, $num=20)
   {
