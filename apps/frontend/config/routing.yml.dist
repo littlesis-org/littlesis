@@ -261,6 +261,10 @@ railsEditTwitter:
   url: /entities/:id/edit_twitter
   param: { module: entity, action: edit_twitter }
 
+maps:
+  url: /maps
+  param: { module: map, action: list }
+
 
 # HELP
 help:
