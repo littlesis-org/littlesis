@@ -114,71 +114,22 @@
 
 <?php else : ?>
 
-
-
-<?php if ($entity['parent_id']) : ?>
-  <?php $parent = Doctrine::getTable('Entity')->find($entity['parent_id']) ?>
-
-  <?php include_partial('global/subsection', array(
-    'title' => 'Parent Organization',
-    'pointer' => $entity['name'] . ' is a subgroup of:'
-  )) ?>
-  
-  <div class="related_entity">
-    <div class="related_entity_entity">
-      <?php echo entity_link($parent) ?>
-  
-      <?php if (isset($parent["blurb"])) : ?>
-        <?php $parent_length = strlen($parent["name"]) ?>
-        <?php $blurb_length = 85 - round($parent_length * 1.2) ?>
-
-        &nbsp;
-        <span class="related_entity_blurb">
-          <?php echo excerpt($parent['blurb'], $blurb_length) ?>
-        </span>
-      <?php endif; ?>
-    </div>
-  </div>
-  <br />
-<?php endif; ?>
-
-<?php $children_pager->execute() ?>
-
-<?php if ($children_pager->getNumResults()) : ?>
-
-  <?php include_partial('global/subsection', array(
-    'title' => 'Child Organizations',
-    'pager' => $children_pager,
-    'more' => EntityTable::getInternalUrl($entity, 'childOrgs'),
-    'pointer' => 'Subgroups of ' . $entity['name']
-  )) ?>
-
-  <?php foreach ($children_pager->execute() as $child) : ?>
-    <div class="related_entity">
-      <div class="related_entity_entity">
-        <?php echo entity_link($child) ?>
-    
-        <?php if (isset($child["blurb"])) : ?>
-          <?php $child_length = strlen($child["name"]) ?>
-          <?php $blurb_length = 85 - round($child_length * 1.2) ?>
-          &nbsp;
-          <span class="related_entity_blurb">
-            <?php echo excerpt($child['blurb'], $blurb_length) ?>
-          </span>
-        <?php endif; ?>
-      </div>
-    </div>
-  <?php endforeach; ?>
-  <br />
-<?php endif; ?>
-
-
-<?php if (!$entity['parent_id'] && !$children_pager->getNumResults() && !count($rels)) : ?>
+<?php if (!count($rels)) : ?>
   <?php include_partial('entity/norelationships', array('entity' => $entity)) ?>
 <?php endif; ?>
 
 
 <?php $sections = array(
+  'Parent Organizations' => array(
+    'more_action' => 'parentOrgs',
+    'category_ids' => array(RelationshipTable::HIERARCHY_CATEGORY),
+    'order' => (1)
+  ),
+  'Child Organizations' => array(
+    'more_action' => 'childOrgs',
+    'category_ids' => array(RelationshipTable::HIERARCHY_CATEGORY),
+    'order' => (2)
+  ),
   'Holdings' => array(
     'more_action' => 'holdings',
     'category_ids' => array(RelationshipTable::OWNERSHIP_CATEGORY),

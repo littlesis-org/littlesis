@@ -35,10 +35,13 @@ There are ten categories of relationships in LittleSis. They help us organize re
     <strong>Family:</strong> when two people are part of the same family. For example: children, spouses, step-siblings, cousins.
   </li>
   <li>
-    <strong>Social:</strong> when two people are socially acquainted, for example: friends, rivals, lovers, running partners.
+    <strong>Social:</strong> when two people are socially acquainted. For example: friends, rivals, lovers, running partners.
   </li>
   <li>
     <strong>Professional:</strong> when two people have a personal working or business relationship. For example: co-writers, business partners, mentors.
+  </li>
+  <li>
+    <strong>Hierarchy:</strong> when an org is a subdivision of another org. For example: subsidiaries, departments, subcommittees.
   </li>
 </ul>
 

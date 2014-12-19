@@ -690,6 +690,10 @@ Ownership:
     percent_stake: integer
     shares: integer
 
+Hierarchy:
+  actAs: [RelationshipCategoryTemplate]
+
+
 #LOBBYING EXTRAS
 
 LobbyFiling:

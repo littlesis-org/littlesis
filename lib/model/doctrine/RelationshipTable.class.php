@@ -14,7 +14,8 @@ class RelationshipTable extends Doctrine_Table
   const SOCIAL_CATEGORY = 8;
   const PROFESSIONAL_CATEGORY = 9;
   const OWNERSHIP_CATEGORY = 10;
-
+  const HIERARCHY_CATEGORY = 11;
+  const MISC_CATEGORY = 12;
 
   static $categories = array(
     'Position', 
@@ -26,7 +27,9 @@ class RelationshipTable extends Doctrine_Table
     'Lobbying',
     'Social',
     'Professional',
-    'Ownership'
+    'Ownership',
+    'Hierarchy',
+    'Misc'
   );
   
   static $prepositions = array(
@@ -40,7 +43,9 @@ class RelationshipTable extends Doctrine_Table
     "for",
     "of",
     "of",
-    "of"  
+    "of",
+    "of",
+    ""
   );
 
   const DEFAULT_PREPOSITION = "&rarr;";
@@ -55,13 +60,15 @@ class RelationshipTable extends Doctrine_Table
     7 => array(1 => "for", 2 => "by"),
     8 => array(1 => "of", 2 => "of"),
     9 => array(1 => "of", 2 => "of"),
-    10 => array(1 => "of", 2 => self::DEFAULT_PREPOSITION)
+    10 => array(1 => "of", 2 => self::DEFAULT_PREPOSITION),
+    11 => array(1 => "of", 2 => "of"),
+    12 => array(1 => "of", 2 => self::DEFAULT_PREPOSITION)
   );
 
 
   static function getAllCategoryIds()
   {
-    return range(1, 10);
+    return range(1, 12);
   }
   
   static function getByCategoryQuery($category)

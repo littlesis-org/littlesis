@@ -749,15 +749,6 @@ class entityActions extends sfActions
   {
     $this->checkEntity($request);
     $this->rels = EntityApi::getRelated($this->entity['id'], array('sort' => 'relationship'));
-
-    if ($this->entity['primary_ext'] == 'Org')
-    {
-      $q = LsDoctrineQuery::create()
-        ->from('Entity e')
-        ->where('e.parent_id = ?', $this->entity['id']);
-        
-      $this->children_pager = new LsDoctrinePager($q, $page=1, $num=5);
-    }
   }
 
 
@@ -1370,7 +1361,46 @@ class entityActions extends sfActions
     );
   }
   
-  
+  public function executeChildOrgs($request)
+  {
+    $this->checkEntity($request);
+    $this->forward404Unless($this->entity['primary_ext'] == 'Org');
+
+    $options = array(
+      'order' => 2,
+      'cat_ids' => array(RelationshipTable::HIERARCHY_CATEGORY)
+    );
+
+    return $this->pagerAction(
+      $request,
+      $this->entity,
+      $options,
+      'Child Organizations',
+      'Organizations that are a part of ' . $this->entity['name'],
+      array('Org')
+    );
+  }
+ 
+  public function executeParentOrgs($request)
+  {
+    $this->checkEntity($request);
+    $this->forward404Unless($this->entity['primary_ext'] == 'Org');
+
+    $options = array(
+      'order' => 1,
+      'cat_ids' => array(RelationshipTable::HIERARCHY_CATEGORY)
+    );
+
+    return $this->pagerAction(
+      $request,
+      $this->entity,
+      $options,
+      'Parent Organizations',
+      'Organizations that ' . $this->entity['name'] . ' are a part of',
+      array('Org')
+    );
+  }
+
   public function executeUploadImage($request)
   {
     $this->checkEntity($request);
@@ -2823,12 +2853,12 @@ class entityActions extends sfActions
   }
   
   
-  public function executeEditHierarchy($request)
-  {
-    $this->checkEntity($request, false, false);
+  // public function executeEditHierarchy($request)
+  // {
+  //   $this->checkEntity($request, false, false);
     
-    $this->childs = $this->entity->getChildrenQuery()->execute();
-  }
+  //   $this->childs = $this->entity->getChildrenQuery()->execute();
+  // }
   
   
   public function executeAddChild($request)
@@ -2958,22 +2988,7 @@ class entityActions extends sfActions
     
     $this->redirect($this->entity->getInternalUrl('editHierarchy'));  
   }
-  
 
-  public function executeChildOrgs($request)
-  {
-    $this->checkEntity($request, false, false);
-
-    $page = $request->getParameter('page', 1);
-    $num = $request->getParameter('num', 20);
-
-    $q = LsDoctrineQuery::create()
-      ->from('Entity e')
-      ->where('e.parent_id = ?', $this->entity->id);
-      
-    $this->children_pager = new LsDoctrinePager($q, $page, $num);
-  }
-  
   
   public function executeNotes($request)
   {

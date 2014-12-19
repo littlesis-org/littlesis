@@ -14,7 +14,9 @@ class RelationshipCategoryTable extends Doctrine_Table
     7 => 'Lobbying',
     8 => 'Social',
     9 => 'Professional',
-    10 => 'Ownership'
+    10 => 'Ownership',
+    11 => 'Hierarchy',
+    12 => 'Misc'
   );
 
 
@@ -28,7 +30,9 @@ class RelationshipCategoryTable extends Doctrine_Table
     7 => 'Lobbying',
     8 => 'Social',
     9 => 'Professional',
-    10 => 'Ownership'
+    10 => 'Ownership',
+    11 => 'Hierarchy',
+    12 => 'Misc'
   );
   
 
@@ -42,7 +46,9 @@ class RelationshipCategoryTable extends Doctrine_Table
     7 => 'Lobbying',
     8 => 'Social',
     9 => 'Professional',
-    10 => 'Owner'
+    10 => 'Owner',
+    11 => 'Hierarchy',
+    12 => 'Misc'
   );
   
   
@@ -56,7 +62,9 @@ class RelationshipCategoryTable extends Doctrine_Table
     7 => array(),
     8 => array(),
     9 => array(),
-    10 => array('percent_stake', 'shares')
+    10 => array('percent_stake', 'shares'),
+    11 => array(),
+    12 => array()
   );
 
 

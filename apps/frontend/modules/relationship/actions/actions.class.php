@@ -54,6 +54,7 @@ class relationshipActions extends sfActions
   public function executeView($request)
   {    
     $this->relationship = RelationshipApi::get($request->getParameter('id'));
+
     $this->forward404Unless($this->relationship);
 
     $this->relationship = array_merge(
@@ -63,6 +64,7 @@ class relationshipActions extends sfActions
         $this->relationship['category_id']
       )
     );
+
     $this->current = null;
     if ($this->relationship['is_current'] == '1')
     {
