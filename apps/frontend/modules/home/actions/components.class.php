@@ -70,6 +70,7 @@ class homeComponents extends sfComponents
     $this->items = array_merge($this->items, array(
       $this->getContext()->getI18N()->__('Explore') => array(
         'items' => array(
+          $this->getContext()->getI18N()->__('Maps') => '@maps',
           $this->getContext()->getI18N()->__('Lists') => 'list/list',
           $this->getContext()->getI18N()->__('Groups') => '@groups',
           $this->getContext()->getI18N()->__('Notes') => '@notes',
