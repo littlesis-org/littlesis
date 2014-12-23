@@ -4,7 +4,7 @@
  */
 class NetworkMapTable extends Doctrine_Table
 {
-  public function prepareData($data)
+  public static function prepareData($data)
   {
     return array(
       'entities' => array_map(array('NetworkMapTable', 'prepareEntityData'), $data['entities']),

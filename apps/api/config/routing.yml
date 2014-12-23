@@ -175,6 +175,10 @@ map_add_entity_data:
   url:   /map/addEntityData.:format
   param: { module: map, action: addEntityData }
 
+map_add_interlocks_data:
+  url:   /map/addInterlocksData.:format
+  param: { module: map, action: addInterlocksData }
+
 map_add_related_entities_data:
   url:   /map/addRelatedEntitiesData.:format
   param: { module: map, action: addRelatedEntitiesData }

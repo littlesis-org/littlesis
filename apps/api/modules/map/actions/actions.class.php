@@ -102,10 +102,65 @@ class mapActions extends LsApiActions
     $entity_id = $request->getParameter("entity_id");
     $entity_ids = $request->getParameter("entity_ids");
 
+    $this->checkIds($entity_id);
+    $this->checkIds($entity_ids);
+
     $data = EntityTable::getAddEntityAndRelsForMap($entity_id, $entity_ids);    
     $data = NetworkMapTable::prepareData($data);
 
     return $this->renderText(json_encode($data));
+  }
+
+  public function checkIds($val)
+  {
+    if (is_null($val))
+    {
+      return true;
+    }
+    elseif (is_string($val))
+    {
+      if (preg_match("/^\d+$/", $val))
+      {
+        return true;
+      } 
+      else
+      {
+        return $this->returnStatusCode(400);
+      }
+    }
+    elseif (is_array($val))
+    {
+      foreach ($val as $v)
+      {
+        $this->checkIds($v);
+      }
+    }
+    elseif (is_int($val))
+    {
+      return true;
+    }
+    else
+    {
+      return $this->returnStatusCode(400);      
+    }
+  }
+
+  public function executeAddInterlocksData($request)
+  {
+    $this->setResponseFormat();    
+
+    $entity1_id = $request->getParameter("entity1_id");
+    $entity2_id = $request->getParameter("entity2_id");
+    $entity_ids = $request->getParameter("entity_ids");
+
+    $this->checkIds($entity1_id);
+    $this->checkIds($entity2_id);
+    $this->checkIds($entity_ids);
+
+    $data = EntityTable::getAddInterlocksAndRelsForMap($entity1_id, $entity2_id, $entity_ids);    
+    $data = NetworkMapTable::prepareData($data);
+
+    return $this->renderText(json_encode($data));    
   }
   
   public function executeAddRelatedEntitiesData($request)

@@ -1770,6 +1770,28 @@ class EntityTable extends Doctrine_Table
     return array("entities" => array($entity), "rels" => $rels); 
   }
 
+  public static function getAddInterlocksAndRelsForMap($entity1_id, $entity2_id, $entity_ids)
+  {
+    $db = Doctrine_Manager::connection();
+    $sql = "SELECT DISTINCT(l1.entity2_id) " . 
+           "FROM link l1 LEFT JOIN link l2 ON (l1.entity2_id = l2.entity1_id) " .
+           "LEFT JOIN relationship r1 ON (r1.id = l1.relationship_id) " .
+           "LEFT JOIN relationship r2 ON (r2.id = l2.relationship_id) " .
+           "WHERE l1.entity1_id IN (?, ?) AND l2.entity2_id IN (?, ?) " .
+           "AND l1.category_id NOT IN ( " . join(",", array(RelationshipTable::DONATION_CATEGORY)) . ") " .
+           "AND l2.category_id NOT IN ( " . join(",", array(RelationshipTable::DONATION_CATEGORY)) . ") " .
+           "AND l1.entity2_id NOT IN ( " . join(",", $entity_ids) . ") " .
+           "AND l1.entity1_id <> l2.entity2_id " . 
+           "AND r1.is_deleted = 0 AND r2.is_deleted = 0";
+    $stmt = $db->execute($sql, array($entity1_id, $entity2_id, $entity1_id, $entity2_id));
+    $interlock_ids = $stmt->fetchAll(PDO::FETCH_COLUMN);
+
+    $interlocks = self::getEntitiesForMap($interlock_ids);
+    $rels = self::getRelsForMapBetween($interlock_ids, $entity_ids);
+
+    return array("entities" => $interlocks, "rels" => $rels);
+  }
+
   public static function getAddRelatedEntitiesAndRelsForMap($entity_id, $num, $entity_ids, $rel_ids, $include_cats=array(), $exclude_cats=array())
   {
     if (!$entity_ids) $entity_ids = array();
