@@ -1786,10 +1786,16 @@ class EntityTable extends Doctrine_Table
     $stmt = $db->execute($sql, array($entity1_id, $entity2_id, $entity1_id, $entity2_id));
     $interlock_ids = $stmt->fetchAll(PDO::FETCH_COLUMN);
 
-    $interlocks = self::getEntitiesForMap($interlock_ids);
-    $rels = self::getRelsForMapBetween($interlock_ids, $entity_ids);
-
-    return array("entities" => $interlocks, "rels" => $rels);
+    if (count($interlock_ids))
+    {
+      $interlocks = self::getEntitiesForMap($interlock_ids);
+      $rels = self::getRelsForMapBetween($interlock_ids, $entity_ids);
+      return array("entities" => $interlocks, "rels" => $rels);
+    }
+    else
+    {
+      return array("entities" => array(), "rels" => array());
+    }
   }
 
   public static function getAddRelatedEntitiesAndRelsForMap($entity_id, $num, $entity_ids, $rel_ids, $include_cats=array(), $exclude_cats=array())
