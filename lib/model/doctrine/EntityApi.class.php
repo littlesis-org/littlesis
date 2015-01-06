@@ -260,7 +260,7 @@ class EntityApi
     $selectTables = array('r' => 'Relationship', 'e1' => 'Entity');
     $select = LsApi::generateSelectQuery($selectTables);
     $from = 'relationship r LEFT JOIN entity e1 ON (e1.id = r.entity1_id)';
-    $where = 'r.entity2_id = ? AND r.entity1_id IN (' . implode(',', $ids) . ')';
+    $where = 'r.entity2_id = ? AND r.entity1_id IN (' . implode(',', $ids) . ') AND e1.is_deleted <> 1';
     $params = array($id);
 
     $db = Doctrine_Manager::connection();
