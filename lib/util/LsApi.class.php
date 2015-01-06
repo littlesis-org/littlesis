@@ -35,6 +35,11 @@ class LsApi
       "CONCAT('http://littlesis.org/relationship/view/id/', *.id)" => 'uri',
       "CONCAT('http://api.littlesis.org/relationship/', *.id, '.xml')" => 'api_uri'      
     ),
+    'Position' => array(
+      'is_board' => 'is_board',
+      'is_executive' => 'is_executive',
+      'is_employee' => 'is_employee'
+    ),
     'LsList' => array(
       'id' => 'id',
       'name' => 'name',

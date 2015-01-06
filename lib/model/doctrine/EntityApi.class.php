@@ -105,13 +105,14 @@ class EntityApi
   static function getRelated($id, $options=array())
   {
     $db = Doctrine_Manager::connection();
-    $selectTables = array('r' => 'Relationship', 'e1' => 'Entity', 'e2' => 'Entity');
+    $selectTables = array('r' => 'Relationship', 'p' => 'Position', 'e1' => 'Entity', 'e2' => 'Entity');
     $select = LsApi::generateSelectQuery($selectTables);
     $select .= ', GROUP_CONCAT(DISTINCT ed1.name) AS exts1, GROUP_CONCAT(DISTINCT ed2.name) AS exts2';
     $from = 'relationship r LEFT JOIN entity e1 ON (r.entity1_id = e1.id) LEFT JOIN entity e2 ON (r.entity2_id = e2.id) ' .
             'LEFT JOIN extension_record er1 ON (er1.entity_id = e1.id) LEFT JOIN extension_record er2 ON (er2.entity_id = e2.id) ' .
             'LEFT JOIN extension_definition ed1 ON (ed1.id = er1.definition_id) ' .
-            'LEFT JOIN extension_definition ed2 ON (ed2.id = er2.definition_id)';
+            'LEFT JOIN extension_definition ed2 ON (ed2.id = er2.definition_id) ' . 
+            'LEFT JOIN position p ON (p.relationship_id = r.id)';
     $where = 'r.is_deleted = 0 AND e1.is_deleted = 0 AND e2.is_deleted = 0';
     
     if ($o = @$options['order'])
@@ -148,7 +149,7 @@ class EntityApi
     //prepare return containers
     $results = array();
     $rels = array();
-    $relMap = LsApi::$responseFields['Relationship'];
+    $relMap = array_merge(LsApi::$responseFields['Relationship'], LsApi::$responseFields['Position']);
     $entityMap = LsApi::$responseFields['Entity'];
 
 
