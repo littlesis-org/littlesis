@@ -923,7 +923,16 @@ class EntityApi
     
     foreach ($rows as $row)
     {
-      $row['uri'] = 'http://littlesis.org/images/' . $size . '/' . $row['filename'];
+      if (sfConfig::get('app_amazon_enable_s3_assets')) 
+      {
+        $base = sfConfig::get('app_amazon_s3_base') . '/' . sfConfig::get('app_amazon_s3_bucket');
+      }
+      else
+      {
+        $base = 'http://littlesis.org';
+      }
+
+      $row['uri'] = $base . '/images/' . $size . '/' . $row['filename'];
       $row['source'] = $row['url'];
       unset($row['url']);
       unset($row['filename']);
