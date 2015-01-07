@@ -41,7 +41,9 @@ class SearchApi
     {
       $query = 'bleahbleahbleahbleahbleahbleahbleah';
     }
-    $query = $s->buildEntityQuery($query, $aliases, $primary_ext);
+
+    $searchAll = @$options['search_all'];
+    $query = $s->buildEntityQuery($query, true, null, $searchAll);
 
     //filter by type_ids, if requested    
     if ($typeIds = @$options['type_ids'])

@@ -26,12 +26,20 @@ class LsSphinxClient extends SphinxClient
     return $str;
   }
 
-  public function buildEntityQuery($terms, $aliases=true, $primary_ext=null)
+  public function buildEntityQuery($terms, $aliases=true, $primary_ext=null, $extended=false)
   {
     $terms = self::cleanQuery($terms);    
     $terms = $this->EscapeString($terms);
     $ext = $primary_ext ? " @primary_ext " . $primary_ext : "";
-    $fields = "@(name" . ($aliases ? ",aliases" : "") . ") ";
+
+    if ($extended)
+    {
+      $fields = "@(name,aliases,blurb,summary) ";
+    }
+    else
+    {
+      $fields = "@(name" . ($aliases ? ",aliases" : "") . ") ";
+    }
 
     return $fields . $terms . $ext;
   }
