@@ -26,11 +26,14 @@ class SearchApi
     $s->SetMatchMode(SPH_MATCH_EXTENDED);
     $s->SetFieldWeights(array('name' => 3, 'aliases' => 3));
 
-    $listIds = explode(',', $options['list_ids']);
-
-    if (is_array($listIds) && count($listIds))
+    if (@$options['list_ids'])
     {
-      $s->setFilter('list_ids', $listIds);
+      $listIds = explode(',', $options['list_ids']);
+
+      if (is_array($listIds) && count($listIds))
+      {
+        $s->setFilter('list_ids', $listIds);
+      }
     }
 
     //no query produces no results
