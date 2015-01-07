@@ -33,12 +33,10 @@ search_entites_by_id:
 search_entities_with_orgs:
   url:   /entities/with-orgs.:format
   param: { module: search, action: entitiesWithOrgs }
-  requirements: { id: \d+ }
 
 search_entities:
   url:   /entities.:format
   param: { module: search, action: entities }
-  requirements: { id: \d+ }
 
 list_entities_with_orgs:
   url:   /list/:id/entities/with-orgs.:format

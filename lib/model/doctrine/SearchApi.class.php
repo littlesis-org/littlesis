@@ -23,15 +23,22 @@ class SearchApi
   {
     $s = new LsSphinxClient();
     $s->SetServer('localhost', 3312);
-    $s->SetMatchMode(SPH_MATCH_ANY);
+    $s->SetMatchMode(SPH_MATCH_EXTENDED);
+    $s->SetFieldWeights(array('name' => 3, 'aliases' => 3));
+
+    $listIds = explode(',', $options['list_ids']);
+
+    if (is_array($listIds) && count($listIds))
+    {
+      $s->setFilter('list_ids', $listIds);
+    }
 
     //no query produces no results
     if (!$query = @$options['q'])
     {
       $query = 'bleahbleahbleahbleahbleahbleahbleah';
     }
-    $query = LsSphinxClient::cleanQuery($query);
-    $query = $s->EscapeString($query);
+    $query = $s->buildEntityQuery($query, $aliases, $primary_ext);
 
     //filter by type_ids, if requested    
     if ($typeIds = @$options['type_ids'])
