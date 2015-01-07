@@ -23,7 +23,7 @@ class SearchApi
   {
     $s = new LsSphinxClient();
     $s->SetServer('localhost', 3312);
-    $s->SetMatchMode(SPH_MATCH_EXTENDED);
+    $s->SetMatchMode(SPH_MATCH_ANY);
     $s->SetFieldWeights(array('name' => 3, 'aliases' => 3));
 
     if (@$options['list_ids'])
@@ -42,8 +42,8 @@ class SearchApi
       $query = 'bleahbleahbleahbleahbleahbleahbleah';
     }
 
-    $searchAll = @$options['search_all'];
-    $query = $s->buildEntityQuery($query, true, null, $searchAll);
+    $query = LsSphinxClient::cleanQuery($query);
+    $query = $s->EscapeString($query);
 
     //filter by type_ids, if requested    
     if ($typeIds = @$options['type_ids'])
