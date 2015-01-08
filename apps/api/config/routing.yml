@@ -48,6 +48,11 @@ list_entities:
   param: { module: list, action: entities }
   requirements: { id: \d+ }
 
+list_entity_ids:
+  url:   /list/:id/entity-ids.:format
+  param: { module: list, action: entityIds }
+  requirements: { id: \d+ }
+
 list_map:
   url:   /list/:id/map.:format
   param: { module: list, action: map }

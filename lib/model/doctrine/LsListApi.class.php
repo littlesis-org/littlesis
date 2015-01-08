@@ -26,6 +26,17 @@ class LsListApi
   }
   
 
+  static function getEntityIds($id, $options=array())
+  {
+    $db = Doctrine_Manager::connection();
+    $sql = 'SELECT le.entity_id FROM entity e LEFT JOIN ls_list_entity le ON (le.entity_id = e.id) ' .
+           'WHERE le.list_id = ? AND le.is_deleted = 0 AND e.is_deleted = 0';
+    $stmt = $db->execute($sql, array($id));
+    
+    return $stmt->fetchAll(PDO::FETCH_COLUMN);
+  }
+   
+
   static function getNetworkLinks($id, $options=array())
   {
     $db = Doctrine_Manager::connection();
@@ -34,7 +45,7 @@ class LsListApi
            'LEFT JOIN entity e1 ON (e1.id = l.entity1_id) ' .
            'LEFT JOIN entity e2 ON (e2.id = l.entity2_id) ' . 
            'LEFT JOIN relationship r ON (r.id = l.relationship_id) ' .
-           'WHERE le.list_id = ? AND e1.is_deleted = 0 AND e2.is_deleted = 0 AND r.is_deleted = 0';
+           'WHERE le.list_id = ? AND le.is_deleted = 0 AND e1.is_deleted = 0 AND e2.is_deleted = 0 AND r.is_deleted = 0';
     $stmt = $db->execute($sql, array($id));
 
     return $stmt->fetchAll(PDO::FETCH_NUM);

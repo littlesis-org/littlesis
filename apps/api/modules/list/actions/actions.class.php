@@ -58,6 +58,20 @@ class listActions extends LsApiActions
     //return ($this->format == 'xml') ? 'Xml' : 'Csv';
   }
   
+
+  public function executeEntityIds($request)
+  {
+    $this->setResponseFormat(array('json'));    
+
+    $options = $this->getParams(array());
+    $results = array_map(
+      function($id) { return intval($id); },
+      LsListApi::getEntityIds($this->list['id'], $options)
+    );
+
+    return $this->renderText(json_encode($results));
+  }
+
   
   public function executeEntitiesWithOrgs($request)
   {
