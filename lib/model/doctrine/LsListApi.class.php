@@ -25,6 +25,21 @@ class LsListApi
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
   }
   
+
+  static function getNetworkLinks($id, $options=array())
+  {
+    $db = Doctrine_Manager::connection();
+    $sql = 'SELECT DISTINCT l.relationship_id, l.entity1_id, l.entity2_id, l.category_id ' .
+           'FROM ls_list_entity le LEFT JOIN link l ON (l.entity1_id = le.entity_id) ' . 
+           'LEFT JOIN entity e1 ON (e1.id = l.entity1_id) ' .
+           'LEFT JOIN entity e2 ON (e2.id = l.entity2_id) ' . 
+           'LEFT JOIN relationship r ON (r.id = l.relationship_id) ' .
+           'WHERE le.list_id = ? AND e1.is_deleted = 0 AND e2.is_deleted = 0 AND r.is_deleted = 0';
+    $stmt = $db->execute($sql, array($id));
+
+    return $stmt->fetchAll(PDO::FETCH_NUM);
+  }
+
   
   static function getSecondDegreeNetwork($id, $options=array(), $countOnly=false)
   {

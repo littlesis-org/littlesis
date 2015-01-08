@@ -87,5 +87,18 @@ class listActions extends LsApiActions
     {
       return 'Xml';
     }
-  }  
+  }
+
+  public function executeNetworkLinks($request)
+  {
+    $this->setResponseFormat(array('json'));    
+    $options = $this->getParams(array());
+
+    $this->data = array_map(
+      function($ary) { return array_map(function($e) { return intval($e); }, $ary); },
+      LsListApi::getNetworkLinks($this->list['id'], $options)
+    );
+
+    return $this->renderText(json_encode($this->data));
+  }
 }

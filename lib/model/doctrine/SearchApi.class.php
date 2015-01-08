@@ -109,21 +109,21 @@ class SearchApi
   {
     $db = Doctrine_Manager::connection();
     $select = LsApi::generateSelectQuery(array('r' => 'Relationship'));
-    $from = 'relationship r';
-    $where = '((r.entity1_id = ? AND r.entity2_id = ?) OR (r.entity1_id = ? AND r.entity2_id = ?)) AND r.is_deleted = 0';
-    $params = array($id1, $id2, $id2, $id1);
+    $from = 'link l LEFT JOIN relationship r ON (r.id = l.relationship_id)';
+    $where = 'l.entity1_id = ? AND l.entity2_id = ? AND r.is_deleted = 0';
+    $params = array($id1, $id2);
     
 
     if ($catIds = @$options['cat_ids'])
     {
       if (count(explode(',', $catIds)) == 1)
       {
-        $where .= ' AND r.category_id = ?';
+        $where .= ' AND l.category_id = ?';
         $params[] = $catIds;
       }
       else
       {
-        $where .= ' AND r.category_id IN (' . $catIds . ')';
+        $where .= ' AND l.category_id IN (' . $catIds . ')';
       }
     }
 

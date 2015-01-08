@@ -53,6 +53,11 @@ list_map:
   param: { module: list, action: map }
   requirements: { id: \d+ }
 
+list_network:
+  url:   /list/:id/network-links.:format
+  param: { module: list, action: networkLinks }
+  requirements: { id: \d+ }
+
 list_view:
   url:   /list/:id.:format
   param: { module: list, action: view }
