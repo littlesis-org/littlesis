@@ -25,6 +25,10 @@ class PublicCompanyForm extends BasePublicCompanyForm
       //'sec_cik' => 'SEC CIK'
     ));
 
+    $this->widgetSchema->setHelps(array(
+      'ticker' => 'include non-US exchange suffix (e.g. CS.PA, COB.L)',
+    ));
+
     $this->widgetSchema->setNameFormat('entity[%s]');
   }
 }
