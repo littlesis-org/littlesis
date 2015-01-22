@@ -218,7 +218,7 @@ class LsListTable extends Doctrine_Table
     $s->setFilter('is_admin', array(false, $admin));
 
     $query = $s->buildListQuery($query);
-    $result = $s->Query($query, 'lists lists-delta');
+    $result = $s->Query($query, 'lists lists_delta');
 
     return $result;
   }

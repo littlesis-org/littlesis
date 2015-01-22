@@ -4853,4 +4853,10 @@ class entityActions extends sfActions
     $this->degree1_ids = $degree1_ids;  
     $this->degree2_ids = $degree2_ids;
   }
+
+  public function executeDatatable($request) 
+  {
+    $this->checkEntity($request, false, false);
+    $this->redirect("http://" . $_SERVER['HTTP_HOST'] . "/entities/" . $this->entity['id'] . "/relationships");
+  }
 }

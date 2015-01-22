@@ -64,7 +64,7 @@ class SearchApi
     
     $s->SetLimits(($page - 1) * $num, (int) $num);
 
-    $result = $s->Query($query, 'entities entities-delta');
+    $result = $s->Query($query, 'entities entities_delta');
     
     if ($result === false)
     {

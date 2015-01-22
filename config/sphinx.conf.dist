@@ -29,11 +29,10 @@ source entities
                     
     sql_attr_multi          = uint type_ids from field
     sql_attr_multi          = uint list_ids from field
-    sql_query_info          = SELECT * FROM entity WHERE id=$id
 }
 
 
-source entities-delta : entities
+source entities_delta : entities
 {
     type                            = mysql    
     sql_host                        = localhost
@@ -64,7 +63,6 @@ source entities-delta : entities
                     
     sql_attr_multi          = uint type_ids from field
     sql_attr_multi          = uint list_ids from field
-    sql_query_info          = SELECT * FROM entity WHERE id=$id
 }
 
 
@@ -90,11 +88,10 @@ source lists
                     AND l.updated_at <= ( SELECT updated_at FROM sphinx_index WHERE name = 'lists' );
                
     sql_attr_bool  = is_admin
-    sql_query_info = SELECT * FROM ls_list WHERE id=$id
 }
 
 
-source lists-delta : lists
+source lists_delta : lists
 {
     type                            = mysql    
     sql_host                        = localhost
@@ -116,7 +113,6 @@ source lists-delta : lists
                     AND l.updated_at > ( SELECT updated_at FROM sphinx_index WHERE name = 'lists' );
 
     sql_attr_bool  = is_admin
-    sql_query_info = SELECT * FROM ls_list WHERE id=$id
 }
 
 
@@ -151,11 +147,10 @@ source notes
     sql_attr_multi          = uint visible_to_user_ids from field
     sql_attr_timestamp      = created_at
     sql_attr_uint           = user_id
-    sql_query_info          = SELECT * FROM note WHERE id=$id
 }
 
 
-source notes-delta : notes
+source notes_delta : notes
 {
     type                            = mysql    
     sql_host                        = localhost
@@ -186,7 +181,6 @@ source notes-delta : notes
     sql_attr_multi          = uint visible_to_user_ids from field
     sql_attr_timestamp      = created_at
     sql_attr_uint           = user_id
-    sql_query_info          = SELECT * FROM entity WHERE id=$id
 }
 
 
@@ -194,11 +188,9 @@ index entities
 {
     source                  = entities
     path                    = [path/to/littlesis]/data/sphinx.entities.index
-    enable_star             = 1
     min_word_len            = 2
     min_prefix_len          = 0
     min_infix_len           = 2
-    charset_type            = utf-8
     charset_table = 0..9, a..z, _, A..Z->a..z, U+00C0->a, U+00C1->a, \
       U+00C2->a, U+00C3->a, U+00C4->a, U+00C5->a, U+00C7->c, U+00C8->e, \
       U+00C9->e, U+00CA->e, U+00CB->e, U+00CC->i, U+00CD->i, U+00CE->i, \
@@ -284,11 +276,10 @@ index entities
 }
 
 
-index entities-delta : entities
+index entities_delta : entities
 {
     source                  = entities-delta
-    path                    = [path/to/littlesis]/data/sphinx.entities-delta.index
-    charset_type            = utf-8
+    path                    = [path/to/littlesis]/data/sphinx.entities_delta.index
     charset_table = 0..9, a..z, _, A..Z->a..z, U+00C0->a, U+00C1->a, \
       U+00C2->a, U+00C3->a, U+00C4->a, U+00C5->a, U+00C7->c, U+00C8->e, \
       U+00C9->e, U+00CA->e, U+00CB->e, U+00CC->i, U+00CD->i, U+00CE->i, \
@@ -378,11 +369,9 @@ index lists
 {
     source                  = lists
     path                    = [path/to/littlesis]/data/sphinx.lists.index
-    enable_star             = 1
     min_word_len            = 2
     min_prefix_len          = 0
     min_infix_len           = 2
-    charset_type            = utf-8
     charset_table = 0..9, a..z, _, A..Z->a..z, U+00C0->a, U+00C1->a, \
       U+00C2->a, U+00C3->a, U+00C4->a, U+00C5->a, U+00C7->c, U+00C8->e, \
       U+00C9->e, U+00CA->e, U+00CB->e, U+00CC->i, U+00CD->i, U+00CE->i, \
@@ -468,11 +457,10 @@ index lists
 }
 
 
-index lists-delta : lists
+index lists_delta : lists
 {
-    source                  = lists-delta
-    path                    = [path/to/littlesis]/data/sphinx.lists-delta.index
-    charset_type            = utf-8
+    source                  = lists_delta
+    path                    = [path/to/littlesis]/data/sphinx.lists_delta.index
     charset_table = 0..9, a..z, _, A..Z->a..z, U+00C0->a, U+00C1->a, \
       U+00C2->a, U+00C3->a, U+00C4->a, U+00C5->a, U+00C7->c, U+00C8->e, \
       U+00C9->e, U+00CA->e, U+00CB->e, U+00CC->i, U+00CD->i, U+00CE->i, \
@@ -562,11 +550,9 @@ index notes
 {
     source                  = notes
     path                    = [path/to/littlesis]/data/sphinx.notes.index
-    enable_star             = 1
     min_word_len            = 2
     min_prefix_len          = 0
     min_infix_len           = 2
-    charset_type            = utf-8
     charset_table = 0..9, a..z, _, A..Z->a..z, U+00C0->a, U+00C1->a, \
       U+00C2->a, U+00C3->a, U+00C4->a, U+00C5->a, U+00C7->c, U+00C8->e, \
       U+00C9->e, U+00CA->e, U+00CB->e, U+00CC->i, U+00CD->i, U+00CE->i, \
@@ -652,11 +638,10 @@ index notes
 }
 
 
-index notes-delta : notes
+index notes_delta : notes
 {
     source                  = notes-delta
-    path                    = [path/to/littlesis]/data/sphinx.notes-delta.index
-    charset_type            = utf-8
+    path                    = [path/to/littlesis]/data/sphinx.notes_delta.index
     charset_table = 0..9, a..z, _, A..Z->a..z, U+00C0->a, U+00C1->a, \
       U+00C2->a, U+00C3->a, U+00C4->a, U+00C5->a, U+00C7->c, U+00C8->e, \
       U+00C9->e, U+00CA->e, U+00CB->e, U+00CC->i, U+00CD->i, U+00CE->i, \
@@ -748,7 +733,7 @@ indexer
 
 searchd
 {
-    port                    = 3312
+    listen                  = 3312
     log                     = [path/to/littlesis/logs]/searchd/searchd.log
     query_log               = [path/to/littlesis/logs]/searchd/query.log
     pid_file                = [path/to/littlesis/logs]/searchd/searchd.pid

@@ -413,7 +413,7 @@ class NoteTable extends Doctrine_Table
   {
     $s->setSortMode(SPH_SORT_ATTR_DESC, 'created_at');
     $query = LsSphinxClient::cleanQuery($query);        
-    $result = $s->Query($query, 'notes notes-delta');
+    $result = $s->Query($query, 'notes notes_delta');
 
     if ($result === false)
     {

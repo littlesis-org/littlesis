@@ -1285,7 +1285,7 @@ class EntityTable extends Doctrine_Table
 
     $query = $s->buildEntityQuery($query, $aliases, $primary_ext);
 
-    $result = $s->Query($query, 'entities entities-delta');
+    $result = $s->Query($query, 'entities entities_delta');
     
     if ($result === false)
     {
