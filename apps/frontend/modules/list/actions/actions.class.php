@@ -1083,4 +1083,10 @@ class listActions extends sfActions
        
     $this->data = json_encode(LsListTable::getEntitiesAndRelsForMap($this->list['id'], $num, array()));
   }
+
+  public function executeDatatable($request) 
+  {
+    $this->checkList($request, false, false);
+    $this->redirect("http://" . $_SERVER['HTTP_HOST'] . "/lists/" . $this->list['id'] . "/relationships");
+  }
 }
