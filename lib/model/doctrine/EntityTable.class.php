@@ -2009,4 +2009,9 @@ class EntityTable extends Doctrine_Table
   {
     return array_filter($ids, array('EntityTable', 'isIntegerId'));
   }
+
+  public static function railsUrl($entity, $action=null, $full=false) 
+  {
+    return ($full ? "http://" . $_SERVER['HTTP_HOST'] : "") . "/entities/" . $entity['id'] . "/" . $action;
+  }
 }

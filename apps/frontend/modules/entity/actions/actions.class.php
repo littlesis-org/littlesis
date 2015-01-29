@@ -4857,6 +4857,6 @@ class entityActions extends sfActions
   public function executeDatatable($request) 
   {
     $this->checkEntity($request, false, false);
-    $this->redirect("http://" . $_SERVER['HTTP_HOST'] . "/entities/" . $this->entity['id'] . "/relationships");
+    $this->redirect(EntityTable::railsUrl($this->entity, "relationships", true));
   }
 }
