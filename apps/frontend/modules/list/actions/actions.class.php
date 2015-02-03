@@ -452,7 +452,7 @@ class listActions extends sfActions
 
     //first get person list members
     $db = Doctrine_Manager::connection();
-    $sql = 'SELECT entity_id FROM ls_list_entity WHERE list_id = ?';
+    $sql = 'SELECT entity_id FROM ls_list_entity WHERE list_id = ? AND is_deleted = 0';
     $stmt = $db->execute($sql, array($request->getParameter('id')));
     $entityIds = $stmt->fetchAll(PDO::FETCH_COLUMN);
        

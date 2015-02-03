@@ -23,7 +23,7 @@ class SearchApi
   {
     $s = new LsSphinxClient();
     $s->SetServer('localhost', 3312);
-    $s->SetMatchMode(SPH_MATCH_ANY);
+    //$s->SetMatchMode(SPH_MATCH_ANY);
     $s->SetFieldWeights(array('name' => 3, 'aliases' => 3));
 
     if (@$options['list_ids'])
