@@ -46,13 +46,13 @@
 
 <?php $personRecipients = LsArray::flip($personRecipients) ?>
 
-<?php $dataLabels = array_map(function($a,$b) { if($b) {return $a . ' (' . $b . ')';} else return $a;}, array_slice($personRecipients['recipient_name'],0,10),array_slice($personRecipients['party'],0,10)); ?>
+<?php $dataLabels = array_map(function($a,$b) { if($b) {return $a . ' (' . $b . ')';} else return $a;}, array_slice($personRecipients['name'],0,10),array_slice($personRecipients['party'],0,10)); ?>
 
 <?php include_partial('global/polBarGraph', array(
-  'dataSet' =>  array_slice($personRecipients['recipient_amount'],0,10),
+  'dataSet' =>  array_slice($personRecipients['amount'],0,10),
   'graphName' => "#top-person-recipients",
   'dataLabels' => $dataLabels,
-  'dataUrls' => array_slice($personRecipients['recipient_url'],0,10)
+  'dataUrls' => array_slice($personRecipients['url'],0,10)
 )) ?>
 
 <?php endif; ?>
@@ -71,10 +71,10 @@
 <?php $orgRecipients = LsArray::flip($orgRecipients) ?>
 
 <?php include_partial('global/polBarGraph', array(
-  'dataSet' =>  array_slice($orgRecipients['recipient_amount'],0,10),
+  'dataSet' =>  array_slice($orgRecipients['amount'],0,10),
   'graphName' => "#top-org-recipients",
-  'dataLabels' => array_slice($orgRecipients['recipient_name'],0,10),
-  'dataUrls' => array_slice($orgRecipients['recipient_url'],0,10)
+  'dataLabels' => array_slice($orgRecipients['name'],0,10),
+  'dataUrls' => array_slice($orgRecipients['url'],0,10)
 )) ?>
 
 <?php endif;?>
@@ -85,7 +85,6 @@
 
 <!-- IF ENTITY IS ORG -->
 <?php else : ?>
-
 
 <?php if ($repTotal > 0 || $demTotal > 0) : ?>
 
@@ -122,10 +121,10 @@
 <?php $personRecipients = LsArray::flip($personRecipients) ?>
 
 <?php include_partial('global/polBarGraph', array(
-  'dataSet' =>  array_slice($personRecipients['recipient_amount'],0,10),
+  'dataSet' =>  array_slice($personRecipients['amount'],0,10),
     'graphName' => "#top-person-recipients",
-  'dataLabels' => array_slice($personRecipients['recipient_name'],0,10),
-  'dataUrls' => array_slice($personRecipients['recipient_url'],0,10)
+  'dataLabels' => array_slice($personRecipients['name'],0,10),
+  'dataUrls' => array_slice($personRecipients['url'],0,10)
 )) ?>
 
 <?php endif; ?>
@@ -144,10 +143,10 @@
 <?php $orgRecipients = LsArray::flip($orgRecipients) ?>
 
 <?php include_partial('global/polBarGraph', array(
-  'dataSet' =>  array_slice($orgRecipients['recipient_amount'],0,10),
+  'dataSet' =>  array_slice($orgRecipients['amount'],0,10),
   'graphName' => "#top-org-recipients",
-  'dataLabels' => array_slice($orgRecipients['recipient_name'],0,10),
-  'dataUrls' => array_slice($orgRecipients['recipient_url'],0,10)
+  'dataLabels' => array_slice($orgRecipients['name'],0,10),
+  'dataUrls' => array_slice($orgRecipients['url'],0,10)
 )) ?>
 
 <?php endif;?>
@@ -165,10 +164,10 @@
 <?php $donors = LsArray::flip($donors) ?>
 
 <?php include_partial('global/polBarGraph', array(
-  'dataSet' =>  array_slice($donors['donor_amount'],0,10),
+  'dataSet' =>  array_slice($donors['amount'],0,10),
   'graphName' => "#top-donors",
-  'dataLabels' => array_slice($donors['donor_name'],0,10),
-  'dataUrls' => array_slice($donors['donor_url'],0,10)
+  'dataLabels' => array_slice($donors['name'],0,10),
+  'dataUrls' => array_slice($donors['url'],0,10)
 )) ?>
 
 

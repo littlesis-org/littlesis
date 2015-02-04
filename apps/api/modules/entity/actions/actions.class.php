@@ -229,5 +229,13 @@ class entityActions extends LsApiActions
     {
       return 'Xml';
     }
-  }  
+  }
+
+  public function executePolitical($request)
+  {
+    $options = $this->getParams(array('start_cycle', 'end_cycle'));
+    $this->data = EntityApi::getDonationSummary($this->entity['id'], $options);
+
+    return $this->renderText(json_encode($this->data));
+  }
 }

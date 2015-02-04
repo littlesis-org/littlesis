@@ -102,7 +102,7 @@ entity_relationship_references:
   url:   /entity/:id/relationships/references.:format
   param: { module: entity, action: relationshipReferences }
   requirements: { id: \d+ }
-  
+
 entity_references:
   url:   /entity/:id/references.:format
   param: { module: entity, action: references }
@@ -132,7 +132,7 @@ entity_leadership:
   url:   /entity/:id/leadership.:format
   param: { module: entity, action: leadership }
   requirements: { id: \d+ }
-  
+
 entity_related:
   url:   /entity/:id/related.:format
   param: { module: entity, action: related }
@@ -147,15 +147,20 @@ entity_aliases:
   url:   /entity/:id/aliases.:format
   param: { module: entity, action: aliases }
   requirements: { id: \d+ }
-  
+
 entity_details:
   url:   /entity/:id/details.:format
   param: { module: entity, action: details }
   requirements: { id: \d+ }
-  
+
 entity_map:
   url:   /entity/:id/map.:format
   param: { module: entity, action: map }
+  requirements: { id: \d+ }
+
+entity_political:
+  url:   /entity/:id/political.json
+  param: { module: entity, action: political, format: json }
   requirements: { id: \d+ }
 
 entity_view:
