@@ -250,7 +250,7 @@ class EntityApi
       
       if (!isset($recipients[$recipientType][$d['recipient_id']]))
       {
-        $url = EntityTable::getInternalUrl(array('id' => $d['recipient_id'], 'name' => $d['recipient_name'], 'primary_ext' => $d['recipient_ext']));
+        $url = url_for(EntityTable::getInternalUrl(array('id' => $d['recipient_id'], 'name' => $d['recipient_name'], 'primary_ext' => $d['recipient_ext'])));
         $recipients[$recipientType][$d['recipient_id']] = array(
           'name' => $d['recipient_name'], 
           'url' => $url, 
@@ -273,7 +273,7 @@ class EntityApi
 
       if (!isset($donors[$d['donor_id']]))
       {
-        $url = EntityTable::getInternalUrl(array('id' => $d['donor_id'], 'name' => $d['donor_name'], 'primary_ext' => $d['donor_ext']));
+        $url = url_for(EntityTable::getInternalUrl(array('id' => $d['donor_id'], 'name' => $d['donor_name'], 'primary_ext' => $d['donor_ext'])));
         $donors[$d['donor_id']] = array(
           'name' => $d['donor_name'],
           'url' => $url, 
