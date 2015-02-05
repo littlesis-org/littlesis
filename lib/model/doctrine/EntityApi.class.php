@@ -183,6 +183,20 @@ class EntityApi
 
   static function getDonationSummary($id, $options=array())
   {
+    $blank = array(
+      'person_recipients' => array(),
+      'org_recipients' => array(),
+      'donors' => array(),
+      'rep_amts' => array(),
+      'dem_amts' => array(),
+      'other_amts' => array(),
+      'total' => array(),
+      'rep_total' => array(),
+      'dem_total' => array(),
+      'other_total' => array(),
+      'cycles' => array()
+    );
+
     if (!$start_cycle = @$options['start_cycle']) $start_cycle = '1990';
     if (!$end_cycle = @$options['end_cycle']) $end_cycle = '2012';
 
@@ -204,12 +218,12 @@ class EntityApi
     }
     else
     {
-      return null;
+      return $blank;
     }
 
     if (count($donations) == 0)
     {
-      return null;
+      return $blank;
     }
 
     $cycles = array_map('strval', range(1990, 2020, 2));
