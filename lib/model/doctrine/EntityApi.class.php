@@ -190,10 +190,10 @@ class EntityApi
       'rep_amts' => array(),
       'dem_amts' => array(),
       'other_amts' => array(),
-      'total' => array(),
-      'rep_total' => array(),
-      'dem_total' => array(),
-      'other_total' => array(),
+      'total' => 0,
+      'rep_total' => 0,
+      'dem_total' => 0,
+      'other_total' => 0,
       'cycles' => array()
     );
 
