@@ -230,7 +230,7 @@ class EntityApi
     $filter = function($ary) use($start_cycle, $end_cycle) { return $ary >= $start_cycle && $ary <= $end_cycle; };
     $cycles = array_filter($cycles, $filter);
     $cycleAmts = $repAmts = $demAmts = $otherAmts = array_fill_keys($cycles, 0);
-    $recipients = array();
+    $recipients = array('personData' => array(), 'orgData' => array());
     $donors = array();
     $total = 0;
     $repTotal = 0;
