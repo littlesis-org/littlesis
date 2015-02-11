@@ -1267,4 +1267,16 @@ class EntityApi
 
     return $entity;
   }
+
+
+  static function getFields($id)
+  {
+    $db = Doctrine_Manager::connection();
+    $sql = "SELECT f.name, ef.value FROM entity_fields ef LEFT JOIN fields f on (f.id = ef.field_id) " . 
+           "WHERE ef.entity_id = ? AND ef.is_admin = false";
+    $stmt = $db->execute($sql, array($id));
+    $fields = $stmt->fetchAll(PDO::FETCH_KEY_PAIR);
+    
+    return $fields;
+  }
 }

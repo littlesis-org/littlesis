@@ -113,10 +113,8 @@ class LsGoogle
     {
       return null;
     }
-    
-    $url = $this->getQueryUrl(); 
-    
-    if (!$this->browser->get( $url )->responseIsError())
+        
+    if (!$this->browser->get($query)->responseIsError())
     {
       $text = $this->browser->getResponseText();
       $results = json_decode($text);

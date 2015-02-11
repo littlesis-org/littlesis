@@ -40,6 +40,7 @@ class entityActions extends LsApiActions
   public function executeDetails($request)
   {
     $this->entity = array_merge($this->entity, EntityApi::getDetails($this->entity['id']));
+    $this->entity = array_merge($this->entity, EntityApi::getFields($this->entity['id']));
     $this->aliases = EntityApi::getAliases($this->entity['id'], false);    
     return 'Xml';
   }
