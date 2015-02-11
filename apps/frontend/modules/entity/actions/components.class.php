@@ -603,13 +603,13 @@ class entityComponents extends sfComponents
       //   $total += count($ary);
       // }
 
-      $total = count($flat_chains);
+      if ($total = count($flat_chains))
+      {
+        $chainAry = array_fill(0, $total, null);
+        array_splice($chainAry, $offset, $num, $full_chains);        
+        $this->chain_pager = new LsDoctrinePager($chainAry, $page, $num);        
+      }
       
-      $chainAry = array_fill(0, $total, null);
-      array_splice($chainAry, $offset, $num, $full_chains);
-
-      $this->chain_pager = new LsDoctrinePager($chainAry, $page, $num);        
-
       // get entities for chain  
       // if ($chain)
       // {
