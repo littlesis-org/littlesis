@@ -43,7 +43,6 @@ class Address extends BaseAddress
     return $text;
   }
 
-  
   public function getMultiLiner()
   {
     $text = $this->street1 ? $this->street1 . "\n" : "";
