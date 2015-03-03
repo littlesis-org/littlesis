@@ -310,9 +310,9 @@ class Entity extends BaseEntity
     {
       $ret = $forDisplay ? 'Organization' : 'Org';
     }
-    else
+    elseif (in_array('Couple', $extensions))
     {
-      $ret = null;
+      $ret = 'Couple';
     }
     
     return $ret;

@@ -2014,4 +2014,12 @@ class EntityTable extends Doctrine_Table
   {
     return ($full ? "http://" . $_SERVER['HTTP_HOST'] : "") . "/entities/" . $entity['id'] . "/" . $action;
   }
+
+  public static function getPartnerIds($id)
+  {
+    $db = Doctrine_Manager::connection();
+    $sql = "SELECT partner1_id, partner2_id FROM couple WHERE entity_id = ?";
+    $stmt = $db->execute($sql, array($id));
+    return array_map('intval', $stmt->fetch());
+  }
 }

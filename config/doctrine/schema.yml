@@ -116,6 +116,27 @@ Org:
     fedspending_id: string(10)
     lda_registrant_id: string(10)
 
+Couple:
+  actAs: [Extension]
+  columns:
+    partner1:
+      type: integer
+      notnull: true
+    partner2:
+      type: integer
+      notnull: true
+  relations:
+    Partner1:
+      class: Entity
+      local: partner1_id
+      foreign: id
+      foreignAlias: Couple1
+    Partner2:
+      class: Entity
+      local: partner2_id
+      foreign: id
+      foeignAlias: Couple2
+
 
 #SECOND TIER PERSON EXTENSIONS & RELATED TABLES
 

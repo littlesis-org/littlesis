@@ -187,9 +187,7 @@ class LsLanguage
 		'Group',
 		'Solutions',
 		'Service',
-		'Worldwide',
-
-		
+		'Worldwide'		
 	);
 
   static $commonPositions = array(

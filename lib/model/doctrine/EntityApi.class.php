@@ -147,6 +147,30 @@ class EntityApi
     return $stmt->fetchAll();
   }
 
+  static function getCoupleDonationData($id, $start_cycle, $end_cycle)
+  {
+    list($id1, $id2) = EntityTable::getPartnerIds($id);
+
+    $db = Doctrine_Manager::connection();
+    
+    $select = "SELECT e.id as donor_id, e.name as donor_name, e.primary_ext as donor_ext, " .
+              "e2.id as recipient_id, e2.name as recipient_name, e2.primary_ext as recipient_ext, " .
+              "f.amount as amt, f.crp_cycle, p2.party_id ";
+    
+    $from = "FROM entity e LEFT JOIN relationship r ON r.entity1_id = e.id " . 
+            "LEFT JOIN fec_filing f ON f.relationship_id = r.id " . 
+            "LEFT JOIN entity e2 ON e2.id = r.entity2_id " . 
+            "LEFT JOIN person p2 ON p2.entity_id = e2.id ";
+    
+    $where = "WHERE r.category_id = 5 AND r.is_deleted=0 AND f.crp_cycle IS NOT NULL " . 
+             "AND e.id IN (?, ?) AND e2.id NOT IN (?, ?) AND f.crp_cycle >= ? AND f.crp_cycle <= ? ";
+    
+    $sql = $select . $from . $where . "GROUP BY f.id";
+    $stmt = $db->execute($sql, array($id1, $id2, $id1, $id2, $start_cycle, $end_cycle));
+
+    return $stmt->fetchAll();
+  }
+
   static function getOrgPartyMap($org_ids)
   {
     $map = array();
@@ -215,6 +239,10 @@ class EntityApi
     else if ($ext == 'Org')
     {
       $donations = self::getOrgDonationData($id, $start_cycle, $end_cycle);
+    }
+    else if ($ext = 'Couple')
+    {
+      $donations = self::getCoupleDonationData($id, $start_cycle, $end_cycle);
     }
     else
     {

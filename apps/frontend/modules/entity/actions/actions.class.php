@@ -241,6 +241,14 @@ class entityActions extends sfActions
   public function executeView($request)
   {
     $this->checkEntity($request);  
+
+    if ($this->entity['primary_ext'] == 'Couple')
+    {
+      list($partner1_id, $partner2_id) = EntityTable::getPartnerIds($this->entity['id']);
+      $this->entity['partner1'] = Doctrine::getTable('Entity')->find($partner1_id);
+      $this->entity['partner2'] = Doctrine::getTable('Entity')->find($partner2_id);
+    }
+
     $this->logRecentView();
 
     $this->tab_name = 'relationships';
@@ -1507,6 +1515,13 @@ class entityActions extends sfActions
     $this->forward404Unless($this->image);
     
     $this->entity = $this->image->Entity;
+  }
+
+
+  public function executeCropImage($request)
+  {
+    $imageId = $request->getParameter('id');
+    $this->redirect("http://" . $_SERVER['HTTP_HOST'] . "/images/" . $imageId . "/crop");
   }
   
   

@@ -35,14 +35,16 @@ class LsListApi
     
     return $stmt->fetchAll(PDO::FETCH_COLUMN);
   }
-   
+
 
   static function getNetworkLinks($id, $options=array())
   {
     $db = Doctrine_Manager::connection();
-    $sql = 'SELECT DISTINCT l.relationship_id, l.entity1_id, l.entity2_id, l.category_id ' .
-           'FROM ls_list_entity le LEFT JOIN link l ON (l.entity1_id = le.entity_id) ' . 
-           'LEFT JOIN entity e1 ON (e1.id = l.entity1_id) ' .
+    $sql = 'SELECT DISTINCT l.relationship_id, le.entity_id AS entity1_id, l.entity2_id, l.category_id ' .
+           'FROM ls_list_entity le ' . 
+           'LEFT JOIN entity e1 ON (e1.id = le.entity_id) ' .
+           'LEFT JOIN couple c1 ON (c1.entity_id = e1.id) ' .
+           'LEFT JOIN link l ON (l.entity1_id IN (le.entity_id, c1.partner1_id, c1.partner2_id)) ' .
            'LEFT JOIN entity e2 ON (e2.id = l.entity2_id) ' . 
            'LEFT JOIN relationship r ON (r.id = l.relationship_id) ' .
            'WHERE le.list_id = ? AND le.is_deleted = 0 AND e1.is_deleted = 0 AND e2.is_deleted = 0 AND r.is_deleted = 0';
@@ -51,7 +53,7 @@ class LsListApi
     return $stmt->fetchAll(PDO::FETCH_NUM);
   }
 
-  
+
   static function getSecondDegreeNetwork($id, $options=array(), $countOnly=false)
   {
     $db = Doctrine_Manager::connection();

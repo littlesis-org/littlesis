@@ -41,7 +41,8 @@ class ExtensionDefinitionTable extends Doctrine_Table
     33 => 'ConsultingFirm',
     34 => 'PublicIntellectual',
     35 => 'PublicOfficial',
-    36 => 'Lawyer'
+    36 => 'Lawyer',
+    37 => 'Couple'
   );  
 
 
@@ -81,7 +82,8 @@ class ExtensionDefinitionTable extends Doctrine_Table
     33 => array(),
     34 => array(),
     35 => array(),
-    36 => array()
+    36 => array(),
+    37 => array('partner1_id', 'partner2_id')
   );    
   
 
@@ -96,7 +98,8 @@ class ExtensionDefinitionTable extends Doctrine_Table
     'GovernmentBody',
     'BusinessPerson',
     'Lobbyist',
-    'PoliticalFundraising'
+    'PoliticalFundraising',
+    'Couple'
   );
 
 
@@ -136,7 +139,8 @@ class ExtensionDefinitionTable extends Doctrine_Table
 		'ConsultingFirm' => array('id' => 33, 'display_name' => 'Consulting Firm'),		
 		'PublicIntellectual' => array('id' => 34, 'display_name' => 'Public Intellectual'),
 		'PublicOfficial' => array('id' => 35, 'display_name' => 'Public Official'),
-		'Lawyer' => array('id' => 36, 'display_name' => 'Lawyer')
+		'Lawyer' => array('id' => 36, 'display_name' => 'Lawyer'),
+    'Couple' => array('id' => 37, 'display_name' => 'Couple')
   );
 
 
