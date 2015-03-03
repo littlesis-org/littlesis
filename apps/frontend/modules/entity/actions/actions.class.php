@@ -70,6 +70,7 @@ class entityActions extends sfActions
       'addPerson',
       'addOrg',
       'image',
+      'cropImage',
       'editImage',
       'removeImage',
       'featureImage',
