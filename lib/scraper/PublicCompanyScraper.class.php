@@ -406,7 +406,7 @@ class PublicCompanyScraper extends Scraper
   
                 //save source
                 $rel->addReference(
-                  $r['xmlUrl'], 
+                  $r['readableXmlUrl'], 
                   null, 
                   null, 
                   $this->entity->name . ' ' . $r['formName'], 
@@ -604,6 +604,7 @@ class PublicCompanyScraper extends Scraper
       {
         $results['xmlUrl'] = $url;
         $results['htmlUrl'] = $url_arr['htmlUrl'];
+        $results['readableXmlUrl'] = preg_replace('/[^\/]+\.xml/i', 'xslF345X03/$0', $url);
         return $results;
       }
     }
@@ -695,7 +696,11 @@ class PublicCompanyScraper extends Scraper
   
                 if ($u != $matches[1])
                 {
-                  $form4_urls[] = array('xmlUrl' => $u, 'htmlUrl' => $matches[1]);
+                  $form4_urls[] = array(
+                    'xmlUrl' => $u, 
+                    'htmlUrl' => $matches[1],
+                    'readableXmlUrl' => preg_replace('/[^\/]+\.xml/i', 'xslF345X03/$0', $u)
+                  );
                 }
               }
             }         
@@ -999,7 +1004,7 @@ class PublicCompanyScraper extends Scraper
     
       //save source info
       $p->addReference(
-        $person_arr['xmlUrl'], 
+        $person_arr['readableXmlUrl'], 
         null, 
         null,
         $this->entity->name . ' ' . $person_arr['formName'],  
@@ -1053,7 +1058,7 @@ class PublicCompanyScraper extends Scraper
       {
         $person->save();
         $a->addReference(
-          $person_arr['xmlUrl'], 
+          $person_arr['readableXmlUrl'], 
           null, 
           null, 
           $this->entity->name . ' ' . $person_arr['formName'],  
@@ -1096,7 +1101,7 @@ class PublicCompanyScraper extends Scraper
   
         //save sources
         $rel->addReference(
-          $person_arr['xmlUrl'], 
+          $person_arr['readableXmlUrl'], 
           null,
           null, 
           $this->entity->name . ' ' . $person_arr['formName'], 
@@ -1148,7 +1153,7 @@ class PublicCompanyScraper extends Scraper
   
         //save sources
         $rel->addReference(
-          $person_arr['xmlUrl'], 
+          $person_arr['readableXmlUrl'], 
           null,
           null, 
           $this->entity->name . ' ' . $person_arr['formName'], 
@@ -1230,7 +1235,7 @@ class PublicCompanyScraper extends Scraper
   
         //save sources
         $rel->addReference(
-          $person_arr['xmlUrl'], 
+          $person_arr['readableXmlUrl'], 
           null,
           null, 
           $this->entity->name . ' ' . $person_arr['formName'], 

@@ -4653,4 +4653,10 @@ class entityActions extends sfActions
     $this->checkEntity($request, false, false);
     $this->redirect(EntityTable::railsUrl($this->entity, "relationships", true));
   }
+
+  public function executeEditFields($request) 
+  {
+    $this->checkEntity($request, false, false);
+    $this->redirect(EntityTable::railsUrl($this->entity, "fields", true));
+  }
 }
