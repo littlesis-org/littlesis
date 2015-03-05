@@ -1096,4 +1096,15 @@ class listActions extends sfActions
     $this->redirect("http://" . $_SERVER['HTTP_HOST'] . "/lists/" . $this->list['id'] . "/match_donations");
   }
 
+  public function executeFindArticles($request) 
+  {
+    $this->checkList($request, false, false);
+    $this->redirect("http://" . $_SERVER['HTTP_HOST'] . "/lists/" . $this->list['id'] . "/find_articles");
+  }
+
+  public function executeAdmin($request) 
+  {
+    $this->checkList($request, false, false);
+    $this->redirect("http://" . $_SERVER['HTTP_HOST'] . "/lists/" . $this->list['id'] . "/admin");
+  }
 }
