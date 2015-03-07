@@ -1307,4 +1307,14 @@ class EntityApi
     
     return $fields;
   }
+
+  static function getArticles($id)
+  {
+    $db = Doctrine_Manager::connection();
+    $sql = "SELECT a.title, a.url, a.snippet, a.published_at FROM articles a LEFT JOIN article_entities ae ON (ae.article_id = a.id) WHERE ae.entity_id = ? ORDER BY a.created_at";
+    $stmt = $db->execute($sql, array($id));
+    $articles = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    return $articles;
+  }
 }

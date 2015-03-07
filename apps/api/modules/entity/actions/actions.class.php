@@ -239,4 +239,10 @@ class entityActions extends LsApiActions
 
     return $this->renderText(json_encode($this->data));
   }
+
+  public function executeArticles($request)
+  {
+    $this->data = EntityApi::getArticles($this->entity['id']);
+    return $this->renderText(json_encode($this->data));
+  }
 }

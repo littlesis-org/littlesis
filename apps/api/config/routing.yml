@@ -163,6 +163,11 @@ entity_political:
   param: { module: entity, action: political, format: json }
   requirements: { id: \d+ }
 
+entity_articles:
+  url:   /entity/:id/articles.json
+  param: { module: entity, action: articles, format: json }
+  requirements: { id: \d+ }
+
 entity_view:
   url:   /entity/:id.:format
   param: { module: entity, action: view }
