@@ -15,25 +15,25 @@ class AddressForm extends BaseAddressForm
       'street1'     => new sfWidgetFormInput(),
       'street2'     => new sfWidgetFormInput(),
       'city'        => new sfWidgetFormInput(),
-      'state_id'    => new sfWidgetFormDoctrineSelect(array('model' => 'AddressState', 'add_empty' => true)),
-      'country_id'  => new sfWidgetFormDoctrineSelect(array('model' => 'AddressCountry', 'add_empty' => false)),
+      'state_name'  => new sfWidgetFormInput(),
       'postal'      => new sfWidgetFormInput(),
+      'country_name' => new sfWidgetFormInput(),
       'category_id' => new sfWidgetFormDoctrineSelect(array('model' => 'AddressCategory', 'add_empty' => true)),
     ));
 
     $this->setValidators(array(
-      'street1'     => new sfValidatorString(array('max_length' => 100)),
+      'street1'     => new sfValidatorString(array('max_length' => 100, 'required' => false)),
       'street2'     => new LsValidatorString(array('max_length' => 100, 'required' => false)),
       'city'        => new sfValidatorString(array('max_length' => 50)),
-      'state_id'    => new sfValidatorDoctrineChoice(array('model' => 'AddressState', 'required' => true)),
-      'country_id'  => new sfValidatorDoctrineChoice(array('model' => 'AddressCountry')),
+      'state_name'  => new sfValidatorString(array('max_length' => 50, 'required' => false)),
+      'country_name' => new sfValidatorString(array('max_length' => 50)),
       'postal'      => new LsValidatorString(array('max_length' => 5, 'required' => false)),
       'category_id' => new sfValidatorDoctrineChoice(array('model' => 'AddressCategory', 'required' => false)),
     ));
 
     $this->widgetSchema->setLabels(array(
-      'state_id' => 'State',
-      'country_id' => 'Country',
+      'state_name' => 'State',
+      'country_name' => 'Country',
       'category_id' => 'Category'    
     ));
 

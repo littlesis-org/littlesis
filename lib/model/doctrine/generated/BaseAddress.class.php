@@ -20,6 +20,8 @@ abstract class BaseAddress extends sfDoctrineRecord
     $this->hasColumn('latitude', 'string', 20, array('type' => 'string', 'length' => '20'));
     $this->hasColumn('longitude', 'string', 20, array('type' => 'string', 'length' => '20'));
     $this->hasColumn('category_id', 'integer', null, array('type' => 'integer'));
+    $this->hasColumn('state_name', 'string', 50, array('type' => 'string', 'length' => '50'));
+    $this->hasColumn('country_name', 'string', 50, array('type' => 'string', 'notnull' => true, 'notblank' => true, 'length' => '50'));
 
     $this->option('collate', 'utf8_unicode_ci');
     $this->option('charset', 'utf8');

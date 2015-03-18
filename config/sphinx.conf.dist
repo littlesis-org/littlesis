@@ -22,7 +22,7 @@ source entities
                     LEFT JOIN ls_list_entity le ON (e.id = le.entity_id) \
             WHERE \
                     e.is_deleted = 0 \
-                    AND le.is_deleted = 0 \
+                    AND (le.is_deleted = 1 OR le.is_deleted IS NULL) \
                     AND e.updated_at <= ( SELECT updated_at FROM sphinx_index WHERE name = 'entities' ) \
             GROUP BY \
                     e.id;
@@ -56,7 +56,7 @@ source entities_delta : entities
                     LEFT JOIN ls_list_entity le ON (e.id = le.entity_id) \
             WHERE \
                     e.is_deleted = 0 \
-                    AND le.is_deleted = 0 \
+                    AND (le.is_deleted = 1 OR le.is_deleted IS NULL) \
                     AND e.updated_at > ( SELECT updated_at FROM sphinx_index WHERE name = 'entities' ) \
             GROUP BY \
                     e.id;
