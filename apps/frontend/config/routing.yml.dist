@@ -143,6 +143,14 @@ orgView:
   url:   org/:id/:slug/*
   param: { module: entity, action: view }
 
+couple:
+  url:   couple/:id/:slug/:action/*
+  param: { module: entity }
+
+coupleView:
+  url:   couple/:id/:slug/*
+  param: { module: entity, action: view }
+
 addPerson:
   url:   entity/addPerson/*
   param: { module: entity, action: addPerson }
