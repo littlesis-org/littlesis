@@ -4665,4 +4665,10 @@ class entityActions extends sfActions
     $this->checkEntity($request, false, false);
     $this->redirect(EntityTable::railsUrl($this->entity, "find_articles", true));
   }
+
+  public function executeArticles($request)
+  {
+    $this->checkEntity($request, false, false);
+    $this->redirect(EntityTable::railsUrl($this->entity, "articles", true));
+  }  
 }
