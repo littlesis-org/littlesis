@@ -203,13 +203,13 @@ class LsListApi
   {
     $db = Doctrine_Manager::connection();
     $sql = 'SELECT le.entity_id, i.filename FROM ls_list_entity le ' . 
-           'JOIN image i ON (le.entity_id = i.entity_id AND i.is_featured = 1) ' .
+           'JOIN image i ON (le.entity_id = i.entity_id AND i.is_featured = 1 AND i.is_deleted = 0) ' .
            'WHERE le.list_id = ? AND le.is_deleted = 0';
     $stmt = $db->execute($sql, array($id));
     $rows = $stmt->fetchAll();
 
     return array_map(function($row) {
-      return array('id' => $row['entity_id'], 'url' => ImageTable::generateS3Url('profile/' . $row['filename']));
+      return array('id' => intval($row['entity_id']), 'url' => ImageTable::generateS3Url('profile/' . $row['filename']));
     }, $rows);
   }
 }
