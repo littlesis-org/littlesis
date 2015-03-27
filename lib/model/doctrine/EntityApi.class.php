@@ -1317,4 +1317,14 @@ class EntityApi
 
     return $articles;
   }
+
+  static function getAddresses($id)
+  {
+    $db = Doctrine_Manager::connection();
+    $sql = "SELECT a.city, a.state_name, a.country_name, a.postal FROM address a WHERE a.entity_id = ?";
+    $stmt = $db->execute($sql, array($id));
+    $addresses = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    return $addresses;
+  }
 }

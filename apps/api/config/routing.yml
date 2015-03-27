@@ -168,6 +168,11 @@ entity_articles:
   param: { module: entity, action: articles, format: json }
   requirements: { id: \d+ }
 
+entity_addresses:
+  url:   /entity/:id/addresses.json
+  param: { module: entity, action: addresses, format: json }
+  requirements: { id: \d+ }
+
 entity_view:
   url:   /entity/:id.:format
   param: { module: entity, action: view }
