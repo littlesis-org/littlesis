@@ -63,6 +63,11 @@ list_network:
   param: { module: list, action: networkLinks }
   requirements: { id: \d+ }
 
+list_images:
+  url:   /list/:id/images.:format
+  param: { module: list, action: images }
+  requirements: { id: \d+ }
+
 list_view:
   url:   /list/:id.:format
   param: { module: list, action: view }

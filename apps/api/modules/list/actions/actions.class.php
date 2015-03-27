@@ -115,4 +115,11 @@ class listActions extends LsApiActions
 
     return $this->renderText(json_encode($this->data));
   }
+
+  public function executeImages($request)
+  {
+    $this->setResponseFormat(array('json'));    
+    $this->data = LsListApi::getImages($this->list['id']);
+    return $this->renderText(json_encode($this->data));
+  }
 }

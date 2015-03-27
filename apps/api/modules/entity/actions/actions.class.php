@@ -234,6 +234,7 @@ class entityActions extends LsApiActions
 
   public function executePolitical($request)
   {
+    $this->setResponseFormat(array('json'));    
     $options = $this->getParams(array('start_cycle', 'end_cycle'));
     $this->data = EntityApi::getDonationSummary($this->entity['id'], $options);
 
@@ -242,12 +243,14 @@ class entityActions extends LsApiActions
 
   public function executeArticles($request)
   {
+    $this->setResponseFormat(array('json'));    
     $this->data = EntityApi::getArticles($this->entity['id']);
     return $this->renderText(json_encode($this->data));
   }
 
   public function executeAddresses($request)
   {
+    $this->setResponseFormat(array('json'));    
     $this->data = EntityApi::getAddresses($this->entity['id']);
     return $this->renderText(json_encode($this->data));
   }
