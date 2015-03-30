@@ -68,6 +68,11 @@ list_images:
   param: { module: list, action: images }
   requirements: { id: \d+ }
 
+list_search_data:
+  url:   /list/:id/search-data.:format
+  param: { module: list, action: searchData }
+  requirements: { id: \d+ }
+
 list_view:
   url:   /list/:id.:format
   param: { module: list, action: view }

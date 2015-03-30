@@ -212,4 +212,22 @@ class LsListApi
       return array('id' => intval($row['entity_id']), 'url' => ImageTable::generateS3Url('profile/' . $row['filename']));
     }, $rows);
   }
+
+  static function getSearchData($id)
+  {
+    $db = Doctrine_Manager::connection();
+    $sql = "SELECT e.id, e.name, e.blurb AS description, e.primary_ext AS primary_type, GROUP_CONCAT(DISTINCT a.name SEPARATOR ';') AS aliases FROM ls_list_entity le " . 
+       'JOIN entity e ON (le.entity_id = e.id) ' .
+       'LEFT JOIN alias a ON (a.entity_id = e.id) ' .
+       'WHERE le.list_id = ? AND le.is_deleted = 0 AND e.is_deleted = 0 ' . 
+       'GROUP BY e.id';
+    $stmt = $db->execute($sql, array($id));
+    $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    return array_map(function($row) {
+      $row['aliases'] = explode(';', $row['aliases']);
+      $row['url'] = EntityTable::getUri($row);
+      return $row;
+    }, $rows);
+  }
 }
