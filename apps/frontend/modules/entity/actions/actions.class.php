@@ -25,10 +25,11 @@ class entityActions extends sfActions
       $this->forward404Unless($this->entity);        
     }
     //check that the entity has the given name
-    $name = LsSlug::convertSlugToName($request->getParameter('slug'));
+    $slug = $request->getParameter('slug');
+    $primarySlug = LsSlug::convertNameToSlug($this->entity['name']);
     
     //if the name isn't primary, we redirect to the url with the primary name
-    if ($this->entity['name'] != $name)
+    if ($slug != $primarySlug)
     {
       $params = $request->getParameterHolder()->getAll();
 

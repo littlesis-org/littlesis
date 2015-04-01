@@ -135,7 +135,7 @@ class LsDate
   {
     if ($convert)
     {
-      if ($this->_year == '00')
+      if ($this->_year == '0000')
       {
         return null;
       }

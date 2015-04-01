@@ -9,7 +9,7 @@ class cacheActions extends sfActions
     $app = $request->getParameter('app', 'frontend');
     $frontendConfig = ProjectConfiguration::getApplicationConfiguration($app, $env, true); 
     $cache = sfContext::createInstance($frontendConfig)->getViewCacheManager()->getCache();
-    
+
     if ($cache instanceOf sfMemcacheCache)
     {
       $this->using_memcache = true;
@@ -22,7 +22,8 @@ class cacheActions extends sfActions
       
       if ($cache instanceOf LsMemcacheCache)
       {
-        $this->metakeys = $cache->getMetaKeys();
+        $metakeys = $cache->getMetaKeys();
+        $this->metakeys = is_array($metakeys) ? $metakeys : array();
       }
     }
     else
