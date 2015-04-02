@@ -119,7 +119,8 @@ class listActions extends LsApiActions
   public function executeImages($request)
   {
     $this->setResponseFormat(array('json'));    
-    $this->data = LsListApi::getImages($this->list['id']);
+    $options = $this->getParams(array('caption'));
+    $this->data = LsListApi::getImages($this->list['id'], $options);
     return $this->renderText(json_encode($this->data));
   }
 

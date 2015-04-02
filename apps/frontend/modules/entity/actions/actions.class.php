@@ -1538,6 +1538,11 @@ class entityActions extends sfActions
       ->from('Image i')
       ->where('i.entity_id = ?', $this->entity->id)
       ->orderBy('i.updated_at DESC');
+
+    if (!$this->getUser()->isAuthenticated())
+    {
+      $q->andWhere('(i.caption IS NULL OR i.caption NOT LIKE "street view:%")');
+    }
       
     $this->image_pager = new LsDoctrinePager($q, $page, $num);  
   }

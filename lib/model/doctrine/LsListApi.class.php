@@ -199,13 +199,23 @@ class LsListApi
     return $list;
   }
 
-  static function getImages($id)
+  static function getImages($id, $options=array())
   {
     $db = Doctrine_Manager::connection();
-    $sql = 'SELECT le.entity_id, i.filename FROM ls_list_entity le ' . 
-           'JOIN image i ON (le.entity_id = i.entity_id AND i.is_featured = 1 AND i.is_deleted = 0) ' .
-           'WHERE le.list_id = ? AND le.is_deleted = 0';
-    $stmt = $db->execute($sql, array($id));
+
+    if (isset($options['caption']))
+    {
+      $sql = 'SELECT le.entity_id, i.filename FROM ls_list_entity le ' . 
+             'JOIN image i ON (le.entity_id = i.entity_id AND i.is_deleted = 0) ' .
+             'WHERE le.list_id = ? AND le.is_deleted = 0 AND i.caption LIKE ?';
+      $stmt = $db->execute($sql, array($id, $options['caption']));
+    } else {
+      $sql = 'SELECT le.entity_id, i.filename FROM ls_list_entity le ' . 
+             'JOIN image i ON (le.entity_id = i.entity_id AND i.is_featured = 1 AND i.is_deleted = 0) ' .
+             'WHERE le.list_id = ? AND le.is_deleted = 0';
+      $stmt = $db->execute($sql, array($id));
+    }
+
     $rows = $stmt->fetchAll();
 
     return array_map(function($row) {

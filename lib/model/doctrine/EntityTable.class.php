@@ -1369,7 +1369,8 @@ class EntityTable extends Doctrine_Table
   static function getProfileImageById($id)
   {
     $db = Doctrine_Manager::connection();
-    $sql = 'SELECT * FROM image where entity_id = ? AND is_featured = 1 AND is_deleted = 0';
+    $sql = 'SELECT * FROM image where entity_id = ? AND is_featured = 1 AND is_deleted = 0 ' .
+           'AND (image.caption IS NULL OR image.caption NOT LIKE "street view:%")';
     $stmt = $db->execute($sql, array($id));
     
     return $stmt->fetch(PDO::FETCH_ASSOC);
