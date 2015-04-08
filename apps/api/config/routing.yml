@@ -68,7 +68,7 @@ list_images:
   param: { module: list, action: images }
   requirements: { id: \d+ }
 
-list_images:
+list_articles:
   url:   /list/:id/articles.:format
   param: { module: list, action: articles }
   requirements: { id: \d+ }

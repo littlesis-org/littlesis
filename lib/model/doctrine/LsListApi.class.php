@@ -244,7 +244,7 @@ class LsListApi
   static function getArticles($id, $options=array())
   {
     $db = Doctrine_Manager::connection();
-    $sql = 'SELECT le.entity_id, a.id AS article_id, a.url FROM ls_list_entity le ' . 
+    $sql = 'SELECT le.entity_id, a.id AS article_id, a.title, a.url FROM ls_list_entity le ' . 
            'JOIN article_entities ae ON (le.entity_id = ae.entity_id) ' .
            'JOIN articles a ON (ae.article_id = a.id) ' .
            'WHERE le.list_id = ? AND le.is_deleted = 0';
