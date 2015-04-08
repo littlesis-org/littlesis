@@ -1321,7 +1321,7 @@ class EntityApi
   static function getAddresses($id)
   {
     $db = Doctrine_Manager::connection();
-    $sql = "SELECT a.city, a.state_name, a.country_name, a.postal FROM address a WHERE a.entity_id = ? AND a.is_deleted = 0";
+    $sql = "SELECT a.city, a.state_name, a.country_name, a.postal, MIN(i.filename) AS image FROM address a LEFT JOIN image i ON (i.address_id = a.id) WHERE a.entity_id = ? AND a.is_deleted = 0 AND i.is_deleted = 0";
     $stmt = $db->execute($sql, array($id));
     $addresses = $stmt->fetchAll(PDO::FETCH_ASSOC);
 

@@ -203,16 +203,16 @@ class LsListApi
   {
     $db = Doctrine_Manager::connection();
 
-    if (isset($options['caption']))
+    if (isset($options['with_address']) && $options['with_address'] == '1')
     {
       $sql = 'SELECT le.entity_id, i.filename FROM ls_list_entity le ' . 
              'JOIN image i ON (le.entity_id = i.entity_id AND i.is_deleted = 0) ' .
-             'WHERE le.list_id = ? AND le.is_deleted = 0 AND i.caption LIKE ?';
-      $stmt = $db->execute($sql, array($id, $options['caption']));
+             'WHERE le.list_id = ? AND le.is_deleted = 0 AND i.address_id IS NOT NULL';
+      $stmt = $db->execute($sql, array($id));
     } else {
       $sql = 'SELECT le.entity_id, i.filename FROM ls_list_entity le ' . 
              'JOIN image i ON (le.entity_id = i.entity_id AND i.is_featured = 1 AND i.is_deleted = 0) ' .
-             'WHERE le.list_id = ? AND le.is_deleted = 0 AND (i.caption IS NULL OR i.caption NOT LIKE "street view:%")';
+             'WHERE le.list_id = ? AND le.is_deleted = 0 AND i.address_id IS NULL';
       $stmt = $db->execute($sql, array($id));
     }
 
