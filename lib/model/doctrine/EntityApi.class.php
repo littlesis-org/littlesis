@@ -1201,7 +1201,7 @@ class EntityApi
   static function getImages($id, $options=array())
   {
     $db = Doctrine_Manager::connection();
-    $select = 'id, title, caption, is_featured, filename, url';
+    $select = 'id, title, caption, is_featured, filename, url, address_id';
     $sql = 'SELECT ' . $select . ' FROM image i WHERE i.entity_id = ? AND i.is_deleted = 0';
     $stmt = $db->execute($sql, array($id));
     $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);  
