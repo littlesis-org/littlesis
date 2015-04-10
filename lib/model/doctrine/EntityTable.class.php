@@ -1370,7 +1370,7 @@ class EntityTable extends Doctrine_Table
   {
     $db = Doctrine_Manager::connection();
     $sql = 'SELECT * FROM image where entity_id = ? AND is_featured = 1 AND is_deleted = 0 ' .
-           'AND (image.caption IS NULL OR image.caption NOT LIKE "street view:%")';
+           'AND image.address_id IS NULL';
     $stmt = $db->execute($sql, array($id));
     
     return $stmt->fetch(PDO::FETCH_ASSOC);
