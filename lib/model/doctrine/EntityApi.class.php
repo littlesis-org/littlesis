@@ -1321,10 +1321,26 @@ class EntityApi
   static function getAddresses($id)
   {
     $db = Doctrine_Manager::connection();
-    $sql = "SELECT a.city, a.state_name, a.country_name, a.postal, MIN(i.filename) AS image FROM address a LEFT JOIN image i ON (i.address_id = a.id) WHERE a.entity_id = ? AND a.is_deleted = 0 AND i.is_deleted = 0";
+    $sql = "SELECT a.city, a.state_name, a.country_name, a.postal, MIN(i.filename) AS image FROM address a LEFT JOIN image i ON (i.address_id = a.id AND i.is_deleted = 0) WHERE a.entity_id = ? AND a.is_deleted = 0 GROUP BY a.id";
     $stmt = $db->execute($sql, array($id));
     $addresses = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    return $addresses;
+    if (sfConfig::get('app_amazon_enable_s3_assets')) 
+    {
+      $base = sfConfig::get('app_amazon_s3_base') . '/' . sfConfig::get('app_amazon_s3_bucket');
+    }
+    else
+    {
+      $base = 'http://littlesis.org';
+    }
+
+    return array_map(function($address) use ($base) {
+      if ($address['image'])
+      {
+        $address['image_uri'] = $base . '/images/large/' . $address['image'];
+      }
+      unset($address['image']);
+      return $address;
+    }, $addresses);
   }
 }
