@@ -1321,7 +1321,7 @@ class EntityApi
   static function getAddresses($id)
   {
     $db = Doctrine_Manager::connection();
-    $sql = "SELECT a.city, a.state_name, a.country_name, a.postal, MIN(i.filename) AS image, a.latitude, a.longitude " . 
+    $sql = "SELECT a.city, a.state_name, a.country_name, a.postal, MIN(i.filename) AS image " . 
            "FROM entity e " .
            "LEFT JOIN couple c ON (c.entity_id = e.id) " .
            "JOIN address a ON (a.entity_id IN (e.id, c.partner1_id, c.partner2_id)) " . 
