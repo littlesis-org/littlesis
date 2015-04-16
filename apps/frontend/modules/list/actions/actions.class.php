@@ -1107,4 +1107,10 @@ class listActions extends sfActions
     $this->checkList($request, false, false);
     $this->redirect("http://" . $_SERVER['HTTP_HOST'] . "/lists/" . $this->list['id'] . "/admin");
   }
+
+  public function executeData($request) 
+  {
+    $this->checkList($request, false, false);
+    $this->redirect("http://" . $_SERVER['HTTP_HOST'] . "/lists/" . $this->list['id'] . "/members");
+  }
 }
