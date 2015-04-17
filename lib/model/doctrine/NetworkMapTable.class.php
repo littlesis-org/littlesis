@@ -34,11 +34,11 @@ class NetworkMapTable extends Doctrine_Table
 
     try 
     {
-      $url = url_for(EntityTable::generateRoute($entity, "map"));
+      $url = url_for(EntityTable::generateRoute($entity));
     } 
     catch (Exception $e) 
     {
-      $url = 'http://littlesis.org/' . strtolower($primary_ext) . '/' . $entity['id'] . '/' . LsSlug::convertNameToSlug($entity['name']) . '/map';
+      $url = 'http://littlesis.org/' . strtolower($primary_ext) . '/' . $entity['id'] . '/' . LsSlug::convertNameToSlug($entity['name']);
     }
     
     if (@$entity["blurb"])
