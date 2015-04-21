@@ -159,6 +159,27 @@ class LsCacheFilter extends sfCacheFilter
     )
   );
   
+  public static function cachedActionsByModule($module)
+  {
+    $actions = array();
+
+    if (self::$alwaysCached[$module])
+    {
+      $actions = array_merge($actions, array_keys(self::$alwaysCached[$module]));
+    }
+
+    if (self::$outsideCached[$module])
+    {
+      $actions = array_merge($actions, array_keys(self::$outsideCached[$module]));
+    }
+
+    if (self::$insideCached[$module])
+    {
+      $actions = array_merge($actions, array_keys(self::$insideCached[$module]));
+    }
+
+    return array_unique($actions);
+  }
 
   public function execute($filterChain)
   {

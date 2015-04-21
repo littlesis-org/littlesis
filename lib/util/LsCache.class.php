@@ -99,7 +99,21 @@ class LsCache
 
   static function getEntityCachePatternsById($id, $action='*', $key='*')
   {
-    return array(self::$clearPatternPrefix . 'entity/' . $action . '/_sf_cache_key/' . $key . '/id/' . $id . '/*');
+    $entity = Doctrine::getTable('Entity')->find($id);
+    $actions = array_merge(array('view'), LsCacheFilter::cachedActionsByModule('entity'));
+    $partials = array('_page', '_action', 'leftcol_profileimage', 'leftcol_references', 'leftcol_stats', 'leftcol_lists', 'relationship_tabs_content', 'similarEntities', 'watchers');
+    $keys = array();
+
+    foreach ($actions as $action)
+    {
+      foreach ($partials as $partial)
+      {
+        $url = 'entity/' . $action . '?id=' . $id . '&slug=' . LsSlug::convertNameToSlug($entity['name']) . '&_sf_cache_key=' . $partial;
+        $keys[] = self::generateCacheKey($url);
+      }
+    }
+
+    return $keys;
   }
 
 
@@ -115,7 +129,21 @@ class LsCache
 
   static function getListCachePatternsById($id)
   {
-    return array(self::$clearPatternPrefix . 'list/*/_sf_cache_key/*/id/' . $id . '/*');
+    $list = Doctrine::getTable('LsList')->find($id);
+    $actions = array_merge(array('view'), LsCacheFilter::cachedActionsByModule('list'));
+    $partials = array('_page', '_action');
+    $keys = array();
+
+    foreach ($actions as $action)
+    {
+      foreach ($partials as $partial)
+      {
+        $url = 'list/' . $action . '?id=' . $id . '&slug=' . LsSlug::convertNameToSlug($list['name']) . '&_sf_cache_key=' . $partial;
+        $keys[] = self::generateCacheKey($url);
+      }
+    }
+
+    return $keys;
   }
 
   
@@ -131,7 +159,20 @@ class LsCache
 
   static function getRelationshipCachePatternsById($id)
   {
-    return array(self::$clearPatternPrefix . 'relationship/*/_sf_cache_key/*/id/' . $id);
+    $actions = array_merge(array('view'), LsCacheFilter::cachedActionsByModule('relationship'));
+    $partials = array('_page', '_action', 'main');
+    $keys = array();
+
+    foreach ($actions as $action)
+    {
+      foreach ($partials as $partial)
+      {
+        $url = 'relationship/' . $action . '?id=' . $id . '&_sf_cache_key=' . $partial;
+        $keys[] = self::generateCacheKey($url);
+      }
+    }
+
+    return $keys;
   }
 
 

@@ -1862,7 +1862,7 @@ class EntityTable extends Doctrine_Table
     $sql = "SELECT r.id, r.entity1_id, r.entity2_id, r.category_id, r.is_current, r.end_date, r.is_deleted, " . 
            "GROUP_CONCAT(DISTINCT(rc.name) SEPARATOR ', ') AS label, " . 
            "GROUP_CONCAT(DISTINCT(r.category_id) SEPARATOR ',') AS category_ids, " . 
-           "COUNT(r.id) AS  num " . 
+           "COUNT(r.id) AS num " . 
            "FROM relationship r LEFT JOIN relationship_category rc ON (rc.id = r.category_id) " . 
            "LEFT JOIN entity e1 ON (e1.id = r.entity1_id) " .
            "LEFT JOIN entity e2 ON (e2.id = r.entity2_id) " .
