@@ -43,6 +43,9 @@ There are ten categories of relationships in LittleSis. They help us organize re
   <li>
     <strong>Hierarchy:</strong> when an org is a subdivision of another org. For example: subsidiaries, departments, subcommittees.
   </li>
+  <li>
+    <strong>Generic:</strong> when a relationship is vague or doesn't fit into any of the above categories.
+  </li>
 </ul>
 
 </body>
