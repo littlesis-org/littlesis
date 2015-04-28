@@ -106,6 +106,11 @@
     'category_ids' => array(RelationshipTable::LOBBYING_CATEGORY),
     'order' => 1,
     'pointer' => 'Officials and agencies ' . $entity['name'] . ' has lobbied'
+  ),
+  'Other Affiliations' => array(
+    'more_action' => 'otherAffiliations',
+    'category_ids' => array(RelationshipTable::GENERIC_CATEGORY),
+    'pointer' => 'Other entities ' . $entity['name'] . ' is connected to'
   )
 ) ?>
 
@@ -199,6 +204,11 @@
     'category_ids' => array(RelationshipTable::LOBBYING_CATEGORY),
     'order' => 1,
     'pointer' => 'Officials and agencies ' . $entity['name'] . ' has lobbied'
+  ),
+  'Other Affiliations' => array(
+    'more_action' => 'otherAffiliations',
+    'category_ids' => array(RelationshipTable::GENERIC_CATEGORY),
+    'pointer' => 'Other entities ' . $entity['name'] . ' is connected to'
   )
 ) ?>
 

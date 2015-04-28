@@ -1411,6 +1411,25 @@ class entityActions extends sfActions
     );
   }
 
+
+  public function executeOtherAffiliations($request)
+  {
+    $this->checkEntity($request);
+
+    $options = array(
+      'cat_ids' => array(RelationshipTable::GENERIC_CATEGORY)
+    );
+
+    return $this->pagerAction(
+      $request,
+      $this->entity,
+      $options,
+      'Other Affiliations',
+      'Other entities ' . $this->entity['name'] . ' is connected to'
+    );
+  }
+
+
   public function executeUploadImage($request)
   {
     $this->checkEntity($request);

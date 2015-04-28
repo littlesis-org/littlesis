@@ -119,10 +119,10 @@ Org:
 Couple:
   actAs: [Extension]
   columns:
-    partner1:
+    partner1_id:
       type: integer
       notnull: true
-    partner2:
+    partner2_id:
       type: integer
       notnull: true
   relations:
@@ -135,7 +135,7 @@ Couple:
       class: Entity
       local: partner2_id
       foreign: id
-      foeignAlias: Couple2
+      foreignAlias: Couple2
 
 
 #SECOND TIER PERSON EXTENSIONS & RELATED TABLES
@@ -712,6 +712,9 @@ Ownership:
     shares: integer
 
 Hierarchy:
+  actAs: [RelationshipCategoryTemplate]
+
+Generic:
   actAs: [RelationshipCategoryTemplate]
 
 

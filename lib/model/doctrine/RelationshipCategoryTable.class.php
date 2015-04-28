@@ -16,7 +16,7 @@ class RelationshipCategoryTable extends Doctrine_Table
     9 => 'Professional',
     10 => 'Ownership',
     11 => 'Hierarchy',
-    12 => 'Misc'
+    12 => 'Generic'
   );
 
 
@@ -32,7 +32,7 @@ class RelationshipCategoryTable extends Doctrine_Table
     9 => 'Professional',
     10 => 'Ownership',
     11 => 'Hierarchy',
-    12 => 'Misc'
+    12 => 'Relationship'
   );
   
 
@@ -48,7 +48,7 @@ class RelationshipCategoryTable extends Doctrine_Table
     9 => 'Professional',
     10 => 'Owner',
     11 => 'Hierarchy',
-    12 => 'Misc'
+    12 => 'Affiliation'
   );
   
   

@@ -20,7 +20,7 @@ class BaseCoupleForm extends BaseFormDoctrine
       'entity_id'      => new sfValidatorDoctrineChoice(array('model' => 'Entity')),
     ));
 
-    $this->widgetSchema->setNameFormat('person[%s]');
+    $this->widgetSchema->setNameFormat('couple[%s]');
 
     $this->errorSchema = new sfValidatorErrorSchema($this->validatorSchema);
 

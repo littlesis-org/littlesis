@@ -15,7 +15,7 @@ class RelationshipTable extends Doctrine_Table
   const PROFESSIONAL_CATEGORY = 9;
   const OWNERSHIP_CATEGORY = 10;
   const HIERARCHY_CATEGORY = 11;
-  const MISC_CATEGORY = 12;
+  const GENERIC_CATEGORY = 12;
 
   static $categories = array(
     'Position', 
@@ -29,7 +29,7 @@ class RelationshipTable extends Doctrine_Table
     'Professional',
     'Ownership',
     'Hierarchy',
-    'Misc'
+    'Generic'
   );
   
   static $prepositions = array(
@@ -62,7 +62,7 @@ class RelationshipTable extends Doctrine_Table
     9 => array(1 => "of", 2 => "of"),
     10 => array(1 => "of", 2 => self::DEFAULT_PREPOSITION),
     11 => array(1 => "of", 2 => "of"),
-    12 => array(1 => "of", 2 => self::DEFAULT_PREPOSITION)
+    12 => array(1 => "of", 2 => "of")
   );
 
 
@@ -287,7 +287,7 @@ class RelationshipTable extends Doctrine_Table
       $ret = 'Relationship';
     }
 
-    $ret = RelationshipCategoryTable::getNameById($rel['category_id']) . ': ' . $rel['Entity1']['name'] . ', ' . $rel['Entity2']['name'];
+    $ret = RelationshipCategoryTable::getDisplayNameById($rel['category_id']) . ': ' . $rel['Entity1']['name'] . ', ' . $rel['Entity2']['name'];
 
     if ($rel['is_deleted'])
     {
