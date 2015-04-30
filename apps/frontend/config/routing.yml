@@ -38,7 +38,7 @@ funding:
 contact:
   url:   /contact
   param: { module: home, action: contact }
-  
+
 startpage:
   url:   /start
   param: { module: home, action: start }
@@ -70,7 +70,7 @@ howto:
 videos:
   url:   /videos
   param: { module: home, action: videos }
-  
+
 disclaimer:
   url:   /disclaimer
   param: { module: home, action: disclaimer }
@@ -90,7 +90,7 @@ search:
 groups:
   url:   /groups
   param: { module: group, action: list }
-  
+
 analysts:
   url:   /analysts
   param: { module: user, action: featured }
@@ -113,7 +113,7 @@ dashboard:
 
 edits:
   url:   /edits
-  param: { module: modification, action: latest }  
+  param: { module: modification, action: latest }
 
 
 # SLUGS
@@ -167,7 +167,7 @@ listPager:
   url:   list/:id/:slug/:action/page/:page/*
   param: { module: list }
   requirements: { page: \d+ }
-  
+
 list:
   url:   list/:id/:slug/:action/*
   param: { module: list }
@@ -270,7 +270,7 @@ railsEditTwitter:
   param: { module: entity, action: edit_twitter }
 
 maps:
-  url: /maps
+  url:   /maps
   param: { module: map, action: list }
 
 
@@ -287,6 +287,7 @@ advancedhelp:
   url:   /advancedhelp
   param: { module: help, action: advanced }
 
+
 # LOCAL
 local:
   url: local/:name/:action/*
@@ -299,12 +300,12 @@ localView:
 localHome:
   url:   /:name
   param: { module: local, action: index }
-
+  
 
 # default rules
 homepage:
   url:   /
-  param: { module: home, action: welcome }
+  param: { module: home, action: index }
 
 default_symfony:
   url:   /symfony/:action/*

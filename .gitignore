@@ -1,7 +1,6 @@
 apps/api/config/app.yml
 apps/api/config/settings.yml
 apps/frontend/config/app.yml
-apps/frontend/config/routing.yml
 apps/frontend/config/settings.yml
 *.DS_Store
 cache/
