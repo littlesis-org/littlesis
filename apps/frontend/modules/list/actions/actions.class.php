@@ -24,6 +24,13 @@ class listActions extends sfActions
   }
 
 
+  public function clearRailsCache($id)
+  {
+    $url = 'http://' . $_SERVER['HTTP_HOST'] . '/lists/' . $id . '/clear_cache';
+    return $result = file_get_contents($url);
+  }
+
+
   public function executeRoute($request)
   {
     $directActions = array(
@@ -157,6 +164,7 @@ class listActions extends sfActions
         $this->list->name = $params['name'];
         $this->list->description = $params['description'];
         $this->list->is_ranked = (isset($params['is_ranked']) && $params['is_ranked']) ? true : false;    
+        $this->list->custom_field_name = $params['custom_field_name'];
 
         if ($this->getUser()->hasCredential('admin'))
         {
@@ -167,6 +175,7 @@ class listActions extends sfActions
         $this->list->saveWithRequiredReference($refParams);
 
         $this->clearCache($this->list);
+        $this->clearRailsCache($this->list->id);
 
         $this->redirect($this->list->getInternalUrl());
       }  
@@ -190,6 +199,7 @@ class listActions extends sfActions
     $this->list->delete();
 
     $this->clearCache($this->list);
+    $this->clearRailsCache($this->list->id);
 
     foreach ($entityIds as $entityId)
     {
@@ -257,14 +267,15 @@ class listActions extends sfActions
         $listEntity->save();      
   
         $this->clearCache($this->list);
+        $this->clearRailsCache($this->list->id);
         LsCache::clearEntityCacheById($entity->id);
       }
       
       $this->redirect($this->list->getInternalUrl());
     }
   }
-  
-  
+
+
   public function executeSetRank($request)
   {
     
@@ -292,6 +303,7 @@ class listActions extends sfActions
     $listEntity->save();
 
     $this->clearCache($this->list);
+    $this->clearRailsCache($this->list->id);
     LsCache::clearEntityCacheById($entity->id);
 
     $this->redirect($this->list->getInternalUrl());
@@ -316,6 +328,7 @@ class listActions extends sfActions
     $listEntity->delete();
 
     $this->clearCache($list);
+    $this->clearRailsCache($list->id);
     LsCache::clearEntityCacheById($entity->id);
     
     $this->redirect($list->getInternalUrl());
@@ -946,6 +959,7 @@ class listActions extends sfActions
           }
         }
         $this->clearCache($this->list);
+        $this->clearRailsCache($this->list->id);
 
         $this->redirect($this->list->getInternalUrl());
       }

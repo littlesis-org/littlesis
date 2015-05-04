@@ -911,6 +911,7 @@ LsList:
     display_name:
       type: string(50)
     featured_list_id: integer
+    custom_field_name: clob
   indexes:
     uniqueness:
       fields: [name]

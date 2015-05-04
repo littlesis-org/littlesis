@@ -16,6 +16,7 @@ abstract class BaseLsList extends sfDoctrineRecord
     $this->hasColumn('is_network', 'boolean', null, array('type' => 'boolean', 'notnull' => true, 'default' => false));
     $this->hasColumn('display_name', 'string', 50, array('type' => 'string', 'length' => '50'));
     $this->hasColumn('featured_list_id', 'integer', null, array('type' => 'integer'));
+    $this->hasColumn('custom_field_name', 'clob', null, array('type' => 'clob'));
 
 
     $this->index('uniqueness', array('fields' => array(0 => 'name'), 'type' => 'unique'));
