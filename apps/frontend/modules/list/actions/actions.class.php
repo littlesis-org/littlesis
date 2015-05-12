@@ -24,6 +24,13 @@ class listActions extends sfActions
   }
 
 
+  public function clearRailsCache($id)
+  {
+    $url = 'http://' . $_SERVER['HTTP_HOST'] . '/lists/' . $id . '/clear_cache';
+    return $result = file_get_contents($url);
+  }
+
+
   public function executeRoute($request)
   {
     $directActions = array(
@@ -157,6 +164,7 @@ class listActions extends sfActions
         $this->list->name = $params['name'];
         $this->list->description = $params['description'];
         $this->list->is_ranked = (isset($params['is_ranked']) && $params['is_ranked']) ? true : false;    
+        $this->list->custom_field_name = $params['custom_field_name'];
 
         if ($this->getUser()->hasCredential('admin'))
         {
@@ -167,6 +175,7 @@ class listActions extends sfActions
         $this->list->saveWithRequiredReference($refParams);
 
         $this->clearCache($this->list);
+        $this->clearRailsCache($this->list->id);
 
         $this->redirect($this->list->getInternalUrl());
       }  
@@ -190,6 +199,7 @@ class listActions extends sfActions
     $this->list->delete();
 
     $this->clearCache($this->list);
+    $this->clearRailsCache($this->list->id);
 
     foreach ($entityIds as $entityId)
     {
@@ -257,14 +267,15 @@ class listActions extends sfActions
         $listEntity->save();      
   
         $this->clearCache($this->list);
+        $this->clearRailsCache($this->list->id);
         LsCache::clearEntityCacheById($entity->id);
       }
       
       $this->redirect($this->list->getInternalUrl());
     }
   }
-  
-  
+
+
   public function executeSetRank($request)
   {
     
@@ -292,6 +303,7 @@ class listActions extends sfActions
     $listEntity->save();
 
     $this->clearCache($this->list);
+    $this->clearRailsCache($this->list->id);
     LsCache::clearEntityCacheById($entity->id);
 
     $this->redirect($this->list->getInternalUrl());
@@ -316,6 +328,7 @@ class listActions extends sfActions
     $listEntity->delete();
 
     $this->clearCache($list);
+    $this->clearRailsCache($list->id);
     LsCache::clearEntityCacheById($entity->id);
     
     $this->redirect($list->getInternalUrl());
@@ -452,7 +465,7 @@ class listActions extends sfActions
 
     //first get person list members
     $db = Doctrine_Manager::connection();
-    $sql = 'SELECT entity_id FROM ls_list_entity WHERE list_id = ?';
+    $sql = 'SELECT entity_id FROM ls_list_entity WHERE list_id = ? AND is_deleted = 0';
     $stmt = $db->execute($sql, array($request->getParameter('id')));
     $entityIds = $stmt->fetchAll(PDO::FETCH_COLUMN);
        
@@ -625,7 +638,6 @@ class listActions extends sfActions
       'cat_ids' => RelationshipTable::DONATION_CATEGORY,
       'order' => 2,
       'degree1_type' => 'Person',
-      'degree2_type' => 'Person',
       'page' => $page,
       'num' => $num
     );
@@ -947,6 +959,7 @@ class listActions extends sfActions
           }
         }
         $this->clearCache($this->list);
+        $this->clearRailsCache($this->list->id);
 
         $this->redirect($this->list->getInternalUrl());
       }
@@ -1083,5 +1096,35 @@ class listActions extends sfActions
     $num = $request->getParameter('num');
        
     $this->data = json_encode(LsListTable::getEntitiesAndRelsForMap($this->list['id'], $num, array()));
+  }
+
+  public function executeDatatable($request) 
+  {
+    $this->checkList($request, false, false);
+    $this->redirect("http://" . $_SERVER['HTTP_HOST'] . "/lists/" . $this->list['id'] . "/relationships");
+  }
+
+  public function executeMatchDonations($request) 
+  {
+    $this->checkList($request, false, false);
+    $this->redirect("http://" . $_SERVER['HTTP_HOST'] . "/lists/" . $this->list['id'] . "/match_donations");
+  }
+
+  public function executeFindArticles($request) 
+  {
+    $this->checkList($request, false, false);
+    $this->redirect("http://" . $_SERVER['HTTP_HOST'] . "/lists/" . $this->list['id'] . "/find_articles");
+  }
+
+  public function executeAdmin($request) 
+  {
+    $this->checkList($request, false, false);
+    $this->redirect("http://" . $_SERVER['HTTP_HOST'] . "/lists/" . $this->list['id'] . "/admin");
+  }
+
+  public function executeData($request) 
+  {
+    $this->checkList($request, false, false);
+    $this->redirect("http://" . $_SERVER['HTTP_HOST'] . "/lists/" . $this->list['id'] . "/members");
   }
 }

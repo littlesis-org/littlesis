@@ -52,10 +52,13 @@ Cats:
 Current:
 <input id="netmap_current_only" type="checkbox" /><br />
 
-<?php if ($sf_user->hasCredential('admin')) : ?>
+<?php if ($sf_user->hasCredential('admin') || $sf_user->hasCredential('importer')) : ?>
 <br />
 <?php if (isset($id)) : ?>
-  <?php echo button_to('edit', "map/edit?id=" . $id) ?><br />
+  <?php echo button_to('view', "@railsMap?id=" . $id) ?><br />
+<?php endif; ?>
+<?php if (isset($id)) : ?>
+  <?php echo button_to('meta', "@railsMapEditMeta?id=" . $id) ?><br />
 <?php endif; ?>
 <input id="netmap_save" type="button" value="save" /><br />
 <?php endif; ?>
@@ -127,17 +130,22 @@ $("#netmap_save").on("click", function() {
 
   var id = netmap.get_network_map_id();
   if (id) {
-    var url = '<?php echo url_for("map/update?id=999999") ?>'.replace("999999", id);
+    var url = "/maps/" + id;
   } else {
-    var url = '<?php echo url_for("map/create") ?>';
+    var url = "/maps";
   }
+
+  var method = id ? "PATCH" : "POST";
+  var data = netmap.data_for_save();
+  data.title = "<?php echo $entity['name'] ?>";
+  data.zoom = netmap.get_scale();
 
   $.ajax({
     url: url,
-    type: "POST",
-    data: netmap.data_for_save(),
+    type: method,
+    data: { map: data },
     success: function(data) { 
-      window.location.href = '<?php echo url_for("map/view?id=999999") ?>'.replace("999999", data.id);    
+      window.location.href = '/maps/' + data.id;
     },
     error: function() { 
       alert("There was an error saving the map"); 

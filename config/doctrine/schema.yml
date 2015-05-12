@@ -116,6 +116,27 @@ Org:
     fedspending_id: string(10)
     lda_registrant_id: string(10)
 
+Couple:
+  actAs: [Extension]
+  columns:
+    partner1_id:
+      type: integer
+      notnull: true
+    partner2_id:
+      type: integer
+      notnull: true
+  relations:
+    Partner1:
+      class: Entity
+      local: partner1_id
+      foreign: id
+      foreignAlias: Couple1
+    Partner2:
+      class: Entity
+      local: partner2_id
+      foreign: id
+      foreignAlias: Couple2
+
 
 #SECOND TIER PERSON EXTENSIONS & RELATED TABLES
 
@@ -690,6 +711,13 @@ Ownership:
     percent_stake: integer
     shares: integer
 
+Hierarchy:
+  actAs: [RelationshipCategoryTemplate]
+
+Generic:
+  actAs: [RelationshipCategoryTemplate]
+
+
 #LOBBYING EXTRAS
 
 LobbyFiling:
@@ -883,6 +911,7 @@ LsList:
     display_name:
       type: string(50)
     featured_list_id: integer
+    custom_field_name: clob
   indexes:
     uniqueness:
       fields: [name]

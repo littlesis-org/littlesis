@@ -35,13 +35,6 @@
   ) ?>
 <?php endif; ?>
 
-<?php if ($entity->hasExtension('Org')) : ?>
-<?php $tabs['Hierarchy'] = array(
-  'url' => $entity->getInternalUrl('editHierarchy'),
-  'actions' => array('editHierarchy', 'addChild', 'changeParent')
-) ?>
-<?php endif; ?>
-
 <?php if ($sf_user->hasCredential('editor')) : ?>
   <?php $tabs['Industries'] = array(
     'url' => $entity->getInternalUrl('editIndustries'),

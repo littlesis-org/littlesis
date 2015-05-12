@@ -1,0 +1,3 @@
+[submodule "web/js/oligrapher"]
+	path = web/js/oligrapher
+	url = git@github.com:skomputer/oligrapher.git

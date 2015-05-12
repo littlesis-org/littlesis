@@ -16,7 +16,8 @@ class LsListForm extends BaseLsListForm
       'description'         => new sfWidgetFormTextarea(),
       'is_ranked'           => new sfWidgetFormInputCheckbox(),
       'is_admin'            => new sfWidgetFormInputCheckbox(),
-      'is_featured'         => new sfWidgetFormInputCheckbox()
+      'is_featured'         => new sfWidgetFormInputCheckbox(),
+      'custom_field_name'   => new sfWidgetFormInput(array(), array('size' => 20))
     ));
 
     $this->setValidators(array(
@@ -27,7 +28,8 @@ class LsListForm extends BaseLsListForm
       'description'         => new sfValidatorString(array('required' => false)),
       'is_ranked'           => new sfValidatorBoolean(),
       'is_admin'            => new sfValidatorBoolean(),
-      'is_featured'         => new sfValidatorBoolean()
+      'is_featured'         => new sfValidatorBoolean(),
+      'custom_field_name'   => new sfValidatorString(array('required' => false))
     ));
 
     $this->widgetSchema->setLabels(array(
@@ -36,7 +38,8 @@ class LsListForm extends BaseLsListForm
     
     $this->widgetSchema->setHelps(array(
       'name' => '5-100 characters, no colons',
-      'is_ranked' => 'are list members sorted by a rank?'
+      'is_ranked' => 'are list members sorted by a rank?',
+      'custom_field_name' => 'name of editable field providing context for each list member'
     ));
     
     $this->validatorSchema->setOption('allow_extra_fields', true);

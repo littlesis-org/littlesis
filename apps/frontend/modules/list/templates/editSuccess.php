@@ -8,7 +8,7 @@
 <table>
   <?php include_partial('reference/required', array('form' => $reference_form)) ?>
 
-  <?php include_partial('global/form', array('form' => $list_form, 'field_names' => array('_csrf_token', 'name', 'description', 'is_ranked'))) ?>
+  <?php include_partial('global/form', array('form' => $list_form, 'field_names' => array('_csrf_token', 'name', 'description', 'is_ranked', 'custom_field_name'))) ?>
 
   <?php if ($sf_user->hasCredential('admin')) : ?>
     <?php include_partial('global/formfield', array('field' => $list_form['is_admin'])) ?>

@@ -47,7 +47,7 @@
     'url' => EntityTable::getInternalUrl($entity, 'political'),
     'href' => $baseHref . 'political',
     'actions' => array('political')
-  )  
+  )
 ) ?>
 
 
@@ -67,6 +67,12 @@
     'actions' => array('schools')
   ) ?> 
 <?php endif; ?>
+
+<?php $tabs['Data'] = array(
+  'url' => EntityTable::getInternalUrl($entity, 'datatable'),
+  'href' => $baseHref . 'datatable',
+  'actions' => array()
+) ?>
 
 <?php /* $tabs['Find Connections'] = array(
   'url' => EntityTable::getInternalUrl($entity, 'findConnections'),

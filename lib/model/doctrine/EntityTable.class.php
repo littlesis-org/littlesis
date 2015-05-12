@@ -1285,7 +1285,7 @@ class EntityTable extends Doctrine_Table
 
     $query = $s->buildEntityQuery($query, $aliases, $primary_ext);
 
-    $result = $s->Query($query, 'entities entities-delta');
+    $result = $s->Query($query, 'entities entities_delta');
     
     if ($result === false)
     {
@@ -1369,7 +1369,8 @@ class EntityTable extends Doctrine_Table
   static function getProfileImageById($id)
   {
     $db = Doctrine_Manager::connection();
-    $sql = 'SELECT * FROM image where entity_id = ? AND is_featured = 1 AND is_deleted = 0';
+    $sql = 'SELECT * FROM image where entity_id = ? AND is_featured = 1 AND is_deleted = 0 ' .
+           'AND image.address_id IS NULL';
     $stmt = $db->execute($sql, array($id));
     
     return $stmt->fetch(PDO::FETCH_ASSOC);
@@ -1770,6 +1771,34 @@ class EntityTable extends Doctrine_Table
     return array("entities" => array($entity), "rels" => $rels); 
   }
 
+  public static function getAddInterlocksAndRelsForMap($entity1_id, $entity2_id, $entity_ids)
+  {
+    $db = Doctrine_Manager::connection();
+    $sql = "SELECT DISTINCT(l1.entity2_id) " . 
+           "FROM link l1 LEFT JOIN link l2 ON (l1.entity2_id = l2.entity1_id) " .
+           "LEFT JOIN relationship r1 ON (r1.id = l1.relationship_id) " .
+           "LEFT JOIN relationship r2 ON (r2.id = l2.relationship_id) " .
+           "WHERE l1.entity1_id IN (?, ?) AND l2.entity2_id IN (?, ?) " .
+           "AND l1.category_id NOT IN ( " . join(",", array(RelationshipTable::DONATION_CATEGORY)) . ") " .
+           "AND l2.category_id NOT IN ( " . join(",", array(RelationshipTable::DONATION_CATEGORY)) . ") " .
+           "AND l1.entity2_id NOT IN ( " . join(",", $entity_ids) . ") " .
+           "AND l1.entity1_id <> l2.entity2_id " . 
+           "AND r1.is_deleted = 0 AND r2.is_deleted = 0";
+    $stmt = $db->execute($sql, array($entity1_id, $entity2_id, $entity1_id, $entity2_id));
+    $interlock_ids = $stmt->fetchAll(PDO::FETCH_COLUMN);
+
+    if (count($interlock_ids))
+    {
+      $interlocks = self::getEntitiesForMap($interlock_ids);
+      $rels = self::getRelsForMapBetween($interlock_ids, $entity_ids);
+      return array("entities" => $interlocks, "rels" => $rels);
+    }
+    else
+    {
+      return array("entities" => array(), "rels" => array());
+    }
+  }
+
   public static function getAddRelatedEntitiesAndRelsForMap($entity_id, $num, $entity_ids, $rel_ids, $include_cats=array(), $exclude_cats=array())
   {
     if (!$entity_ids) $entity_ids = array();
@@ -1814,32 +1843,11 @@ class EntityTable extends Doctrine_Table
 
   public static function mapRelsFromRows($rows)
   {
-    sfLoader::loadHelpers(array("Asset", "Url"));
     $rels = array();
 
     foreach ($rows as $rel)
     {
-      try 
-      {
-        $url = url_for(RelationshipTable::generateRoute($rel));
-      } 
-      catch (Exception $e)
-      {
-        $url = "http://littlesis.org/relationship/view/id/" . $rel['id'];
-      }
-      
-      $rels[] = array(
-       "id" => $rel["id"],
-        "entity1_id" => $rel["entity1_id"],
-        "entity2_id" => $rel["entity2_id"],
-        "category_id" => $rel["category_id"],
-        "category_ids" => $rel["category_ids"],
-        "is_current" => $rel["is_current"],
-        "end_date" => $rel["end_date"],       
-        "value" => 1, 
-        "label" => $rel["label"],
-        "url" => $url      
-      );
+      $rels[] = NetworkMapTable::prepareRelData($rel);
     }
     
     return $rels;  
@@ -1847,11 +1855,14 @@ class EntityTable extends Doctrine_Table
 
   public static function getRelsForMap($entity_ids, $include_cats=array(), $exclude_cats=array(), $exclude_ids=array())
   {
+    $entity1_ids = EntityTable::removeCustomIds($entity1_ids);
+    $exclude_ids = EntityTable::removeCustomIds($exclude_ids);
+
     $db = Doctrine_Manager::connection();
     $sql = "SELECT r.id, r.entity1_id, r.entity2_id, r.category_id, r.is_current, r.end_date, r.is_deleted, " . 
            "GROUP_CONCAT(DISTINCT(rc.name) SEPARATOR ', ') AS label, " . 
            "GROUP_CONCAT(DISTINCT(r.category_id) SEPARATOR ',') AS category_ids, " . 
-           "COUNT(r.id) AS  num " . 
+           "COUNT(r.id) AS num " . 
            "FROM relationship r LEFT JOIN relationship_category rc ON (rc.id = r.category_id) " . 
            "LEFT JOIN entity e1 ON (e1.id = r.entity1_id) " .
            "LEFT JOIN entity e2 ON (e2.id = r.entity2_id) " .
@@ -1863,15 +1874,18 @@ class EntityTable extends Doctrine_Table
            (count($exclude_ids) ? "AND r.id NOT IN (" . join(",", $exclude_ids) . ") " : "") .
            (count($include_cats) ? "AND r.category_id IN (" . join(",", $include_cats) . ") " : "") .
            (count($exclude_cats) ? "AND r.category_id NOT IN (" . join(",", $exclude_cats) . ") " : "") .
-           "GROUP BY r.entity1_id, r.entity2_id";
+           "GROUP BY LEAST(r.entity1_id, r.entity2_id), GREATEST(r.entity1_id, r.entity2_id), r.category_id";
     $stmt = $db->execute($sql);
     $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
     
     return self::mapRelsFromRows($rows);
   }
 
-  public static function getRelsForMapBetween($entity1_ids, $entity2_ids, $include_cats=array(), $exclude_cats=array())
+  public static function getRelsForMapBetween($entity1_ids, $entity2_ids, $include_cats=array(), $exclude_cats=array(), $entity_id=null)
   {
+    $entity1_ids = EntityTable::removeCustomIds($entity1_ids);
+    $entity2_ids = EntityTable::removeCustomIds($entity2_ids);
+
     $db = Doctrine_Manager::connection();
     $sql = "SELECT r.id, r.entity1_id, r.entity2_id, r.category_id, r.is_current, r.is_deleted, " . 
            "GROUP_CONCAT(DISTINCT(rc.name) SEPARATOR ', ') AS label, " . 
@@ -1885,12 +1899,14 @@ class EntityTable extends Doctrine_Table
            "WHERE l.entity1_id IN (" . join(",", $entity1_ids) . ") " . 
            "AND l.entity2_id IN (" . join(",", $entity2_ids) . ") " . 
            "AND l.entity1_id <> l.entity2_id " .
+           ($entity_id ? "AND (r.entity1_id = ? OR r.entity2_id = ?) " : "") .
            "AND r.is_deleted = 0 " .
            "AND e1.is_deleted = 0 AND e2.is_deleted = 0 " .
            (count($include_cats) ? "AND r.category_id IN (" . join(",", $include_cats) . ") " : "") .
            (count($exclude_cats) ? "AND r.category_id NOT IN (" . join(",", $exclude_cats) . ") " : "") .
-           "GROUP BY r.entity1_id, r.entity2_id";
-    $stmt = $db->execute($sql);
+           "GROUP BY LEAST(r.entity1_id, r.entity2_id), GREATEST(r.entity1_id, r.entity2_id), r.category_id";
+    $params = $entity_id ? array($entity_id, $entity_id) : array();
+    $stmt = $db->execute($sql, $params);
     $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     return self::mapRelsFromRows($rows);    
@@ -1900,32 +1916,38 @@ class EntityTable extends Doctrine_Table
   {
     if (!$entity_ids) $entity_ids = array();
 
+    $entity_ids = EntityTable::removeCustomIds($entity_ids);
+
     if (!in_array($entity_id, $entity_ids))
     {
       $entity_ids[] = $entity_id;
     }
-    
-    $db = Doctrine_Manager::connection();
-    $sql = "SELECT r.id, r.entity1_id, r.entity2_id, r.category_id, r.is_current, r.is_deleted, " . 
-           "GROUP_CONCAT(DISTINCT(rc.name) SEPARATOR ', ') AS label, " . 
-           "GROUP_CONCAT(DISTINCT(r.category_id) SEPARATOR ',') AS category_ids, " . 
-           "COUNT(r.id) AS  num " . 
-           "FROM relationship r LEFT JOIN relationship_category rc ON (rc.id = r.category_id) " . 
-           "LEFT JOIN entity e1 ON (e1.id = r.entity1_id) " .
-           "LEFT JOIN entity e2 ON (e2.id = r.entity2_id) " .
-           "WHERE r.entity1_id IN (" . join(",", $entity_ids) . ") " . 
-           "AND r.entity2_id IN (" . join(",", $entity_ids) . ") " . 
-           "AND (r.entity1_id = ? OR r.entity2_id = ?) " .
-           "AND r.is_deleted = 0 " .
-           "AND r.entity1_id <> r.entity2_id " .
-           "AND e1.is_deleted = 0 AND e2.is_deleted = 0 " .
-           (count($include_cats) ? "AND r.category_id IN (" . join(",", $include_cats) . ") " : "") .
-           (count($exclude_cats) ? "AND r.category_id NOT IN (" . join(",", $exclude_cats) . ") " : "") .
-           "GROUP BY r.entity1_id, r.entity2_id";
-    $stmt = $db->execute($sql, array($entity_id, $entity_id));
-    $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    return self::mapRelsFromRows($rows);    
+    return self::getRelsForMapBetween($entity_ids, $entity_ids, $include_cats, $exclude_cats, $entity_id);
+    
+    // $db = Doctrine_Manager::connection();
+    // $sql = "SELECT r.id, r.entity1_id, r.entity2_id, r.category_id, r.is_current, r.is_deleted, " . 
+    //        "GROUP_CONCAT(DISTINCT(rc.name) SEPARATOR ', ') AS label, " . 
+    //        "GROUP_CONCAT(DISTINCT(r.category_id) SEPARATOR ',') AS category_ids, " . 
+    //        "COUNT(r.id) AS  num " . 
+    //        "FROM link l " .
+    //        "LEFT JOIN relationship r ON (r.id = l.relationship_id) " .
+    //        "LEFT JOIN relationship_category rc ON (rc.id = r.category_id) " . 
+    //        "LEFT JOIN entity e1 ON (e1.id = r.entity1_id) " .
+    //        "LEFT JOIN entity e2 ON (e2.id = r.entity2_id) " .
+    //        "WHERE l.entity1_id IN (" . join(",", $entity_ids) . ") " . 
+    //        "AND l.entity2_id IN (" . join(",", $entity_ids) . ") " . 
+    //        "AND l.entity1_id <> l.entity2_id " .
+    //        "AND (l.entity1_id = ? OR l.entity2_id = ?) " .
+    //        "AND r.is_deleted = 0 " .
+    //        "AND e1.is_deleted = 0 AND e2.is_deleted = 0 " .
+    //        (count($include_cats) ? "AND r.category_id IN (" . join(",", $include_cats) . ") " : "") .
+    //        (count($exclude_cats) ? "AND r.category_id NOT IN (" . join(",", $exclude_cats) . ") " : "") .
+    //        "GROUP BY LEAST(r.entity1_id, r.entity2_id), GREATEST(r.entity1_id, r.entity2_id), r.category_id";
+    // $stmt = $db->execute($sql, array($entity_id, $entity_id));
+    // $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // return self::mapRelsFromRows($rows);    
   }
 
   public static function getEntitiesForMap($entity_ids)
@@ -1948,6 +1970,8 @@ class EntityTable extends Doctrine_Table
 
   public static function getRelatedEntityIdsForMap($entity_id, $num=10, $include_cats=array(), $exclude_cats=array(), $exclude_ids=array())
   {
+    $exclude_ids = EntityTable::removeCustomIds($exclude_ids);
+
     $db = Doctrine_Manager::connection();
     $sql = "SELECT l.entity2_id, COUNT(l.id) AS num " . 
            "FROM link l " . 
@@ -1972,32 +1996,31 @@ class EntityTable extends Doctrine_Table
            "WHERE e.id = ?";
     $params = array($entity_id);
     $stmt = $db->execute($sql, $params);      
-    $entity = $stmt->fetch(PDO::FETCH_ASSOC);      
+    $entity = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    if (!$entity["filename"])
-    {
-      $image_path = $entity["primary_ext"] == "Person" ? image_path("system/anon.png") : image_path("system/anons.png");
-    } 
-    else 
-    {      
-      $image_path = image_path(ImageTable::getPath($entity['filename'], 'profile'));
-    }
+    return NetworkMapTable::prepareEntityData($entity);
+  }
 
-    try 
-    {
-      $url = url_for(self::generateRoute($entity, "map"));
-    } 
-    catch (Exception $e) 
-    {
-      $url = 'http://littlesis.org/' . strtolower($entity['primary_ext']) . '/' . $entity['id'] . '/' . LsSlug::convertNameToSlug($entity['name']) . '/map';
-    }
-    
-    return array(
-      "id" => $entity_id, 
-      "name" => $entity["name"], 
-      "image" => $image_path, 
-      "url" => $url, 
-      "description" => $entity["blurb"]
-    );  
+  public static function isIntegerId($id)
+  {
+    return preg_match("/^\d+$/", $id) === 1;
+  }
+
+  public static function removeCustomIds($ids)
+  {
+    return array_filter($ids, array('EntityTable', 'isIntegerId'));
+  }
+
+  public static function railsUrl($entity, $action=null, $full=false) 
+  {
+    return ($full ? "http://" . $_SERVER['HTTP_HOST'] : "") . "/entities/" . $entity['id'] . "/" . $action;
+  }
+
+  public static function getPartnerIds($id)
+  {
+    $db = Doctrine_Manager::connection();
+    $sql = "SELECT partner1_id, partner2_id FROM couple WHERE entity_id = ?";
+    $stmt = $db->execute($sql, array($id));
+    return array_map('intval', $stmt->fetch());
   }
 }

@@ -1,5 +1,7 @@
 <?php
 
+require('/usr/local/bin/psysh');
+
 class PublicCompanyScraper extends Scraper
 {
   protected $entity;
@@ -85,7 +87,12 @@ class PublicCompanyScraper extends Scraper
       $this->entity = $company;
       $this->empty = false;
       $this->importRoster();
-      $this->saveMeta($this->session,'last_processed',$company->id);
+
+      if ($this->session)
+      {
+        $this->saveMeta($this->session, 'last_processed', $company->id);
+      }
+
       if (!$this->is_already_scraped)
       {
         $this->logCompany($company, $this->empty);
@@ -123,6 +130,7 @@ class PublicCompanyScraper extends Scraper
         ->where('e.id >= ?', $start_id)
         ->andWhere('e.primary_ext = ?', 'Org')
         ->andWhere('(pc.ticker IS NOT NULL OR pc.sec_cik IS NOT NULL)')  //need ticker or CIK to get directors
+        ->orderBy('e.id ASC')
         ->limit($this->limit);
         
       if ($this->session && $this->hasMeta($this->session,'last_processed'))
@@ -138,13 +146,16 @@ class PublicCompanyScraper extends Scraper
   
   public function importRoster($include_execs = true, $include_board = true)
   {
-    //we need a company CIK to get data from the SEC
-    if ((($this->entity->sec_cik == NULL) || ($this->entity->sec_cik == '')) && $this->entity->ticker)
-    {
-      $this->printDebug("Fetching CIK for company with ticker " . $this->entity->ticker . "...");
-      $this->entity->getCik();
-    }
+    // THE FOLLOWING CODE SHOULD NOT BE USED
+    // SEC CIKs should be scraped from tickers beforehand using "rake companies:get_sec_ciks" in Rails
+    //
+    // if ((($this->entity->sec_cik == NULL) || ($this->entity->sec_cik == '')) && $this->entity->ticker)
+    // {
+    //   $this->printDebug("Fetching CIK for company with ticker " . $this->entity->ticker . "...");
+    //   $this->entity->getCik();
+    // }
 
+    //we need a company CIK to get data from the SEC
     if (!$this->entity->sec_cik)
     {
       $this->printDebug("Can't scrape public company: no company CIK!\n");
@@ -177,8 +188,6 @@ class PublicCompanyScraper extends Scraper
     $stmt = $this->db->execute($sql, array($this->entity->id, RelationshipTable::POSITION_CATEGORY));
     $this->old_exec_entity_ids = array_unique($stmt->fetchAll(PDO::FETCH_COLUMN, 1));
 
-
-    
     //compile roster of company directors and executives using recent Form 4s
     $form4_urls = $this->getForm4Urls();
     $roster = array();
@@ -226,11 +235,12 @@ class PublicCompanyScraper extends Scraper
       $this->printDebug($filing['url'] . " (" . $filing['date'] . ")");
     }
     
+    $this->printDebug("Recent filing date: " . $this->recent_filing_date);
+
     $current_board_ids = array();
+    $current_roster = array();
 
-
-
-    
+    //loop through names from form 3 & 4s
     foreach ($roster as $r)
     {
       $this->printDebug("Cross-checking " . $r['parsedName'] . "...");
@@ -246,6 +256,8 @@ class PublicCompanyScraper extends Scraper
       $this->filing_name = null;
       $this->filing_url = null;
       
+
+      //look for name in proxies and S-registrations
       foreach ($this->filings as $filing)
       {
         if (preg_match_all($r['regexName'], $filing['doc']->text, $matches, PREG_SET_ORDER | PREG_OFFSET_CAPTURE))
@@ -255,9 +267,8 @@ class PublicCompanyScraper extends Scraper
           $this->filing_name = $filing['name'];
           $this->filing_url = $filing['url'];
           break;
-        }        
+        }
       }
-
 
       //if name found in filing text, or if form 4 is more recent than the filing date, consider it current
       //if not: consider not current if board, consider it unknown otherwise
@@ -282,7 +293,7 @@ class PublicCompanyScraper extends Scraper
       }
 
 
-              
+      //match existing or create person
       if (($r['isDirector'] == '1' && $include_board) || ($include_execs && $r['officerTitle'] != '') || ($r['isTenPercentOwner'] == '1'))
       {
         //look for existing entity by CIK
@@ -320,6 +331,7 @@ class PublicCompanyScraper extends Scraper
           else
           {
             $p = $this->importPerson($r);
+            $new_entities[] = $p;
           }
 
         }
@@ -328,11 +340,15 @@ class PublicCompanyScraper extends Scraper
           $this->printDebug("Found existing person with same SEC CIK: " . $p['name']);          
         }
           
+        //$p should always exist at this point right?
         if ($p)
         {
           //save entity ID for comparison with existing entities
           if ($current)
+          {
             $current_board_ids[] = $p->id;
+            $current_roster[] = $r;
+          }
 
           //add address to person
           //$this->importAddress($r['address'], $p, $r);
@@ -388,9 +404,9 @@ class PublicCompanyScraper extends Scraper
 
                 $rel->save();
   
-              //save source
+                //save source
                 $rel->addReference(
-                  $r['xmlUrl'], 
+                  $r['readableXmlUrl'], 
                   null, 
                   null, 
                   $this->entity->name . ' ' . $r['formName'], 
@@ -435,7 +451,7 @@ class PublicCompanyScraper extends Scraper
       }*/
       if (1)//else if ($board_checked == 0)
       {
-        $this->printDebug("GOOD BOARD PAGE NOT FOUND"); 
+        //$this->printDebug("GOOD BOARD PAGE NOT FOUND"); 
         foreach ($board_rels as $rel)
         {
           //only update if old board relationship is current but board member isn't on current roster
@@ -577,7 +593,7 @@ class PublicCompanyScraper extends Scraper
     if (!$this->browser->get($url)->responseIsError())
     {
       $xml = $this->browser->getResponseXml();
-      $results = $this->parseForm4($xml);
+      $results = $this->parseForm4($xml, $url);
 
       //make sure this is an entity with ownership in our given entity
       if (strpos($results['personCik'], trim($this->entity->sec_cik)) !== false || stristr($results['corpCik'], trim($this->entity->sec_cik)) === false)
@@ -588,6 +604,7 @@ class PublicCompanyScraper extends Scraper
       {
         $results['xmlUrl'] = $url;
         $results['htmlUrl'] = $url_arr['htmlUrl'];
+        $results['readableXmlUrl'] = preg_replace('/[^\/]+\.xml/i', 'xslF345X03/$0', $url);
         return $results;
       }
     }
@@ -612,7 +629,7 @@ class PublicCompanyScraper extends Scraper
     { 
       $search_pages = 0;
       $next_page = true;
-      $url = 'http://searchwww.sec.gov/EDGARFSClient/jsp/EDGAR_MainAccess.jsp?search_text=*&sort=Date&formType=' . $type . '&isAdv=true&stemming=true&numResults=100&queryCik=' . $this->entity->sec_cik . '&numResults=10&fromDate=01/01/' . $this->ownership_start_year . '&toDate=01/01/2015';
+      $url = 'http://searchwww.sec.gov/EDGARFSClient/jsp/EDGAR_MainAccess.jsp?search_text=*&sort=Date&formType=' . $type . '&isAdv=true&stemming=true&numResults=100&queryCik=' . $this->entity->sec_cik . '&fromDate=01/01/' . strval($this->years[0]) . '&toDate=01/01/' . strval($this->years[count($this->years)-1]+1);
 
       $this->printDebug("Form 3/4 search url: " . $url);
     
@@ -679,7 +696,11 @@ class PublicCompanyScraper extends Scraper
   
                 if ($u != $matches[1])
                 {
-                  $form4_urls[] = array('xmlUrl' => $u, 'htmlUrl' => $matches[1]);
+                  $form4_urls[] = array(
+                    'xmlUrl' => $u, 
+                    'htmlUrl' => $matches[1],
+                    'readableXmlUrl' => preg_replace('/[^\/]+\.xml/i', 'xslF345X03/$0', $u)
+                  );
                 }
               }
             }         
@@ -706,9 +727,9 @@ class PublicCompanyScraper extends Scraper
     return $form4_urls;
   }
   
-  public function parseForm4($xml)
+  public function parseForm4($xml, $url)
   {
-    $results = array();
+    $results = array('url' => $url);
 
     //form type
     $type = trim($xml->documentType);
@@ -723,8 +744,12 @@ class PublicCompanyScraper extends Scraper
 		//sometimes /CT/ (or /NY, /VA, etc) appears at the end of the person's name
 		$results['personName'] = preg_replace('/\/\p{L}+\/?$/','',$results['personName']);
 
-    //if Inc, LLC, or Trust appears in owner name, it's an org
-    if (preg_match('#(^| )(inc|llc|llp|trust|l\.l\.c\.|corp|group|holdings|company|limited|ltd|fund|l\.p\.|)($| |\.|,|/)#i', $results['personName']))
+    $nameCount = count(explode(' ', $results['personName']));
+
+    //if Inc, LLC, Trust, etc appears in owner name, it's an org
+    //if there's only one word in the name, it's an org
+    if ($nameCount == 1 || $nameCount > 10 || preg_match('#(^| )(inc|llc|llp|trust|trusts|l\.l\.c\.|corp|group|holdings|company|limited|ltd|fund|l\.p\.|lp|l p|l l c|l l p|l\.l.\
+      .p\.|partners|equity|equities|advisors|investor|investors|investment|investments|associates|usa|acquisition|subsidiary|co\.|co|ventures|foundation|insurance|plc|retirement|trustees|estate|management|gmbh|year)($| |\.|,|/)#i', $results['personName']))
     {
       $results['primaryExt'] = 'Org';
       $org = new Entity;
@@ -840,7 +865,7 @@ class PublicCompanyScraper extends Scraper
       $name = $last . "," . $rest;
       $person = PersonTable::parseCommaName($name);
     }
-    
+
     $name = $person->getFullName();
     $regex = $person->getNameRegex();
     
@@ -979,7 +1004,7 @@ class PublicCompanyScraper extends Scraper
     
       //save source info
       $p->addReference(
-        $person_arr['xmlUrl'], 
+        $person_arr['readableXmlUrl'], 
         null, 
         null,
         $this->entity->name . ' ' . $person_arr['formName'],  
@@ -1033,7 +1058,7 @@ class PublicCompanyScraper extends Scraper
       {
         $person->save();
         $a->addReference(
-          $person_arr['xmlUrl'], 
+          $person_arr['readableXmlUrl'], 
           null, 
           null, 
           $this->entity->name . ' ' . $person_arr['formName'],  
@@ -1076,7 +1101,7 @@ class PublicCompanyScraper extends Scraper
   
         //save sources
         $rel->addReference(
-          $person_arr['xmlUrl'], 
+          $person_arr['readableXmlUrl'], 
           null,
           null, 
           $this->entity->name . ' ' . $person_arr['formName'], 
@@ -1128,7 +1153,7 @@ class PublicCompanyScraper extends Scraper
   
         //save sources
         $rel->addReference(
-          $person_arr['xmlUrl'], 
+          $person_arr['readableXmlUrl'], 
           null,
           null, 
           $this->entity->name . ' ' . $person_arr['formName'], 
@@ -1210,7 +1235,7 @@ class PublicCompanyScraper extends Scraper
   
         //save sources
         $rel->addReference(
-          $person_arr['xmlUrl'], 
+          $person_arr['readableXmlUrl'], 
           null,
           null, 
           $this->entity->name . ' ' . $person_arr['formName'], 
@@ -1248,7 +1273,7 @@ class PublicCompanyScraper extends Scraper
           {
             $rel->save();
           }        
-          $this->printDebug("Existing relationship no longer current: " . $rel);
+          $this->printDebug("Existing relationship no longer current: " . $rel->id . " (" . $rel->Entity1->name . ")");
         }
       }
     }    

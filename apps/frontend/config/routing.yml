@@ -38,7 +38,7 @@ funding:
 contact:
   url:   /contact
   param: { module: home, action: contact }
-  
+
 startpage:
   url:   /start
   param: { module: home, action: start }
@@ -70,7 +70,7 @@ howto:
 videos:
   url:   /videos
   param: { module: home, action: videos }
-  
+
 disclaimer:
   url:   /disclaimer
   param: { module: home, action: disclaimer }
@@ -90,7 +90,7 @@ search:
 groups:
   url:   /groups
   param: { module: group, action: list }
-  
+
 analysts:
   url:   /analysts
   param: { module: user, action: featured }
@@ -110,7 +110,11 @@ data:
 dashboard:
   url:   /home/dashboard
   param: { module: home, action: dashboard }
-  
+
+edits:
+  url:   /edits
+  param: { module: modification, action: latest }
+
 
 # SLUGS
 personPager:
@@ -139,6 +143,14 @@ orgView:
   url:   org/:id/:slug/*
   param: { module: entity, action: view }
 
+couple:
+  url:   couple/:id/:slug/:action/*
+  param: { module: entity }
+
+coupleView:
+  url:   couple/:id/:slug/*
+  param: { module: entity, action: view }
+
 addPerson:
   url:   entity/addPerson/*
   param: { module: entity, action: addPerson }
@@ -155,7 +167,7 @@ listPager:
   url:   list/:id/:slug/:action/page/:page/*
   param: { module: list }
   requirements: { page: \d+ }
-  
+
 list:
   url:   list/:id/:slug/:action/*
   param: { module: list }
@@ -218,22 +230,47 @@ categoryOrgs:
 
 
 # MAPS
-viewMap:
-  url: /map/:id
-  param: { module: map, action: view }
-
-editMap:
-  url: /map/:id/edit
-  param: { module: map, action: edit }
-  methods: [GET,POST]
+listMaps:
+  url: /map/list
+  param: { module: map, action: list }
 
 deleteMap:
   url: /map/:id/delete
   param: { module: map, action: delete }
   methods: [POST]
 
-listMaps:
-  url: /map/list
+createMap:
+  url: /map/create
+  param: { module: map, action: create }
+  methods: [POST]
+
+updateMap:
+  url: /map/:id/update
+  param: { module: map, action: update }
+  methods: [POST]
+
+editMap:
+  url: /maps/:id/edit
+  param: { module: map, action: view }
+
+editMapOld:
+  url: /map/:id/edit
+  param: { module: map, action: view }
+
+railsMap:
+  url: /maps/:id
+  param: { module: map, action: view }
+
+railsMapEditMeta:
+  url: /maps/:id/edit_meta
+  param: { module: map, action: view }
+
+railsEditTwitter:
+  url: /entities/:id/edit_twitter
+  param: { module: entity, action: edit_twitter }
+
+maps:
+  url:   /maps
   param: { module: map, action: list }
 
 
@@ -250,6 +287,7 @@ advancedhelp:
   url:   /advancedhelp
   param: { module: help, action: advanced }
 
+
 # LOCAL
 local:
   url: local/:name/:action/*
@@ -262,12 +300,12 @@ localView:
 localHome:
   url:   /:name
   param: { module: local, action: index }
-
+  
 
 # default rules
 homepage:
   url:   /
-  param: { module: home, action: welcome }
+  param: { module: home, action: index }
 
 default_symfony:
   url:   /symfony/:action/*

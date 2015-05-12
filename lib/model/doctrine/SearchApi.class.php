@@ -23,13 +23,25 @@ class SearchApi
   {
     $s = new LsSphinxClient();
     $s->SetServer('localhost', 3312);
-    $s->SetMatchMode(SPH_MATCH_ANY);
+    //$s->SetMatchMode(SPH_MATCH_ANY);
+    $s->SetFieldWeights(array('name' => 3, 'aliases' => 3));
+
+    if (@$options['list_ids'])
+    {
+      $listIds = explode(',', $options['list_ids']);
+
+      if (is_array($listIds) && count($listIds))
+      {
+        $s->setFilter('list_ids', $listIds);
+      }
+    }
 
     //no query produces no results
     if (!$query = @$options['q'])
     {
       $query = 'bleahbleahbleahbleahbleahbleahbleah';
     }
+
     $query = LsSphinxClient::cleanQuery($query);
     $query = $s->EscapeString($query);
 
@@ -52,7 +64,7 @@ class SearchApi
     
     $s->SetLimits(($page - 1) * $num, (int) $num);
 
-    $result = $s->Query($query, 'entities entities-delta');
+    $result = $s->Query($query, 'entities entities_delta');
     
     if ($result === false)
     {
@@ -97,21 +109,21 @@ class SearchApi
   {
     $db = Doctrine_Manager::connection();
     $select = LsApi::generateSelectQuery(array('r' => 'Relationship'));
-    $from = 'relationship r';
-    $where = '((r.entity1_id = ? AND r.entity2_id = ?) OR (r.entity1_id = ? AND r.entity2_id = ?)) AND r.is_deleted = 0';
-    $params = array($id1, $id2, $id2, $id1);
+    $from = 'link l LEFT JOIN relationship r ON (r.id = l.relationship_id)';
+    $where = 'l.entity1_id = ? AND l.entity2_id = ? AND r.is_deleted = 0';
+    $params = array($id1, $id2);
     
 
     if ($catIds = @$options['cat_ids'])
     {
       if (count(explode(',', $catIds)) == 1)
       {
-        $where .= ' AND r.category_id = ?';
+        $where .= ' AND l.category_id = ?';
         $params[] = $catIds;
       }
       else
       {
-        $where .= ' AND r.category_id IN (' . $catIds . ')';
+        $where .= ' AND l.category_id IN (' . $catIds . ')';
       }
     }
 

@@ -4,7 +4,8 @@ class LsSlug
 {
   private static $regexMap = array(
     ' ' => '_',
-    '/' => '~'
+    '/' => '~',
+    '+' => '_'
   );
 
 
@@ -12,7 +13,7 @@ class LsSlug
   {
     foreach (self::$regexMap as $bad => $good)
     {
-      $str = preg_replace('#' . $bad . '#', $good, $str);
+      $str = preg_replace('#' . preg_quote($bad) . '#', $good, $str);
     }
     
     return $str;
@@ -23,7 +24,7 @@ class LsSlug
   {
     foreach (self::$regexMap as $bad => $good)
     {
-      $str = preg_replace('#' . $good . '#', $bad, $str);
+      $str = preg_replace('#' . preg_quote($good) . '#', $bad, $str);
     }
     
     return $str;

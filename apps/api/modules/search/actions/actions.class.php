@@ -38,7 +38,7 @@ class searchActions extends sfActions
 
   public function executeEntities($request)
   {
-    $options = $this->getParams(array('q', 'type_ids', 'num', 'page'));
+    $options = $this->getParams(array('q', 'type_ids', 'num', 'page', 'list_ids', 'search_all'));
     $result = SearchApi::getEntities($options);    
     $this->entities = array();
     

@@ -310,9 +310,9 @@ class Entity extends BaseEntity
     {
       $ret = $forDisplay ? 'Organization' : 'Org';
     }
-    else
+    elseif (in_array('Couple', $extensions))
     {
-      $ret = null;
+      $ret = 'Couple';
     }
     
     return $ret;
@@ -559,6 +559,10 @@ class Entity extends BaseEntity
         $this->name = PersonTable::nameizePersonName($this->name);
       }
       
+
+      //set delta field for sphinx indexing (in rails)
+      $this->delta = true;
+
 
       //save entity
       $ret = parent::save($conn);

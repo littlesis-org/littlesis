@@ -3,6 +3,12 @@
 class LsCache
 {
   protected static $clearPatternPrefix = '/*/all/';
+
+
+  static function isCacheEnabled()
+  {
+    return sfConfig::get('sf_cache');
+  }
   
 
   static function generateCacheKey($internalUri, $hostName = '', $vary = '', $contextualPrefix = '')  
@@ -11,6 +17,12 @@ class LsCache
     sfConfig::set('sf_cache_namespace_callable', null);
     
     $cache = sfContext::getInstance()->getViewCacheManager();
+
+    if (!$cache)
+    {
+      throw new Exception('no cache!');
+    }
+
     $key = $cache->generateCacheKey($internalUri, $hostName, $vary, $contextualPrefix);
 
     //end hack
@@ -50,6 +62,11 @@ class LsCache
 
   static function clearRecordCache(Doctrine_Record $r)
   {
+    if (!self::isCacheEnabled())
+    {
+      return null;
+    }
+    
     if (!$r->id)
     {
       throw new Exception("Can't clear cache for new record");
@@ -81,6 +98,11 @@ class LsCache
 
   static function clearUserCacheById($id)
   {
+    if (!self::isCacheEnabled())
+    {
+      return null;
+    }
+
     $name = sfGuardUserTable::getPublicNameById($id);
 
     return self::clearUserCacheByName($name);
@@ -89,6 +111,11 @@ class LsCache
   
   static function clearUserCacheByName($name)
   {
+    if (!self::isCacheEnabled())
+    {
+      return null;
+    }
+
     $patterns = self::getUserCachePatternsByName($name);
     
     self::clearCachePatterns($patterns);  
@@ -99,12 +126,31 @@ class LsCache
 
   static function getEntityCachePatternsById($id, $action='*', $key='*')
   {
-    return array(self::$clearPatternPrefix . 'entity/' . $action . '/_sf_cache_key/' . $key . '/id/' . $id . '/*');
+    $entity = Doctrine::getTable('Entity')->find($id);
+    $actions = array_merge(array('view'), LsCacheFilter::cachedActionsByModule('entity'));
+    $partials = array('_page', '_action', 'leftcol_profileimage', 'leftcol_references', 'leftcol_stats', 'leftcol_lists', 'relationship_tabs_content', 'similarEntities', 'watchers');
+    $keys = array();
+
+    foreach ($actions as $action)
+    {
+      foreach ($partials as $partial)
+      {
+        $url = 'entity/' . $action . '?id=' . $id . '&slug=' . LsSlug::convertNameToSlug($entity['name']) . '&_sf_cache_key=' . $partial;
+        $keys[] = self::generateCacheKey($url);
+      }
+    }
+
+    return $keys;
   }
 
 
   static function clearEntityCacheById($id, $action='*', $key='*')
   {
+    if (!self::isCacheEnabled())
+    {
+      return null;
+    }
+
     $patterns = self::getEntityCachePatternsById($id, $action, $key);
       
     self::clearCachePatterns($patterns);
@@ -115,12 +161,31 @@ class LsCache
 
   static function getListCachePatternsById($id)
   {
-    return array(self::$clearPatternPrefix . 'list/*/_sf_cache_key/*/id/' . $id . '/*');
+    $list = Doctrine::getTable('LsList')->find($id);
+    $actions = array_merge(array('view'), LsCacheFilter::cachedActionsByModule('list'));
+    $partials = array('_page', '_action');
+    $keys = array();
+
+    foreach ($actions as $action)
+    {
+      foreach ($partials as $partial)
+      {
+        $url = 'list/' . $action . '?id=' . $id . '&slug=' . LsSlug::convertNameToSlug($list['name']) . '&_sf_cache_key=' . $partial;
+        $keys[] = self::generateCacheKey($url);
+      }
+    }
+
+    return $keys;
   }
 
   
   static function clearListCacheById($id)
   {
+    if (!self::isCacheEnabled())
+    {
+      return null;
+    }
+
     $patterns = self::getListCachePatternsById($id);
       
     self::clearCachePatterns($patterns);
@@ -131,12 +196,30 @@ class LsCache
 
   static function getRelationshipCachePatternsById($id)
   {
-    return array(self::$clearPatternPrefix . 'relationship/*/_sf_cache_key/*/id/' . $id);
+    $actions = array_merge(array('view'), LsCacheFilter::cachedActionsByModule('relationship'));
+    $partials = array('_page', '_action', 'main');
+    $keys = array();
+
+    foreach ($actions as $action)
+    {
+      foreach ($partials as $partial)
+      {
+        $url = 'relationship/' . $action . '?id=' . $id . '&_sf_cache_key=' . $partial;
+        $keys[] = self::generateCacheKey($url);
+      }
+    }
+
+    return $keys;
   }
 
 
   static function clearRelationshipCacheById($id, $entity1Id=null, $entity2Id=null)
   {
+    if (!self::isCacheEnabled())
+    {
+      return null;
+    }
+
     $patterns = self::getRelationshipCachePatternsById($id);
     
     self::clearCachePatterns($patterns);
@@ -164,6 +247,11 @@ class LsCache
 
   static function clearNetworkMapCacheById($id)
   {
+    if (!self::isCacheEnabled())
+    {
+      return null;
+    }
+
     $patterns = self::getNetworkMapCachePatternsById($id);
 
     self::clearCachePatterns($patterns);
@@ -183,6 +271,11 @@ class LsCache
   
   static function clearGroupCacheByName($name)
   {
+    if (!self::isCacheEnabled())
+    {
+      return null;
+    }
+
     $patterns = self::getGroupCachePatternsByName($name);
     
     self::clearCachePatterns($patterns);
@@ -193,7 +286,7 @@ class LsCache
     
   static function clearCachePatterns($patterns)
   {
-    if (!sfConfig::get('sf_cache'))
+    if (!self::isCacheEnabled())
     {
       return null;
     }

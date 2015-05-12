@@ -33,12 +33,10 @@ search_entites_by_id:
 search_entities_with_orgs:
   url:   /entities/with-orgs.:format
   param: { module: search, action: entitiesWithOrgs }
-  requirements: { id: \d+ }
 
 search_entities:
   url:   /entities.:format
   param: { module: search, action: entities }
-  requirements: { id: \d+ }
 
 list_entities_with_orgs:
   url:   /list/:id/entities/with-orgs.:format
@@ -50,9 +48,34 @@ list_entities:
   param: { module: list, action: entities }
   requirements: { id: \d+ }
 
+list_entity_ids:
+  url:   /list/:id/entity-ids.:format
+  param: { module: list, action: entityIds }
+  requirements: { id: \d+ }
+
 list_map:
   url:   /list/:id/map.:format
   param: { module: list, action: map }
+  requirements: { id: \d+ }
+
+list_network:
+  url:   /list/:id/network-links.:format
+  param: { module: list, action: networkLinks }
+  requirements: { id: \d+ }
+
+list_images:
+  url:   /list/:id/images.:format
+  param: { module: list, action: images }
+  requirements: { id: \d+ }
+
+list_articles:
+  url:   /list/:id/articles.:format
+  param: { module: list, action: articles }
+  requirements: { id: \d+ }
+
+list_search_data:
+  url:   /list/:id/search-data.:format
+  param: { module: list, action: searchData }
   requirements: { id: \d+ }
 
 list_view:
@@ -94,7 +117,7 @@ entity_relationship_references:
   url:   /entity/:id/relationships/references.:format
   param: { module: entity, action: relationshipReferences }
   requirements: { id: \d+ }
-  
+
 entity_references:
   url:   /entity/:id/references.:format
   param: { module: entity, action: references }
@@ -124,7 +147,7 @@ entity_leadership:
   url:   /entity/:id/leadership.:format
   param: { module: entity, action: leadership }
   requirements: { id: \d+ }
-  
+
 entity_related:
   url:   /entity/:id/related.:format
   param: { module: entity, action: related }
@@ -139,15 +162,30 @@ entity_aliases:
   url:   /entity/:id/aliases.:format
   param: { module: entity, action: aliases }
   requirements: { id: \d+ }
-  
+
 entity_details:
   url:   /entity/:id/details.:format
   param: { module: entity, action: details }
   requirements: { id: \d+ }
-  
+
 entity_map:
   url:   /entity/:id/map.:format
   param: { module: entity, action: map }
+  requirements: { id: \d+ }
+
+entity_political:
+  url:   /entity/:id/political.json
+  param: { module: entity, action: political, format: json }
+  requirements: { id: \d+ }
+
+entity_articles:
+  url:   /entity/:id/articles.json
+  param: { module: entity, action: articles, format: json }
+  requirements: { id: \d+ }
+
+entity_addresses:
+  url:   /entity/:id/addresses.json
+  param: { module: entity, action: addresses, format: json }
   requirements: { id: \d+ }
 
 entity_view:
@@ -174,6 +212,10 @@ entity_types:
 map_add_entity_data:
   url:   /map/addEntityData.:format
   param: { module: map, action: addEntityData }
+
+map_add_interlocks_data:
+  url:   /map/addInterlocksData.:format
+  param: { module: map, action: addInterlocksData }
 
 map_add_related_entities_data:
   url:   /map/addRelatedEntitiesData.:format

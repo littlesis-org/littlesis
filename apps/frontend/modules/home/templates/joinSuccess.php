@@ -16,7 +16,7 @@
 
 <?php include_partial('global/section', array('title' => 'Join Our Announcement List')) ?>
 
-<p style="text-align: center;">
+<p style="text-align: center;"><a name="signup"></a>
 <form method="post" action="http://oi.vresp.com?fid=ba4140c884" target="vr_optin_popup" onsubmit="window.open( 'http://www.verticalresponse.com', 'vr_optin_popup', 'scrollbars=yes,width=600,height=450' ); return true;" >
     &nbsp; &nbsp; Email: &nbsp;
     <input name="email_address" style="position: relative; top: -1px;"/>&nbsp;
@@ -27,8 +27,8 @@
 <br />
 <br />
 
-<a name="signup"></a>
 <?php include_partial('global/section', array('title' => 'Become An Analyst')) ?>
+</a>
 
 <?php if ($sf_request->getParameter('group') == 'bubblebarons') : ?>
 

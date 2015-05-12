@@ -35,15 +35,14 @@ class Address extends BaseAddress
     $text = $this->street1 ? $this->street1 . ", " : "";
     $text .= $this->street2 ? $this->street2 . ", " : "";
     $text .= $this->city . ", ";
-    $text .= $this->State->exists() ? $this->State->abbreviation : "";
+    $text .= $this->state_name ? $this->state_name : ($this->state_id ? $this->State->abbreviation : "");
     $text .= " ";
     $text .= $this->postal ? $this->postal : "";
-    $text .= $this->Country->id == 1 ? "" : " " . $this->Country->name;
+    $text .= " " . $this->country_name;
 
     return $text;
   }
 
-  
   public function getMultiLiner()
   {
     $text = $this->street1 ? $this->street1 . "\n" : "";

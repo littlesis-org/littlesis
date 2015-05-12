@@ -48,12 +48,14 @@ class searchActions extends sfActions
     //search lists
     if (strlen($terms) > 2)
     {
-      $db = Doctrine_Manager::connection();
-      $sql = 'SELECT l.* FROM ls_list l WHERE l.name LIKE ? AND l.is_deleted = 0 AND l.is_network = 0 ' . 
-             ($this->getUser()->hasCredential('admin') ? '' : 'AND l.is_admin = 0 ') .
-             'ORDER BY l.name ASC';
-      $stmt = $db->execute($sql, array('%' . $terms . '%'));
-      $this->lists = $stmt->fetchAll(PDO::FETCH_ASSOC);      
+      $this->lists = LsListTable::getListsFromSphinxSearch($terms, $this->getUser()->hasCredential('admin'));
+
+      // $db = Doctrine_Manager::connection();
+      // $sql = 'SELECT l.* FROM ls_list l WHERE l.name LIKE ? AND l.is_deleted = 0 AND l.is_network = 0 ' . 
+      //        ($this->getUser()->hasCredential('admin') ? '' : 'AND l.is_admin = 0 ') .
+      //        'ORDER BY l.name ASC';
+      // $stmt = $db->execute($sql, array('%' . $terms . '%'));
+      // $this->lists = $stmt->fetchAll(PDO::FETCH_ASSOC);      
     }
 
     //search groups

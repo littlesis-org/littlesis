@@ -1,4 +1,4 @@
 viewSuccess:
-  javascripts:    [d3.v3.min.js, jquery.min.js, netmap.js]
+  javascripts:    [d3.v3.min.js, jquery.min.js, oligrapher/netmap.js]
   has_layout:     on
   layout:         layout

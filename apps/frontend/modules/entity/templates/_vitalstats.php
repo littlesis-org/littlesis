@@ -40,7 +40,7 @@
     'Aliases' => $aliases = EntityTable::getAliasNamesById($entity['id'], false),
     'Networks' => $networkLinks,
     'Industries' => $categoryLinks,
-    'Addresses<br>' . link_to('[edit]',EntityTable::getInternalUrl($entity, 'editContact')) => $addressLinks
+    'Addresses' => $addressLinks
   ),
   'label_width' => '100px'
 )) ?>

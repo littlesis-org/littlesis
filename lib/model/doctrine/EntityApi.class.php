@@ -101,17 +101,304 @@ class EntityApi
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
   }
 
+  static function getPersonDonationData($id, $start_cycle, $end_cycle)
+  {
+    $db = Doctrine_Manager::connection();
+    
+    $select = "SELECT e.id as donor_id, e.name as donor_name, e.primary_ext as donor_ext, " .
+              "e2.id as recipient_id, e2.name as recipient_name, e2.primary_ext as recipient_ext, " .
+              "f.amount as amt, f.crp_cycle, p2.party_id ";
+    
+    $from = "FROM entity e LEFT JOIN relationship r ON r.entity1_id = e.id " . 
+            "LEFT JOIN fec_filing f ON f.relationship_id = r.id " . 
+            "LEFT JOIN entity e2 ON e2.id = r.entity2_id " . 
+            "LEFT JOIN person p2 ON p2.entity_id = e2.id ";
+    
+    $where = "WHERE r.category_id = 5 AND r.is_deleted=0 AND f.crp_cycle IS NOT NULL " . 
+             "AND e.id = ? AND f.crp_cycle >= ? AND f.crp_cycle <= ? ";
+    
+    $sql = $select . $from . $where . "GROUP BY f.id";
+    $stmt = $db->execute($sql, array($id, $start_cycle, $end_cycle));
+
+    return $stmt->fetchAll();
+  }
+
+  static function getOrgDonationData($id, $start_cycle, $end_cycle)
+  {
+    $db = Doctrine_Manager::connection();
+
+    $select = "SELECT e.id as donor_id, e.name as donor_name, e.primary_ext as donor_ext, " .
+              "e2.id as recipient_id, e2.name as recipient_name, e2.primary_ext as recipient_ext, " .
+              "r2.is_current, p.is_board, p.is_executive, f.amount as amt, f.crp_cycle, p2.party_id ";
+    
+    $from = "FROM relationship r LEFT JOIN relationship r2 ON r2.entity1_id = r.entity1_id " . 
+            "LEFT JOIN entity e ON e.id = r.entity1_id " . 
+            "LEFT JOIN fec_filing f ON f.relationship_id = r.id " . 
+            "LEFT JOIN position p ON p.relationship_id = r2.id " . 
+            "LEFT JOIN entity e2 ON e2.id = r.entity2_id " . 
+            "LEFT JOIN person p2 ON p2.entity_id = e2.id ";
+    
+    $where = "WHERE r.category_id = 5 AND r2.category_id IN (1,3) AND r.is_deleted=0 AND r2.is_deleted=0 " . 
+             "AND r2.entity2_id = ? AND f.crp_cycle IS NOT NULL AND f.crp_cycle >= ? AND f.crp_cycle <= ? ";
+    
+    $sql = $select . $from . $where . 'GROUP BY f.id';
+    $stmt = $db->execute($sql, array($id, $start_cycle, $end_cycle));
+
+    return $stmt->fetchAll();
+  }
+
+  static function getCoupleDonationData($id, $start_cycle, $end_cycle)
+  {
+    list($id1, $id2) = EntityTable::getPartnerIds($id);
+
+    $db = Doctrine_Manager::connection();
+    
+    $select = "SELECT e.id as donor_id, e.name as donor_name, e.primary_ext as donor_ext, " .
+              "e2.id as recipient_id, e2.name as recipient_name, e2.primary_ext as recipient_ext, " .
+              "f.amount as amt, f.crp_cycle, p2.party_id ";
+    
+    $from = "FROM entity e LEFT JOIN relationship r ON r.entity1_id = e.id " . 
+            "LEFT JOIN fec_filing f ON f.relationship_id = r.id " . 
+            "LEFT JOIN entity e2 ON e2.id = r.entity2_id " . 
+            "LEFT JOIN person p2 ON p2.entity_id = e2.id ";
+    
+    $where = "WHERE r.category_id = 5 AND r.is_deleted=0 AND f.crp_cycle IS NOT NULL " . 
+             "AND e.id IN (?, ?) AND e2.id NOT IN (?, ?) AND f.crp_cycle >= ? AND f.crp_cycle <= ? ";
+    
+    $sql = $select . $from . $where . "GROUP BY f.id";
+    $stmt = $db->execute($sql, array($id1, $id2, $id1, $id2, $start_cycle, $end_cycle));
+
+    return $stmt->fetchAll();
+  }
+
+  static function getOrgPartyMap($org_ids)
+  {
+    $map = array();
+
+    if (count($org_ids))
+    {
+      $db = Doctrine_Manager::connection();
+      $sql = "SELECT entity_id, fec_id FROM political_fundraising WHERE entity_id IN(" . join(',', $org_ids) . ")";
+      $stmt = $db->execute($sql);
+      $entity_fec_map = $stmt->fetchAll(PDO::FETCH_KEY_PAIR);
+
+      if (count($entity_fec_map))
+      {
+        $databaseManager = sfContext::getInstance()->getDatabaseManager();
+        $rawDb = $databaseManager->getDatabase('raw');
+        $rawDb = Doctrine_Manager::connection($rawDb->getParameter('dsn'));  
+        $sql = "SELECT committee_id, party FROM os_committee " . 
+               "WHERE committee_id IN(" . join(',', array_fill(0, count($entity_fec_map), '?')) . ")";
+
+        $stmt = $rawDb->execute($sql, array_values($entity_fec_map));
+        $fec_party_map = $stmt->fetchAll(PDO::FETCH_KEY_PAIR);
+
+        $db = Doctrine_Manager::connection($databaseManager->getDatabase('main')->getParameter('dsn'));
+
+        foreach ($org_ids as $org_id)
+        {
+          $map[$org_id] = @$fec_party_map[$entity_fec_map[$org_id]];
+        }
+      }
+    }
+
+    return $map;
+  }
+
+  static function getDonationSummary($id, $options=array())
+  {
+    $blank = array(
+      'person_recipients' => array(),
+      'org_recipients' => array(),
+      'donors' => array(),
+      'rep_amts' => array(),
+      'dem_amts' => array(),
+      'other_amts' => array(),
+      'total' => 0,
+      'rep_total' => 0,
+      'dem_total' => 0,
+      'other_total' => 0,
+      'cycles' => array()
+    );
+
+    if (!$start_cycle = @$options['start_cycle']) $start_cycle = '1990';
+    if (!$end_cycle = @$options['end_cycle']) $end_cycle = '2012';
+
+    if (!$ext = @$options['type'])
+    {
+      $db = Doctrine_Manager::connection();
+      $sql = "SELECT primary_ext FROM entity WHERE id = ?";
+      $stmt = $db->execute($sql, array($id));
+      $ext = $stmt->fetch(PDO::FETCH_COLUMN);
+    }
+
+    if ($ext == 'Person')
+    {
+      $donations = self::getPersonDonationData($id, $start_cycle, $end_cycle);
+    }
+    else if ($ext == 'Org')
+    {
+      $donations = self::getOrgDonationData($id, $start_cycle, $end_cycle);
+    }
+    else if ($ext = 'Couple')
+    {
+      $donations = self::getCoupleDonationData($id, $start_cycle, $end_cycle);
+    }
+    else
+    {
+      return $blank;
+    }
+
+    if (count($donations) == 0)
+    {
+      return $blank;
+    }
+
+    $cycles = array_map('strval', range(1990, 2020, 2));
+    $filter = function($ary) use($start_cycle, $end_cycle) { return $ary >= $start_cycle && $ary <= $end_cycle; };
+    $cycles = array_filter($cycles, $filter);
+    $cycleAmts = $repAmts = $demAmts = $otherAmts = array_fill_keys($cycles, 0);
+    $recipients = array('personData' => array(), 'orgData' => array());
+    $donors = array();
+    $total = 0;
+    $repTotal = 0;
+    $demTotal = 0;
+    $otherTotal = 0;
+    $numDonations = 0;
+    $parties = array(12886 => 'D', 12901 => 'R');
+    $party = null;
+    $entity_fec_map = array();
+    $fec_party_map = array();
+
+    $org_donations = array_filter($donations, function($d) { return $d['recipient_ext'] == 'Org'; });
+    $org_ids = array_map(function($d) { return $d['recipient_id']; }, $org_donations);
+    $org_party_map = self::getOrgPartyMap($org_ids);
+
+    foreach ($donations as $d)
+    {
+      if ($d['recipient_ext'] == 'Person')
+      {
+        $party = @$parties[$d['party_id']];
+      }
+      else
+      {
+        $party = @$org_party_map[$d['recipient_id']];
+      }
+
+      $amt = intval($d['amt']);
+      if ($amt > 0) $numDonations++;
+
+      $recipientType = strtolower($d['recipient_ext']) . 'Data';
+      
+      if (!isset($recipients[$recipientType][$d['recipient_id']]))
+      {
+        $url = EntityTable::getUri(array('id' => $d['recipient_id'], 'name' => $d['recipient_name'], 'primary_ext' => $d['recipient_ext']));
+        $recipients[$recipientType][$d['recipient_id']] = array(
+          'name' => $d['recipient_name'], 
+          'url' => $url, 
+          'amount' => $amt, 
+          'donor_count' => 1,
+          'party' => $party,
+          'donor_ids' =>array($d['donor_id'])
+        );
+      }
+      else
+      {
+        $recipients[$recipientType][$d['recipient_id']]['amount'] += $amt; 
+        
+        if(!in_array($d['donor_id'], $recipients[$recipientType][$d['recipient_id']]['donor_ids']))
+        {
+          $recipients[$recipientType][$d['recipient_id']]['donor_ids'][] = $d['donor_id'];
+          $recipients[$recipientType][$d['recipient_id']]['donor_count']++;
+        }
+      }
+
+      if (!isset($donors[$d['donor_id']]))
+      {
+        $url = EntityTable::getUri(array('id' => $d['donor_id'], 'name' => $d['donor_name'], 'primary_ext' => $d['donor_ext']));
+        $donors[$d['donor_id']] = array(
+          'name' => $d['donor_name'],
+          'url' => $url, 
+          'amount' => $amt,
+          'recipient_count' => 1,
+          'recipient_ids' => array($d['recipient_id'])
+        );
+      }
+      else
+      {
+        $donors[$d['donor_id']]['amount'] += $amt; 
+
+        if(!in_array($d['recipient_id'],$donors[$d['donor_id']]['recipient_ids']))
+        {
+          $donors[$d['donor_id']]['recipient_ids'][] = $d['recipient_id'];
+          $donors[$d['donor_id']]['recipient_count']++;
+        }
+      }
+
+      $cycleAmts[$d['crp_cycle']] += $amt;
+      $total += $amt;
+
+      if ($party == 'D')
+      {
+        $demAmts[$d['crp_cycle']] += $amt;
+        $demTotal += $amt;
+      }
+      else if ($party == 'R')
+      {
+        $repAmts[$d['crp_cycle']] += $amt;
+        $repTotal += $amt;
+      }
+      else
+      {
+        $otherAmts[$d['crp_cycle']] += $amt;
+        $otherTotal += $amt;
+      }
+    }
+
+    $personRecipients = $recipients['personData'];
+    $orgRecipients = $recipients['orgData'];
+    $amountCompareDesc = function($a, $b) { return $b['amount'] - $a['amount']; };    
+    uasort($personRecipients, $amountCompareDesc);
+    uasort($orgRecipients, $amountCompareDesc);   
+    uasort($donors, $amountCompareDesc);
+
+    if ($numDonations > 0)
+    {
+      $avgDonation = $total/$numDonations;
+    }
+
+    if ($repTotal > 0 || $demTotal > 0)
+    {
+      $demPct = LsNumber::makeReadable(($demTotal/($repTotal+$demTotal)) * 100, null, 1, "%");
+      $repPct = LsNumber::makeReadable(($repTotal/($repTotal+$demTotal)) * 100, null, 1, "%");        
+    }
+
+    return array(
+      'person_recipients' => $personRecipients,
+      'org_recipients' => $orgRecipients,
+      'donors' => $donors,
+      'rep_amts' => $repAmts,
+      'dem_amts' => $demAmts,
+      'other_amts' => $otherAmts,
+      'total' => $total,
+      'rep_total' => $repTotal,
+      'dem_total' => $demTotal,
+      'other_total' => $otherTotal,
+      'cycles' => $cycles
+    );
+  }
 
   static function getRelated($id, $options=array())
   {
     $db = Doctrine_Manager::connection();
-    $selectTables = array('r' => 'Relationship', 'e1' => 'Entity', 'e2' => 'Entity');
+    $selectTables = array('r' => 'Relationship', 'p' => 'Position', 'e1' => 'Entity', 'e2' => 'Entity');
     $select = LsApi::generateSelectQuery($selectTables);
     $select .= ', GROUP_CONCAT(DISTINCT ed1.name) AS exts1, GROUP_CONCAT(DISTINCT ed2.name) AS exts2';
     $from = 'relationship r LEFT JOIN entity e1 ON (r.entity1_id = e1.id) LEFT JOIN entity e2 ON (r.entity2_id = e2.id) ' .
             'LEFT JOIN extension_record er1 ON (er1.entity_id = e1.id) LEFT JOIN extension_record er2 ON (er2.entity_id = e2.id) ' .
             'LEFT JOIN extension_definition ed1 ON (ed1.id = er1.definition_id) ' .
-            'LEFT JOIN extension_definition ed2 ON (ed2.id = er2.definition_id)';
+            'LEFT JOIN extension_definition ed2 ON (ed2.id = er2.definition_id) ' . 
+            'LEFT JOIN position p ON (p.relationship_id = r.id)';
     $where = 'r.is_deleted = 0 AND e1.is_deleted = 0 AND e2.is_deleted = 0';
     
     if ($o = @$options['order'])
@@ -148,7 +435,7 @@ class EntityApi
     //prepare return containers
     $results = array();
     $rels = array();
-    $relMap = LsApi::$responseFields['Relationship'];
+    $relMap = array_merge(LsApi::$responseFields['Relationship'], LsApi::$responseFields['Position']);
     $entityMap = LsApi::$responseFields['Entity'];
 
 
@@ -260,7 +547,7 @@ class EntityApi
     $selectTables = array('r' => 'Relationship', 'e1' => 'Entity');
     $select = LsApi::generateSelectQuery($selectTables);
     $from = 'relationship r LEFT JOIN entity e1 ON (e1.id = r.entity1_id)';
-    $where = 'r.entity2_id = ? AND r.entity1_id IN (' . implode(',', $ids) . ')';
+    $where = 'r.entity2_id = ? AND r.entity1_id IN (' . implode(',', $ids) . ') AND e1.is_deleted <> 1';
     $params = array($id);
 
     $db = Doctrine_Manager::connection();
@@ -501,6 +788,29 @@ class EntityApi
       $select = 'l2.entity2_id AS degree2_id, GROUP_CONCAT(DISTINCT l2.entity1_id) AS degree1_ids, COUNT(DISTINCT l2.entity1_id) AS num';
       $from = 'link l1 LEFT JOIN link l2 ON (l2.entity1_id = l1.entity2_id)';
       $where = 'l1.entity1_id = ? AND l2.entity2_id <> ?';
+
+      if ($mapId = $options['map_id']) 
+      {
+        $sql = 'SELECT * FROM network_map WHERE id = ? AND is_deleted = 0';
+        $stmt = $db->execute($sql, array($mapId));
+        $map = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($map) 
+        {
+          $entityIds = explode(',', $map['entity_ids']);
+
+          if (count($entityIds) > 0)
+          {
+            $isInt = function($int) {
+              return ($int + 0 > 0);
+            };
+
+            $entityIds = array_filter($entityIds, $isInt);
+            $where .= ' AND l2.entity2_id IN (' . implode(',', $entityIds) . ')';
+          }
+        }
+      }
+
       $group = 'l2.entity2_id';
       $params = array($id, $id);
 
@@ -891,7 +1201,7 @@ class EntityApi
   static function getImages($id, $options=array())
   {
     $db = Doctrine_Manager::connection();
-    $select = 'id, title, caption, is_featured, filename, url';
+    $select = 'id, title, caption, is_featured, filename, url, address_id';
     $sql = 'SELECT ' . $select . ' FROM image i WHERE i.entity_id = ? AND i.is_deleted = 0';
     $stmt = $db->execute($sql, array($id));
     $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);  
@@ -900,7 +1210,16 @@ class EntityApi
     
     foreach ($rows as $row)
     {
-      $row['uri'] = 'http://littlesis.org/images/' . $size . '/' . $row['filename'];
+      if (sfConfig::get('app_amazon_enable_s3_assets')) 
+      {
+        $base = sfConfig::get('app_amazon_s3_base') . '/' . sfConfig::get('app_amazon_s3_bucket');
+      }
+      else
+      {
+        $base = 'http://littlesis.org';
+      }
+
+      $row['uri'] = $base . '/images/' . $size . '/' . $row['filename'];
       $row['source'] = $row['url'];
       unset($row['url']);
       unset($row['filename']);
@@ -975,5 +1294,59 @@ class EntityApi
     }
 
     return $entity;
+  }
+
+
+  static function getFields($id)
+  {
+    $db = Doctrine_Manager::connection();
+    $sql = "SELECT f.name, ef.value FROM entity_fields ef LEFT JOIN fields f on (f.id = ef.field_id) " . 
+           "WHERE ef.entity_id = ? AND ef.is_admin = false";
+    $stmt = $db->execute($sql, array($id));
+    $fields = $stmt->fetchAll(PDO::FETCH_KEY_PAIR);
+    
+    return $fields;
+  }
+
+  static function getArticles($id)
+  {
+    $db = Doctrine_Manager::connection();
+    $sql = "SELECT a.title, a.url, a.snippet, a.published_at FROM articles a LEFT JOIN article_entities ae ON (ae.article_id = a.id) WHERE ae.entity_id = ? ORDER BY a.created_at";
+    $stmt = $db->execute($sql, array($id));
+    $articles = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    return $articles;
+  }
+
+  static function getAddresses($id)
+  {
+    $db = Doctrine_Manager::connection();
+    $sql = "SELECT a.city, a.state_name, a.country_name, a.postal, MIN(i.filename) AS image " . 
+           "FROM entity e " .
+           "LEFT JOIN couple c ON (c.entity_id = e.id) " .
+           "JOIN address a ON (a.entity_id IN (e.id, c.partner1_id, c.partner2_id)) " . 
+           "LEFT JOIN image i ON (i.address_id = a.id AND i.is_deleted = 0) " . 
+           "WHERE e.id = ? AND a.is_deleted = 0 AND a.latitude IS NOT NULL AND a.longitude IS NOT NULL " . 
+           "GROUP BY TRUNCATE(a.latitude, 2), TRUNCATE(a.longitude, 2)";
+    $stmt = $db->execute($sql, array($id));
+    $addresses = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    if (sfConfig::get('app_amazon_enable_s3_assets')) 
+    {
+      $base = sfConfig::get('app_amazon_s3_base') . '/' . sfConfig::get('app_amazon_s3_bucket');
+    }
+    else
+    {
+      $base = 'http://littlesis.org';
+    }
+
+    return array_map(function($address) use ($base) {
+      if ($address['image'])
+      {
+        $address['image_uri'] = $base . '/images/large/' . $address['image'];
+      }
+      unset($address['image']);
+      return $address;
+    }, $addresses);
   }
 }

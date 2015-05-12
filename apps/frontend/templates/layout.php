@@ -34,10 +34,9 @@
   var js, fjs = d.getElementsByTagName(s)[0];
   if (d.getElementById(id)) return;
   js = d.createElement(s); js.id = id;
-  js.src = "//connect.facebook.net/en_US/all.js#xfbml=1";
+  js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&appId=155245744527686&version=v2.0";
   fjs.parentNode.insertBefore(js, fjs);
 }(document, 'script', 'facebook-jssdk'));</script>
-
 
 <div id="top">
   <nav class="navbar navbar-default navbar-fixed-top">
@@ -127,7 +126,7 @@
         </div>
         &nbsp;
         <div style="display: inline;">
-          <iframe src="//www.facebook.com/plugins/like.php?href=<?php echo urlencode($share_link) ?>&amp;send=false&amp;layout=button_count&amp;width=450&amp;show_faces=false&amp;action=recommend&amp;colorscheme=light&amp;font&amp;height=21" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:95px !important; height:21px;" allowTransparency="true"></iframe>
+          <div class="fb-share-button" data-href="<?php echo urlencode($share_link) ?>" data-type="button"></div>
         </div>
       <?php else : ?>
         <div style="display: inline; position: relative; top: -1px;">

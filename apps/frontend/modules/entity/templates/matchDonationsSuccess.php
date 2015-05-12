@@ -37,6 +37,12 @@ function swapAll(master) {
     <br />
   <?php endforeach; ?>
   </div>
+  <?php include_partial('global/section', array('title' => 'Addresses')) ?>
+  <div class="padded">
+  <?php foreach ($addresses as $address) : ?>
+    <?php echo preg_replace('/^\d+\s*/', '', $address->getOneliner()) ?><br>
+  <?php endforeach; ?>
+  </div>
   </div>
 <?php end_slot() ?>
 

@@ -1,7 +1,6 @@
 apps/api/config/app.yml
 apps/api/config/settings.yml
 apps/frontend/config/app.yml
-apps/frontend/config/routing.yml
 apps/frontend/config/settings.yml
 *.DS_Store
 cache/
@@ -24,7 +23,10 @@ tmp/
 web/.htaccess
 web/crossdomain.xml
 web/google*
-web/images/
+web/images/large/
+web/images/profile/
+web/images/small/
+web/images/square/
 web/*sitemap*.xml
 web/*cret.php
 web/uploads/

@@ -269,9 +269,10 @@ class entityComponents extends sfComponents
       'cat2_ids' => RelationshipTable::POSITION_CATEGORY . ',' . RelationshipTable::MEMBERSHIP_CATEGORY,
       'order2' => $order2,
       'page' => $this->page,
-      'num' => $this->num
+      'num' => $this->num,
+      'map_id' => $this->map_id
     );
-    
+
     $entities = EntityApi::getSecondDegreeNetwork($this->entity['id'], $options);      
     $count = EntityApi::getSecondDegreeNetwork($this->entity['id'], $options, $countOnly=true);
 
@@ -346,151 +347,179 @@ class entityComponents extends sfComponents
   
   public function executePolitical()
   {
-    $db = Doctrine_Manager::connection();
     $this->all_cycles = array('1990','1992','1994','1996','1998','2000','2002','2004','2006','2008','2010','2012');
-    if (!$this->start_cycle)
-    {
-      $this->start_cycle = $this->request->getParameter('start_cycle','1990');
-      $this->end_cycle = $this->request->getParameter('end_cycle','2012');
+    $this->start_cycle = $this->request->getParameter('start_cycle', '1990');
+    $this->end_cycle = $this->request->getParameter('end_cycle', '2012');
+
+    $data = EntityApi::getDonationSummary($this->entity['id'], array(
+      'start_cycle' => $this->start_cycle, 
+      'end_cycle' => $this->end_cycle
+    ));
+
+    function camelize($scored) {
+      return lcfirst(
+        implode(
+          '',
+          array_map(
+            'ucfirst',
+            array_map(
+              'strtolower',
+              explode(
+                '_', $scored)))));
     }
+
+    foreach ($data as $k => $v)
+    {
+      $key = camelize($k);
+      $this->$key = $v;
+    }
+
+   //  OLD WAY
+
+   //  $db = Doctrine_Manager::connection();
+   //  $this->all_cycles = array('1990','1992','1994','1996','1998','2000','2002','2004','2006','2008','2010','2012');
+   //  if (!$this->start_cycle)
+   //  {
+   //    $this->start_cycle = $this->request->getParameter('start_cycle','1990');
+   //    $this->end_cycle = $this->request->getParameter('end_cycle','2012');
+   //  }
     
-    if ($this->entity['primary_ext'] == 'Person')
-    {
-    	$db = Doctrine_Manager::connection();
+   //  if ($this->entity['primary_ext'] == 'Person')
+   //  {
+   //  	$db = Doctrine_Manager::connection();
       
-      $select = 'SELECT e.id as donor_id,e.name as donor_name,e.primary_ext as donor_ext,e2.id as recipient_id,e2.name as recipient_name,e2.primary_ext as recipient_ext,f.amount as amt,crp_cycle,p2.party_id AS party_id ';
+   //    $select = 'SELECT e.id as donor_id,e.name as donor_name,e.primary_ext as donor_ext,e2.id as recipient_id,e2.name as recipient_name,e2.primary_ext as recipient_ext,f.amount as amt,crp_cycle,p2.party_id AS party_id ';
       
-      $from = 'FROM entity e LEFT JOIN relationship r ON r.entity1_id = e.id LEFT JOIN fec_filing f ON f.relationship_id = r.id LEFT JOIN entity e2 ON e2.id = r.entity2_id LEFT JOIN person p2 ON p2.entity_id = e2.id ';
+   //    $from = 'FROM entity e LEFT JOIN relationship r ON r.entity1_id = e.id LEFT JOIN fec_filing f ON f.relationship_id = r.id LEFT JOIN entity e2 ON e2.id = r.entity2_id LEFT JOIN person p2 ON p2.entity_id = e2.id ';
       
-      $where = 'WHERE r.category_id = 5 AND r.is_deleted=0 AND crp_cycle IS NOT NULL AND e.id = ? AND crp_cycle >= ? AND crp_cycle <= ? ';
+   //    $where = 'WHERE r.category_id = 5 AND r.is_deleted=0 AND crp_cycle IS NOT NULL AND e.id = ? AND crp_cycle >= ? AND crp_cycle <= ? ';
       
-      $sql = $select . $from . $where . 'group by f.id';
-      $stmt = $db->execute($sql, array($this->entity['id'], $this->start_cycle,$this->end_cycle));
-  	}
-  	else
-    {
+   //    $sql = $select . $from . $where . 'group by f.id';
+   //    $stmt = $db->execute($sql, array($this->entity['id'], $this->start_cycle,$this->end_cycle));
+  	// }
+  	// else
+   //  {
     	
-      $select = 'SELECT e.id as donor_id,e.name as donor_name,e.primary_ext as donor_ext,e2.id as recipient_id,e2.name as recipient_name,e2.primary_ext as recipient_ext,r2.is_current,p.is_board,p.is_executive,f.amount as amt,crp_cycle,p2.party_id AS party_id ';
+   //    $select = 'SELECT e.id as donor_id,e.name as donor_name,e.primary_ext as donor_ext,e2.id as recipient_id,e2.name as recipient_name,e2.primary_ext as recipient_ext,r2.is_current,p.is_board,p.is_executive,f.amount as amt,crp_cycle,p2.party_id AS dparty_id ';
       
-      $from = 'FROM relationship r LEFT JOIN relationship r2 ON r2.entity1_id = r.entity1_id LEFT JOIN entity e ON e.id = r.entity1_id LEFT JOIN fec_filing f ON f.relationship_id = r.id LEFT JOIN position p ON p.relationship_id = r2.id LEFT JOIN entity e2 ON e2.id = r.entity2_id LEFT JOIN person p2 ON p2.entity_id = e2.id ';
+   //    $from = 'FROM relationship r LEFT JOIN relationship r2 ON r2.entity1_id = r.entity1_id LEFT JOIN entity e ON e.id = r.entity1_id LEFT JOIN fec_filing f ON f.relationship_id = r.id LEFT JOIN position p ON p.relationship_id = r2.id LEFT JOIN entity e2 ON e2.id = r.entity2_id LEFT JOIN person p2 ON p2.entity_id = e2.id ';
       
-      $where = 'WHERE r.category_id = 5 AND r2.category_id IN (1,3) AND r.is_deleted=0 AND r2.is_deleted=0 AND r2.entity2_id = ? AND crp_cycle IS NOT NULL AND crp_cycle >= ? AND crp_cycle <= ? ';
+   //    $where = 'WHERE r.category_id = 5 AND r2.category_id IN (1,3) AND r.is_deleted=0 AND r2.is_deleted=0 AND r2.entity2_id = ? AND crp_cycle IS NOT NULL AND crp_cycle >= ? AND crp_cycle <= ? ';
       
-      $sql = $select . $from . $where . 'group by f.id';
-      $stmt = $db->execute($sql, array($this->entity['id'], $this->start_cycle,$this->end_cycle));
-    }
+   //    $sql = $select . $from . $where . 'group by f.id';
+   //    $stmt = $db->execute($sql, array($this->entity['id'], $this->start_cycle,$this->end_cycle));
+   //  }
     
-    $giving_data = $stmt->fetchAll(); 
-    $this->cycles = array();
-    $cyc = $this->start_cycle;
-    while ($cyc <= $this->end_cycle)
-    {
-      $this->cycles[] = $cyc;
-      $cyc +=2;
-    }
+   //  $giving_data = $stmt->fetchAll(); 
+   //  $this->cycles = array();
+   //  $cyc = $this->start_cycle;
+   //  while ($cyc <= $this->end_cycle)
+   //  {
+   //    $this->cycles[] = $cyc;
+   //    $cyc +=2;
+   //  }
 
-    $this->cycleAmts = $this->repAmts = $this->demAmts = array_fill_keys($this->cycles,0);
+   //  $this->cycleAmts = $this->repAmts = $this->demAmts = array_fill_keys($this->cycles,0);
 
-    $recipients = array();
-    $donors = array();
-    $this->total = 0;
-    $this->repTotal = 0;
-    $this->demTotal = 0;
-    $other_total = 0;
-    $this->numDonations = 0;
-    $parties = array(12886 => 'D',12901 => 'R');
-    $party = null;
-    foreach($giving_data as $gd)
-    {
-      if ($gd['party_id']) $party = $parties[$gd['party_id']];
-      if ($gd['amt'] > 0)
-      {
-        $this->numDonations++;
-      }
-      $recType = strtolower($gd['recipient_ext']) . 'Data';
-      if (!isset($recipients[$recType][$gd['recipient_id']]))
-      {
-        $url = 'http://littlesis.org/' . strtolower($gd['recipient_ext']) . '/' . $gd['recipient_id'] . '/' . LsSlug::convertNameToSlug($gd['recipient_name']);
-        $recipients[$recType][$gd['recipient_id']] = array('recipient_name' => $gd['recipient_name'],'recipient_url' => $url, 'recipient_amount' => $gd['amt'],'donor_count' => 1,'party' => $party,'donor_ids' =>array($gd['donor_id']));
-      }
-      else
-      {
-        $recipients[$recType][$gd['recipient_id']]['recipient_amount'] += $gd['amt']; 
-        if(!in_array($gd['donor_id'],$recipients[$recType][$gd['recipient_id']]['donor_ids']))
-        {
-          $recipients[$recType][$gd['recipient_id']]['donor_ids'][] = $gd['donor_id'];
-          $recipients[$recType][$gd['recipient_id']]['donor_count'] ++;
-        }
-      }
-      if (!isset($donors[$gd['donor_id']]))
-      {
-        $url = 'http://littlesis.org/' . strtolower($gd['donor_ext']) . '/' . $gd['donor_id'] . '/' . LsSlug::convertNameToSlug($gd['donor_name']);
-        $donors[$gd['donor_id']] = array('donor_name' => $gd['donor_name'],'donor_url' => $url, 'donor_amount' => $gd['amt'],'recipient_count' => 1,'recipient_ids' =>array($gd['recipient_id']));
-      }
-      else
-      {
-        $donors[$gd['donor_id']]['donor_amount'] += $gd['amt']; 
-        if(!in_array($gd['recipient_id'],$donors[$gd['donor_id']]['recipient_ids']))
-        {
-          $donors[$gd['donor_id']]['recipient_ids'][] = $gd['recipient_id'];
-          $donors[$gd['donor_id']]['recipient_count'] ++;
-        }
-      }
-      $this->cycleAmts[$gd['crp_cycle']] += $gd['amt'];
-      $this->total += $gd['amt'];
-      if($gd['party_id'] == 12886)
-      {
-        $this->demAmts[$gd['crp_cycle']] += $gd['amt'];
-        $this->demTotal += $gd['amt'];
-      }
-      else if ($gd['party_id'] == 12901)
-      {
-        $this->repAmts[$gd['crp_cycle']] += $gd['amt'];
-        $this->repTotal += $gd['amt'];
-      }
-      else $other_total += $gd['amt'];
-    }
-    $this->personRecipients = LsArray::aasort($recipients['personData'],'recipient_amount',1);
-    $this->orgRecipients = $orgs = LsArray::aasort($recipients['orgData'],'recipient_amount',1);
-    $this->donors = LsArray::aasort($donors,'donor_amount',1);
-    if ($this->numDonations > 0)
-    {
-      $this->avgDonation = $this->total/$this->numDonations;
-    }
-    $arr = array('politicians supported' => $this->personRecipients,'PACs/political orgs supported' => $this->orgRecipients, 'top donors' => $this->donors);
-    $this->links = array();
-    foreach($arr as $ak => $av)
-    {
-      if (count($av))
-      {
-        $this->links = $ak;
-      }
-    }
-    if ($this->total > 0)
-    {
-      if ($this->repTotal > 0 || $this->demTotal > 0)
-      {
-        $this->demPct = LsNumber::makeReadable(($this->demTotal/($this->repTotal+$this->demTotal))*100,null,1,"%");
-        $this->repPct = LsNumber::makeReadable(($this->repTotal/($this->repTotal+$this->demTotal))*100,null,1,"%");
-        $lean_party = $this->repPct . " of campaign contributions were to Republicans";
-        if ($this->demPct > $this->repPct) $lean_party = $this->demPct . " of campaign contributions were to Democrats";
-        if (count($this->personRecipients) > 3)
-        {
-          $codes = array(70 => 'Strongly Republican', 55 => 'Republican',45 => 'Split Republican/Democratic',30 => 'Democratic', 0 => 'Strongly Democratic');
-          foreach($codes as $ck => $cv)
-          {
-            if ($this->repPct >= $ck)
-            {
-              $this->orientation = $cv . '; ' . $lean_party;
-              break;
-            }
-          }
-        }
-        else $this->orientation = "Not enough data to make determination";
-      }
-    }
-    else $this->stats = null;
-  
+   //  $recipients = array();
+   //  $donors = array();
+   //  $this->total = 0;
+   //  $this->repTotal = 0;
+   //  $this->demTotal = 0;
+   //  $other_total = 0;
+   //  $this->numDonations = 0;
+   //  $parties = array(12886 => 'D',12901 => 'R');
+   //  $party = null;
+   //  foreach($giving_data as $gd)
+   //  {
+   //    if ($gd['party_id']) $party = $parties[$gd['party_id']];
+   //    if ($gd['amt'] > 0)
+   //    {
+   //      $this->numDonations++;
+   //    }
+   //    $recType = strtolower($gd['recipient_ext']) . 'Data';
+   //    if (!isset($recipients[$recType][$gd['recipient_id']]))
+   //    {
+   //      $url = 'http://littlesis.org/' . strtolower($gd['recipient_ext']) . '/' . $gd['recipient_id'] . '/' . LsSlug::convertNameToSlug($gd['recipient_name']);
+   //      $recipients[$recType][$gd['recipient_id']] = array('recipient_name' => $gd['recipient_name'],'recipient_url' => $url, 'recipient_amount' => $gd['amt'],'donor_count' => 1,'party' => $party,'donor_ids' =>array($gd['donor_id']));
+   //    }
+   //    else
+   //    {
+   //      $recipients[$recType][$gd['recipient_id']]['recipient_amount'] += $gd['amt']; 
+   //      if(!in_array($gd['donor_id'],$recipients[$recType][$gd['recipient_id']]['donor_ids']))
+   //      {
+   //        $recipients[$recType][$gd['recipient_id']]['donor_ids'][] = $gd['donor_id'];
+   //        $recipients[$recType][$gd['recipient_id']]['donor_count'] ++;
+   //      }
+   //    }
+   //    if (!isset($donors[$gd['donor_id']]))
+   //    {
+   //      $url = 'http://littlesis.org/' . strtolower($gd['donor_ext']) . '/' . $gd['donor_id'] . '/' . LsSlug::convertNameToSlug($gd['donor_name']);
+   //      $donors[$gd['donor_id']] = array('donor_name' => $gd['donor_name'],'donor_url' => $url, 'donor_amount' => $gd['amt'],'recipient_count' => 1,'recipient_ids' =>array($gd['recipient_id']));
+   //    }
+   //    else
+   //    {
+   //      $donors[$gd['donor_id']]['donor_amount'] += $gd['amt']; 
+   //      if(!in_array($gd['recipient_id'],$donors[$gd['donor_id']]['recipient_ids']))
+   //      {
+   //        $donors[$gd['donor_id']]['recipient_ids'][] = $gd['recipient_id'];
+   //        $donors[$gd['donor_id']]['recipient_count'] ++;
+   //      }
+   //    }
+   //    $this->cycleAmts[$gd['crp_cycle']] += $gd['amt'];
+   //    $this->total += $gd['amt'];
+   //    if($gd['party_id'] == 12886)
+   //    {
+   //      $this->demAmts[$gd['crp_cycle']] += $gd['amt'];
+   //      $this->demTotal += $gd['amt'];
+   //    }
+   //    else if ($gd['party_id'] == 12901)
+   //    {
+   //      $this->repAmts[$gd['crp_cycle']] += $gd['amt'];
+   //      $this->repTotal += $gd['amt'];
+   //    }
+   //    else $other_total += $gd['amt'];
+   //  }
+   //  $this->personRecipients = LsArray::aasort($recipients['personData'],'recipient_amount',1);
+   //  $this->orgRecipients = $orgs = LsArray::aasort($recipients['orgData'],'recipient_amount',1);
+   //  $this->donors = LsArray::aasort($donors,'donor_amount',1);
+   //  if ($this->numDonations > 0)
+   //  {
+   //    $this->avgDonation = $this->total/$this->numDonations;
+   //  }
+   //  $arr = array('politicians supported' => $this->personRecipients,'PACs/political orgs supported' => $this->orgRecipients, 'top donors' => $this->donors);
+   //  $this->links = array();
+   //  foreach($arr as $ak => $av)
+   //  {
+   //    if (count($av))
+   //    {
+   //      $this->links = $ak;
+   //    }
+   //  }
+   //  if ($this->total > 0)
+   //  {
+   //    if ($this->repTotal > 0 || $this->demTotal > 0)
+   //    {
+   //      $this->demPct = LsNumber::makeReadable(($this->demTotal/($this->repTotal+$this->demTotal))*100,null,1,"%");
+   //      $this->repPct = LsNumber::makeReadable(($this->repTotal/($this->repTotal+$this->demTotal))*100,null,1,"%");
+   //      $lean_party = $this->repPct . " of campaign contributions were to Republicans";
+   //      if ($this->demPct > $this->repPct) $lean_party = $this->demPct . " of campaign contributions were to Democrats";
+   //      if (count($this->personRecipients) > 3)
+   //      {
+   //        $codes = array(70 => 'Strongly Republican', 55 => 'Republican',45 => 'Split Republican/Democratic',30 => 'Democratic', 0 => 'Strongly Democratic');
+   //        foreach($codes as $ck => $cv)
+   //        {
+   //          if ($this->repPct >= $ck)
+   //          {
+   //            $this->orientation = $cv . '; ' . $lean_party;
+   //            break;
+   //          }
+   //        }
+   //      }
+   //      else $this->orientation = "Not enough data to make determination";
+   //    }
+   //  }
+   //  else $this->stats = null;
   }
 
   public function executeSchools()
@@ -515,55 +544,89 @@ class entityComponents extends sfComponents
       }
 
       $page = $this->page;
+      $num = $request->getParameter('num', 10);
 
       $options = array('cat_ids' => $request->getParameter('cat_ids', '1'));
 
       //get all chains
       $chains = SearchApi::getEntitiesChains($this->entity['id'], $id2, $options);      
 
-      //expand one chain
-      $chain = null;    
-      $count = 1;
-      
+      $offset = ($page - 1) * $num;
+
+      $flat_chains = array();
+
       foreach ($chains as $degree => $ary)
       {
         foreach ($ary as $ids)
         {
-          if ($count == $page)
-          {
-            $chain = SearchApi::buildRelationshipChain($ids, explode(',', $options['cat_ids']));
-            break 2;
-          }
-  
-          $count++;        
+          $flat_chains[]= $ids;
         }
       }
 
-      //count total number of chains
-      $total = 0;
-      
-      foreach ($chains as $degree => $ary)
-      {
-        $total += count($ary);
-      }
+      $page_chains = array_slice($flat_chains, $offset, $num);
+      $full_chains = array();
 
-      //get entities for chain  
-      if ($chain)
+      foreach ($page_chains as $ids)
       {
-        $this->entities = array();
-    
+        $full = array();
+        $chain = SearchApi::buildRelationshipChain($ids, explode(',', $options['cat_ids']));
+
         foreach ($chain as $id => $rels)
         {
           $entity = EntityApi::get($id);
           $entity['Relationships'] = count($rels) ? BatchApi::getRelationships($rels, array()) : array();
-          $this->entities[] = $entity;
+          $full[]= $entity;
         }
 
-        $chainAry = array_fill(0, $total, null);
-        $chainAry[$page-1] = $this->entities;
-
-        $this->chain_pager = new LsDoctrinePager($chainAry, $page, $num=1);        
+        $full_chains[] = $full;
       }
+
+      // foreach ($page_chains as $degree => $ary)
+      // {
+      //   foreach ($ary as $ids)
+      //   {
+      //     if ($count == $page)
+      //     {
+      //       $chain = SearchApi::buildRelationshipChain($ids, explode(',', $options['cat_ids']));
+      //       break 2;
+      //     }
+  
+      //     $count++;        
+      //   }
+      // }
+
+      // count total number of chains
+      // $total = 0;
+      
+      // foreach ($chains as $degree => $ary)
+      // {
+      //   $total += count($ary);
+      // }
+
+      if ($total = count($flat_chains))
+      {
+        $chainAry = array_fill(0, $total, null);
+        array_splice($chainAry, $offset, $num, $full_chains);        
+        $this->chain_pager = new LsDoctrinePager($chainAry, $page, $num);        
+      }
+      
+      // get entities for chain  
+      // if ($chain)
+      // {
+      //   $this->entities = array();
+    
+      //   foreach ($chain as $id => $rels)
+      //   {
+      //     $entity = EntityApi::get($id);
+      //     $entity['Relationships'] = count($rels) ? BatchApi::getRelationships($rels, array()) : array();
+      //     $this->entities[] = $entity;
+      //   }
+
+      //   $chainAry = array_fill(0, $total, null);
+      //   $chainAry[$page-1] = $this->entities;
+
+      //   $this->chain_pager = new LsDoctrinePager($chainAry, $page, $num);        
+      // }
     }
     else
     {

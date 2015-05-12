@@ -17,6 +17,7 @@ class homeComponents extends sfComponents
       $this->items[$name]['items'][$this->getContext()->getI18N()->__('Notes')] = 'home/notes';
       $this->items[$name]['items'][$this->getContext()->getI18N()->__('Groups')] = 'home/groups';    
       $this->items[$name]['items'][$this->getContext()->getI18N()->__('Edits')] = 'home/modifications';
+      $this->items[$name]['items'][$this->getContext()->getI18N()->__('Maps')] = 'home/maps';
       $this->items[$name]['items']['divider1'] = 'divider';      
       $this->items[$name]['items'][$network_name] = '@localHome?name=' . $network_path;
       $this->items[$name]['items']['divider2'] = 'divider';
@@ -69,11 +70,12 @@ class homeComponents extends sfComponents
     $this->items = array_merge($this->items, array(
       $this->getContext()->getI18N()->__('Explore') => array(
         'items' => array(
+          $this->getContext()->getI18N()->__('Maps') => '@maps',
           $this->getContext()->getI18N()->__('Lists') => 'list/list',
           $this->getContext()->getI18N()->__('Groups') => '@groups',
           $this->getContext()->getI18N()->__('Notes') => '@notes',
           $this->getContext()->getI18N()->__('Users') => '@users',
-          $this->getContext()->getI18N()->__('Edits') => 'modification/latest'
+          $this->getContext()->getI18N()->__('Edits') => '@edits'
         )
       ),
       $this->getContext()->getI18N()->__('Add') => null,

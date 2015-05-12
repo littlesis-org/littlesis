@@ -58,6 +58,20 @@ class listActions extends LsApiActions
     //return ($this->format == 'xml') ? 'Xml' : 'Csv';
   }
   
+
+  public function executeEntityIds($request)
+  {
+    $this->setResponseFormat(array('json'));    
+
+    $options = $this->getParams(array());
+    $results = array_map(
+      function($id) { return intval($id); },
+      LsListApi::getEntityIds($this->list['id'], $options)
+    );
+
+    return $this->renderText(json_encode($results));
+  }
+
   
   public function executeEntitiesWithOrgs($request)
   {
@@ -87,5 +101,40 @@ class listActions extends LsApiActions
     {
       return 'Xml';
     }
+  }
+
+  public function executeNetworkLinks($request)
+  {
+    $this->setResponseFormat(array('json'));    
+    $options = $this->getParams(array());
+
+    $this->data = array_map(
+      function($ary) { return array_map(function($e) { return intval($e); }, $ary); },
+      LsListApi::getNetworkLinks($this->list['id'], $options)
+    );
+
+    return $this->renderText(json_encode($this->data));
+  }
+
+  public function executeImages($request)
+  {
+    $this->setResponseFormat(array('json'));    
+    $options = $this->getParams(array('with_address'));
+    $this->data = LsListApi::getImages($this->list['id'], $options);
+    return $this->renderText(json_encode($this->data));
+  }
+
+  public function executeSearchData($request)
+  {
+    $this->setResponseFormat(array('json'));    
+    $this->data = LsListApi::getSearchData($this->list['id']);
+    return $this->renderText(json_encode($this->data));
   }  
+
+  public function executeArticles($request)
+  {
+    $this->setResponseFormat(array('json'));    
+    $this->data = LsListApi::getArticles($this->list['id']);
+    return $this->renderText(json_encode($this->data));
+  }
 }

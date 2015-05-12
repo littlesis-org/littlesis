@@ -40,6 +40,7 @@ class entityActions extends LsApiActions
   public function executeDetails($request)
   {
     $this->entity = array_merge($this->entity, EntityApi::getDetails($this->entity['id']));
+    $this->entity = array_merge($this->entity, EntityApi::getFields($this->entity['id']));
     $this->aliases = EntityApi::getAliases($this->entity['id'], false);    
     return 'Xml';
   }
@@ -229,5 +230,28 @@ class entityActions extends LsApiActions
     {
       return 'Xml';
     }
-  }  
+  }
+
+  public function executePolitical($request)
+  {
+    $this->setResponseFormat(array('json'));    
+    $options = $this->getParams(array('start_cycle', 'end_cycle'));
+    $this->data = EntityApi::getDonationSummary($this->entity['id'], $options);
+
+    return $this->renderText(json_encode($this->data));
+  }
+
+  public function executeArticles($request)
+  {
+    $this->setResponseFormat(array('json'));    
+    $this->data = EntityApi::getArticles($this->entity['id']);
+    return $this->renderText(json_encode($this->data));
+  }
+
+  public function executeAddresses($request)
+  {
+    $this->setResponseFormat(array('json'));    
+    $this->data = EntityApi::getAddresses($this->entity['id']);
+    return $this->renderText(json_encode($this->data));
+  }
 }

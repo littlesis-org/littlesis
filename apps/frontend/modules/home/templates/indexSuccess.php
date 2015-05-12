@@ -17,7 +17,7 @@
 <?php endforeach; ?>
 <?php echo $counter; ?>
 </span> dots connected:</span>
-<div style="margin-top: 10px; margin-bottom: 20px;">
+<div style="margin-top: 10px; margin-bottom: 24px;">
 &nbsp; &nbsp;&#10004;&nbsp; <?php echo link_to('Paid-for politicians', $politician_list->getInternalUrl()) ?><br />
 &nbsp; &nbsp;&#10004;&nbsp; <?php echo link_to('Corporate fat cats', $fatcat_list->getInternalUrl()) ?><br />
 &nbsp; &nbsp;&#10004;&nbsp; <?php echo link_to('Revolving door lobbyists', $lobbyist_list->getInternalUrl()) ?><br />

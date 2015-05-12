@@ -25,7 +25,35 @@ class LsListApi
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
   }
   
-  
+
+  static function getEntityIds($id, $options=array())
+  {
+    $db = Doctrine_Manager::connection();
+    $sql = 'SELECT le.entity_id FROM entity e LEFT JOIN ls_list_entity le ON (le.entity_id = e.id) ' .
+           'WHERE le.list_id = ? AND le.is_deleted = 0 AND e.is_deleted = 0';
+    $stmt = $db->execute($sql, array($id));
+    
+    return $stmt->fetchAll(PDO::FETCH_COLUMN);
+  }
+
+
+  static function getNetworkLinks($id, $options=array())
+  {
+    $db = Doctrine_Manager::connection();
+    $sql = 'SELECT DISTINCT l.relationship_id, le.entity_id AS entity1_id, l.entity2_id, l.category_id ' .
+           'FROM ls_list_entity le ' . 
+           'LEFT JOIN entity e1 ON (e1.id = le.entity_id) ' .
+           'LEFT JOIN couple c1 ON (c1.entity_id = e1.id) ' .
+           'LEFT JOIN link l ON (l.entity1_id IN (le.entity_id, c1.partner1_id, c1.partner2_id)) ' .
+           'LEFT JOIN entity e2 ON (e2.id = l.entity2_id) ' . 
+           'LEFT JOIN relationship r ON (r.id = l.relationship_id) ' .
+           'WHERE le.list_id = ? AND le.is_deleted = 0 AND e1.is_deleted = 0 AND e2.is_deleted = 0 AND r.is_deleted = 0';
+    $stmt = $db->execute($sql, array($id));
+
+    return $stmt->fetchAll(PDO::FETCH_NUM);
+  }
+
+
   static function getSecondDegreeNetwork($id, $options=array(), $countOnly=false)
   {
     $db = Doctrine_Manager::connection();
@@ -170,4 +198,59 @@ class LsListApi
     
     return $list;
   }
+
+  static function getImages($id, $options=array())
+  {
+    $db = Doctrine_Manager::connection();
+
+    if (isset($options['with_address']) && $options['with_address'] == '1')
+    {
+      $sql = 'SELECT le.entity_id, i.filename FROM ls_list_entity le ' . 
+             'JOIN image i ON (le.entity_id = i.entity_id AND i.is_deleted = 0) ' .
+             'WHERE le.list_id = ? AND le.is_deleted = 0 AND i.address_id IS NOT NULL';
+      $stmt = $db->execute($sql, array($id));
+    } else {
+      $sql = 'SELECT le.entity_id, i.filename FROM ls_list_entity le ' . 
+             'JOIN image i ON (le.entity_id = i.entity_id AND i.is_featured = 1 AND i.is_deleted = 0) ' .
+             'WHERE le.list_id = ? AND le.is_deleted = 0 AND i.address_id IS NULL';
+      $stmt = $db->execute($sql, array($id));
+    }
+
+    $rows = $stmt->fetchAll();
+
+    return array_map(function($row) {
+      return array('id' => intval($row['entity_id']), 'url' => ImageTable::generateS3Url('profile/' . $row['filename']));
+    }, $rows);
+  }
+
+  static function getSearchData($id)
+  {
+    $db = Doctrine_Manager::connection();
+    $sql = "SELECT e.id, e.name, e.blurb AS description, e.primary_ext AS primary_type, GROUP_CONCAT(DISTINCT a.name SEPARATOR ';') AS aliases FROM ls_list_entity le " . 
+       'JOIN entity e ON (le.entity_id = e.id) ' .
+       'LEFT JOIN alias a ON (a.entity_id = e.id) ' .
+       'WHERE le.list_id = ? AND le.is_deleted = 0 AND e.is_deleted = 0 ' . 
+       'GROUP BY e.id';
+    $stmt = $db->execute($sql, array($id));
+    $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    return array_map(function($row) {
+      $row['aliases'] = explode(';', $row['aliases']);
+      $row['url'] = EntityTable::getUri($row);
+      return $row;
+    }, $rows);
+  }
+
+  static function getArticles($id, $options=array())
+  {
+    $db = Doctrine_Manager::connection();
+    $sql = 'SELECT le.entity_id, a.id AS article_id, a.title, a.url FROM ls_list_entity le ' . 
+           'JOIN article_entities ae ON (le.entity_id = ae.entity_id) ' .
+           'JOIN articles a ON (ae.article_id = a.id) ' .
+           'WHERE le.list_id = ? AND le.is_deleted = 0';
+    $stmt = $db->execute($sql, array($id));
+    $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    return $rows;
+  }  
 }

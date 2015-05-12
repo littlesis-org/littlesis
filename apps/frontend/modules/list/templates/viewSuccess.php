@@ -53,6 +53,7 @@
 <div id="member_tabs_content">
 </div>
 
+<?php use_helper('LsJavascript') ?>
 <?php echo javascript_tag("
 
   hash = parseHash();

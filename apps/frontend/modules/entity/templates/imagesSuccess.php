@@ -30,6 +30,10 @@
   <?php if ($sf_user->hasCredential('editor') && (!$entity->getProfileImage() || $entity->getProfileImage()->id != $image->id)) : ?>
     <?php $actions[] = array('text' => 'Put on profile', 'url' => 'entity/featureImage?id=' . $image->id) ?>
   <?php endif; ?>
+
+  <?php if ($sf_user->hasCredential('editor')) : ?>
+    <?php $actions[] = array('text' => 'Crop', 'url' => 'entity/cropImage?id=' . $image->id) ?>
+  <?php endif; ?>
   
   <?php include_partial('entity/imagelisting', array(
     'image' => $image,
