@@ -2,9 +2,9 @@ all:
   raw:
     class:      sfDoctrineDatabase
     param:
-      dsn:      mysql://USERNAME:PASSWORD@localhost/DATABASE
+      dsn:      mysql://littlesis:PASSWORD@localhost/littlesis_raw
 
   main:
     class:      sfDoctrineDatabase
     param:
-      dsn:      mysql://USERNAME:PASSWORD@localhost/DATABASE
+      dsn:      mysql://littlesis:PASSWORD@localhost/littlesis
