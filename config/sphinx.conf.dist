@@ -23,7 +23,7 @@ source entities
                     LEFT JOIN ls_list_entity le ON (e.id = le.entity_id) \
             WHERE \
                     e.is_deleted = 0 \
-                    AND (le.is_deleted = 1 OR le.is_deleted IS NULL) \
+                    AND (le.is_deleted = 0 OR le.is_deleted IS NULL) \
                     AND e.updated_at <= ( SELECT updated_at FROM sphinx_index WHERE name = 'entities' ) \
             GROUP BY \
                     e.id;
@@ -57,7 +57,7 @@ source entities_delta : entities
                     LEFT JOIN ls_list_entity le ON (e.id = le.entity_id) \
             WHERE \
                     e.is_deleted = 0 \
-                    AND (le.is_deleted = 1 OR le.is_deleted IS NULL) \
+                    AND (le.is_deleted = 0 OR le.is_deleted IS NULL) \
                     AND e.updated_at > ( SELECT updated_at FROM sphinx_index WHERE name = 'entities' ) \
             GROUP BY \
                     e.id;
@@ -281,7 +281,7 @@ index entities
 
 index entities_delta : entities
 {
-    source                  = entities-delta
+    source                  = entities_delta
     path                    = [path/to/littlesis]/data/sphinx.entities_delta.index
     charset_table = 0..9, a..z, _, A..Z->a..z, U+00C0->a, U+00C1->a, \
       U+00C2->a, U+00C3->a, U+00C4->a, U+00C5->a, U+00C7->c, U+00C8->e, \
@@ -643,7 +643,7 @@ index notes
 
 index notes_delta : notes
 {
-    source                  = notes-delta
+    source                  = notes_delta
     path                    = [path/to/littlesis]/data/sphinx.notes_delta.index
     charset_table = 0..9, a..z, _, A..Z->a..z, U+00C0->a, U+00C1->a, \
       U+00C2->a, U+00C3->a, U+00C4->a, U+00C5->a, U+00C7->c, U+00C8->e, \
