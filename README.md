@@ -69,7 +69,6 @@ To enable the API, API account registration and API documentation:
 To enable the LittleSis frontend, user account registration, and map pages: 
  * Edit `apps/frontend/config/app.yml.dist`, enter the Google Maps and ReCAPTCHA keys, and save as `apps/frontend/config/app.yml`. 
  * Edit `apps/frontend/config/settings.yml.dist`, enter a CRSF token secret string, and save as `apps/frontend/config/settings.yml`. 
- * Edit `apps/frontend/config/routing.yml.dist` and save as `apps/frontend/config/routing.yml`. 
  * There are other keys you may need to set if you want to use some of the scrapers...
 
 Now you need to make the cache directory recursively writable, and create a log directory with an empty log file. This can be done with a symfony command:
