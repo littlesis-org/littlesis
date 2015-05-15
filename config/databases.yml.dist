@@ -2,9 +2,9 @@ all:
   raw:
     class:      sfDoctrineDatabase
     param:
-      dsn:      mysql://littlesis:PASSWORD@localhost/littlesis_raw
+      dsn:      mysql://littlesis:themanbehindthemanbehindthethrone@localhost/littlesis_raw
 
   main:
     class:      sfDoctrineDatabase
     param:
-      dsn:      mysql://littlesis:PASSWORD@localhost/littlesis
+      dsn:      mysql://littlesis:themanbehindthemanbehindthethrone@localhost/littlesis

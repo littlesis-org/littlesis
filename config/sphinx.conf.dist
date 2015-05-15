@@ -2,10 +2,10 @@ source entities
 {
     type                            = mysql    
     sql_host                        = localhost
-    sql_user                        = [username]
-    sql_pass                        = [password]
-    sql_db                          = [database]
-    sql_sock                        = [path/to/mysqld.sock]
+    sql_user                        = littlesis
+    sql_pass                        = themanbehindthemanbehindthethrone
+    sql_db                          = littlesis
+    sql_sock                        = /var/run/mysqld/mysqld.sock
     sql_port                        = 3306                  
 
     sql_query_pre = SET NAMES utf8
@@ -37,10 +37,10 @@ source entities_delta : entities
 {
     type                            = mysql    
     sql_host                        = localhost
-    sql_user                        = [username]
-    sql_pass                        = [password]
-    sql_db                          = [database]
-    sql_sock                        = [path/to/mysqld.sock]
+    sql_user                        = littlesis
+    sql_pass                        = themanbehindthemanbehindthethrone
+    sql_db                          = littlesis
+    sql_sock                        = /var/run/mysqld/mysqld.sock
     sql_port                        = 3306                  
 
     sql_query_pre = SET NAMES utf8
@@ -71,10 +71,10 @@ source lists
 {
     type                            = mysql    
     sql_host                        = localhost
-    sql_user                        = [username]
-    sql_pass                        = [password]
-    sql_db                          = [database]
-    sql_sock                        = [path/to/mysqld.sock]
+    sql_user                        = littlesis
+    sql_pass                        = themanbehindthemanbehindthethrone
+    sql_db                          = littlesis
+    sql_sock                        = /var/run/mysqld/mysqld.sock
     sql_port                        = 3306                  
 
     sql_query_pre = SET NAMES utf8
@@ -97,10 +97,10 @@ source lists_delta : lists
 {
     type                            = mysql    
     sql_host                        = localhost
-    sql_user                        = [username]
-    sql_pass                        = [password]
-    sql_db                          = [database]
-    sql_sock                        = [path/to/mysqld.sock]
+    sql_user                        = littlesis
+    sql_pass                        = themanbehindthemanbehindthethrone
+    sql_db                          = littlesis
+    sql_sock                        = /var/run/mysqld/mysqld.sock
     sql_port                        = 3306                  
 
     sql_query_pre = SET NAMES utf8
@@ -122,10 +122,10 @@ source notes
 {
     type                            = mysql    
     sql_host                        = localhost
-    sql_user                        = [username]
-    sql_pass                        = [password]
-    sql_db                          = [database]
-    sql_sock                        = [path/to/mysqld.sock]
+    sql_user                        = littlesis
+    sql_pass                        = themanbehindthemanbehindthethrone
+    sql_db                          = littlesis
+    sql_sock                        = /var/run/mysqld/mysqld.sock
     sql_port                        = 3306                  
 
     sql_query_pre = SET NAMES utf8
@@ -157,10 +157,10 @@ source notes_delta : notes
 {
     type                            = mysql    
     sql_host                        = localhost
-    sql_user                        = [username]
-    sql_pass                        = [password]
-    sql_db                          = [database]
-    sql_sock                        = [path/to/mysqld.sock]
+    sql_user                        = littlesis
+    sql_pass                        = themanbehindthemanbehindthethrone
+    sql_db                          = littlesis
+    sql_sock                        = /var/run/mysqld/mysqld.sock
     sql_port                        = 3306                  
 
     sql_query_pre = SET NAMES utf8
@@ -190,7 +190,7 @@ source notes_delta : notes
 index entities
 {
     source                  = entities
-    path                    = [path/to/littlesis]/data/sphinx.entities.index
+    path                    = /var/www/littlesis/symfony/data/sphinx.entities.index
     min_word_len            = 2
     min_prefix_len          = 0
     min_infix_len           = 2
@@ -282,7 +282,7 @@ index entities
 index entities_delta : entities
 {
     source                  = entities_delta
-    path                    = [path/to/littlesis]/data/sphinx.entities_delta.index
+    path                    = /var/www/littlesis/symfony/data/sphinx.entities_delta.index
     charset_table = 0..9, a..z, _, A..Z->a..z, U+00C0->a, U+00C1->a, \
       U+00C2->a, U+00C3->a, U+00C4->a, U+00C5->a, U+00C7->c, U+00C8->e, \
       U+00C9->e, U+00CA->e, U+00CB->e, U+00CC->i, U+00CD->i, U+00CE->i, \
@@ -371,7 +371,7 @@ index entities_delta : entities
 index lists
 {
     source                  = lists
-    path                    = [path/to/littlesis]/data/sphinx.lists.index
+    path                    = /var/www/littlesis/symfony/data/sphinx.lists.index
     min_word_len            = 2
     min_prefix_len          = 0
     min_infix_len           = 2
@@ -463,7 +463,7 @@ index lists
 index lists_delta : lists
 {
     source                  = lists_delta
-    path                    = [path/to/littlesis]/data/sphinx.lists_delta.index
+    path                    = /var/www//littlesis/symfony/data/sphinx.lists_delta.index
     charset_table = 0..9, a..z, _, A..Z->a..z, U+00C0->a, U+00C1->a, \
       U+00C2->a, U+00C3->a, U+00C4->a, U+00C5->a, U+00C7->c, U+00C8->e, \
       U+00C9->e, U+00CA->e, U+00CB->e, U+00CC->i, U+00CD->i, U+00CE->i, \
@@ -552,7 +552,7 @@ index lists_delta : lists
 index notes
 {
     source                  = notes
-    path                    = [path/to/littlesis]/data/sphinx.notes.index
+    path                    = /var/www/littlesis/symfony/data/sphinx.notes.index
     min_word_len            = 2
     min_prefix_len          = 0
     min_infix_len           = 2
@@ -644,7 +644,7 @@ index notes
 index notes_delta : notes
 {
     source                  = notes_delta
-    path                    = [path/to/littlesis]/data/sphinx.notes_delta.index
+    path                    = /var/www/littlesis/symfony/data/sphinx.notes_delta.index
     charset_table = 0..9, a..z, _, A..Z->a..z, U+00C0->a, U+00C1->a, \
       U+00C2->a, U+00C3->a, U+00C4->a, U+00C5->a, U+00C7->c, U+00C8->e, \
       U+00C9->e, U+00CA->e, U+00CB->e, U+00CC->i, U+00CD->i, U+00CE->i, \
@@ -731,13 +731,13 @@ index notes_delta : notes
 
 indexer
 {
-		mem_limit 							= 256M
+    mem_limit               = 256M
 }
 
 searchd
 {
     listen                  = 3312
-    log                     = [path/to/littlesis/logs]/searchd/searchd.log
-    query_log               = [path/to/littlesis/logs]/searchd/query.log
-    pid_file                = [path/to/littlesis/logs]/searchd/searchd.pid
+    log                     = /var/www/littlesis/symfony/log/searchd/searchd.log
+    query_log               = /var/www/littlesis/symfony/log/searchd/query.log
+    pid_file                = /var/www/littlesis/symfony/log/searchd/searchd.pid
 }
