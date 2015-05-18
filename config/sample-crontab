@@ -1,0 +1,4 @@
+0 0 * * * indexer --config /var/www/littlesis/symfony/config/sphinx.conf entities notes --rotate
+* * * * * indexer --config /var/www/littlesis/symfony/config/sphinx.conf entities-delta notes-delta --rotate
+*/10 * * * * /var/www/littlesis/symfony/symfony email:send-scheduled >>/home/lilsis/www/log/send-scheduled-emails.log >> /dev/null 2>&1
+45 * * * * /var/www/littlesis/symfony/symfony links:update --limit=500 >> /dev/null 2>&1

@@ -4,17 +4,20 @@ all:
     enabled: on
 
   netmap:
-    api_key: LITTLESIS_API_KEY
+    api_key: freeapiforlittlesisdevs
+    default_width: 960
+    default_height: 550
     
   carousel:
-    list_id: LIST_ID_FOR_HOMEPAGE_CAROUSEL
+    list_id: 404
 
   images:
     file_type: png
     mime_type: png
+    square_file_type: jpg
 
   imagemagick:
-    binary_path: PATH_TO_IMAGEMAGICK_CONVERT
+    binary_path: /usr/bin/convert
 
   login_enabled: on
 
@@ -61,13 +64,12 @@ all:
 
   search:
     engine:               sphinx
-    lucene_index_file:    lucene.entity.index
 
   amazon:
-    enable_s3:            false
-    enable_s3_assets:     false
+    enable_s3:            true
+    enable_s3_assets:     true
     s3_base:              "http://s3.amazonaws.com"
-    s3_bucket:            littlesis
+    s3_bucket:            pai-littlesis
     s3_folder:            images
     access_key:           AMAZON_ACCESS_KEY
     secret_key:           AMAZON_SECRET_KEY
@@ -75,24 +77,7 @@ all:
   google:
     search_key:           GOOGLE_CUSTOM_SEARCH_KEY
     search_engine_id:     GOOGLE_CUSTOM_SEARCH_ENGINE_ID
-    maps_key:             GOOGLE_MAPS_KEY
-
-  nytimes:
-    username:             NYTIMES_USERNAME
-    password:             NYTIMES_PASSWORD
-    
-  opencalais:
-    license_id:           OPENCALAIS_LICENSE_ID
     
   recaptcha:
     public_key:           RECAPTCHA_PUBLIC_KEY
     private_key:          RECAPTCHA_PRIVATE_KEY
-
-  sunlight:
-    api_key:              SUNLIGHT_API_KEY
-
-  votesmart:
-    api_key:              VOTESMART_API_KEY
-
-  yahoo:
-    api_key:              YAHOO_API_KEY

@@ -737,7 +737,7 @@ indexer
 searchd
 {
     listen                  = 3312
-    log                     = /var/www/littlesis/symfony/log/searchd/searchd.log
-    query_log               = /var/www/littlesis/symfony/log/searchd/query.log
-    pid_file                = /var/www/littlesis/symfony/log/searchd/searchd.pid
+    log                     = /var/www/littlesis/symfony/log/sphinx/searchd.log
+    query_log               = /var/www/littlesis/symfony/log/sphinx/query.log
+    pid_file                = /var/www/littlesis/symfony/log/sphinx/searchd.pid
 }
