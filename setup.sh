@@ -8,12 +8,11 @@ cp apps/frontend/config/settings.yml.dist apps/frontend/config/settings.yml
 cp apps/api/config/app.yml.dist apps/api/config/app.yml
 cp apps/api/config/settings.yml.dist apps/api/config/settings.yml
 cp config/sphinx.conf.dist config/sphinx.conf
-./symfony fix-perms
 mkdir -p data/sfWebBrowserPlugin/sfCurlAdapter
 touch data/sfWebBrowserPlugin/sfCurlAdapter/cookies.txt
 mkdir tmp
 chmod -R 777 tmp
-mkdir log/sphinx
+mkdir -p log/sphinx
 touch log/sphinx/searchd.log
 touch log/sphinx/query.log
 touch log/sphinx/searchd.pid
