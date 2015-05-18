@@ -1,5 +1,7 @@
 #! /bin/bash
 
+git submodule init
+git submodule update
 cp config/ProjectConfiguration.class.php.dist config/ProjectConfiguration.class.php
 cp config/databases.yml.dist config/databases.yml
 cp web/.htaccess.dist web/.htaccess
