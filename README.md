@@ -5,9 +5,14 @@ About LittleSis
 
 LittleSis is open source software licensed under the [GNU Public License](http://www.gnu.org/copyleft/gpl.html).
 
+Installation
+============
 
-Install Notes
-=============
+The recommended and non-agonizing way to install LittleSis is either with [Docker](https://github.com/littlesis-org/littlesis/wiki/Install-with-Docker) or [docker-osx-dev](https://github.com/littlesis-org/littlesis/wiki/Install-with-Docker-via-docker-osx-dev) (for Mac Users).
+
+
+Install Notes (OUTDATED AND AGONIZING)
+=====================================
 
 LittleSis requires PHP 5.2.3+ with cURL, GD, PDO and Memcache extensions. The application requires that version 1.1.7 (through 1.1.9) of the [Symfony framework](http://symfony-project.org) and [Sphinx](http://sphinxsearch.com) are installed on the server.
 
