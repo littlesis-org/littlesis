@@ -33,7 +33,21 @@ class LsListApi
            'WHERE le.list_id = ? AND le.is_deleted = 0 AND e.is_deleted = 0';
     $stmt = $db->execute($sql, array($id));
     
-    return $stmt->fetchAll(PDO::FETCH_COLUMN);
+    $entityIds = $stmt->fetchAll(PDO::FETCH_COLUMN);
+
+    if (@$options['expand_couples'] && count($entityIds) > 0)
+    {
+      $sql = 'SELECT c.partner1_id, c.partner2_id FROM couple c WHERE c.entity_id IN (' . join(',', $entityIds) . ')';
+      $stmt = $db->execute($sql);
+
+      foreach($stmt->fetchAll() as $ary)
+      {
+        $entityIds[] = $ary[0];
+        $entityIds[] = $ary[1];
+      }
+    }
+    
+    return $entityIds;
   }
 
 

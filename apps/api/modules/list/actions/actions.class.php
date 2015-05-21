@@ -63,7 +63,7 @@ class listActions extends LsApiActions
   {
     $this->setResponseFormat(array('json'));    
 
-    $options = $this->getParams(array());
+    $options = $this->getParams(array('expand_couples'));
     $results = array_map(
       function($id) { return intval($id); },
       LsListApi::getEntityIds($this->list['id'], $options)
