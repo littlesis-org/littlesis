@@ -26,14 +26,14 @@
       'actions' => array('funding')
     ) ?>
   <?php endif; ?>
-  <?php $tabs['Data'] = array(
-    'url' => $list->getInternalUrl('data'),
-    'href' => $baseHref . 'data',
-    'remote' => false,
-    'actions' => array('data')
-  ) ?>
 <?php endif; ?>
 
+<?php $tabs['Data'] = array(
+  'url' => $list->getInternalUrl('data'),
+  'href' => $baseHref . 'data',
+  'remote' => false,
+  'actions' => array('data')
+) ?>
 
 <?php include_partial('global/tabs', array(
   'tabs' => $tabs,
