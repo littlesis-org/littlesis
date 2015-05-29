@@ -1326,7 +1326,7 @@ class EntityApi
            "LEFT JOIN couple c ON (c.entity_id = e.id) " .
            "JOIN address a ON (a.entity_id IN (e.id, c.partner1_id, c.partner2_id)) " . 
            "LEFT JOIN image i ON (i.address_id = a.id AND i.is_deleted = 0) " . 
-           "WHERE e.id = ? AND a.is_deleted = 0 AND a.latitude IS NOT NULL AND a.longitude IS NOT NULL " . 
+           "WHERE e.id = ? AND a.is_deleted = 0 " . 
            "GROUP BY TRUNCATE(a.latitude, 2), TRUNCATE(a.longitude, 2)";
     $stmt = $db->execute($sql, array($id));
     $addresses = $stmt->fetchAll(PDO::FETCH_ASSOC);
