@@ -27,7 +27,7 @@ class listActions extends LsApiActions
     
     foreach ($acceptedKeys as $key)
     {
-      if (@$params[$key]) { $ret[$key] = $params[$key]; }
+      if (@$params[$key] !== NULL) { $ret[$key] = $params[$key]; }
     }
 
     $this->getResponse()->setSlot('params', $ret);
@@ -119,7 +119,7 @@ class listActions extends LsApiActions
   public function executeImages($request)
   {
     $this->setResponseFormat(array('json'));    
-    $options = $this->getParams(array('with_address'));
+    $options = $this->getParams(array('with_address', 'all_images'));
     $this->data = LsListApi::getImages($this->list['id'], $options);
     return $this->renderText(json_encode($this->data));
   }

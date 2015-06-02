@@ -222,14 +222,17 @@ class LsListApi
       $sql = 'SELECT le.entity_id, i.id AS image_id, i.filename FROM ls_list_entity le ' . 
              'JOIN image i ON (le.entity_id = i.entity_id AND i.is_deleted = 0) ' .
              'WHERE le.list_id = ? AND le.is_deleted = 0 AND i.address_id IS NOT NULL';
-      $stmt = $db->execute($sql, array($id));
+    } else if (isset($options['all_images']) && $options['all_images'] == '1') {
+      $sql = 'SELECT le.entity_id, i.id AS image_id, i.filename FROM ls_list_entity le ' . 
+             'JOIN image i ON (le.entity_id = i.entity_id AND i.is_deleted = 0) ' .
+             'WHERE le.list_id = ? AND le.is_deleted = 0';
     } else {
       $sql = 'SELECT le.entity_id, i.id AS image_id, i.filename FROM ls_list_entity le ' . 
              'JOIN image i ON (le.entity_id = i.entity_id AND i.is_featured = 1 AND i.is_deleted = 0) ' .
              'WHERE le.list_id = ? AND le.is_deleted = 0 AND i.address_id IS NULL';
-      $stmt = $db->execute($sql, array($id));
     }
 
+    $stmt = $db->execute($sql, array($id));
     $rows = $stmt->fetchAll();
 
     return array_map(function($row) {
