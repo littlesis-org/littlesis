@@ -25,13 +25,13 @@ class searchActions extends sfActions
       $networkIds = null;
     }
 
-    if ($this->getUser()->hasCredential('admin') || !sfConfig::get('app_blacklist_enabled'))
+    if ($this->getUser()->hasCredential('admin') || !sfConfig::get('app_blacklist_search_enabled'))
     {
       $this->results_pager = EntityTable::getSphinxPager($terms, $page, $num, $networkIds);
     } 
     else 
     {
-      $blacklistIds = (array) sfConfig::get('app_blacklist_ids');
+      $blacklistIds = (array) sfConfig::get('app_blacklist_search_ids');
       $entities = array();
       $result = EntityTable::getSphinxHits($terms, $page, $num, $networkIds);
 
