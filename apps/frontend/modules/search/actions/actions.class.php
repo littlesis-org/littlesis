@@ -8,41 +8,52 @@ class searchActions extends sfActions
     $num = $request->getParameter('num', 20);
     $terms = $request->getParameter('q', '');
     
-    //search entities
-    switch (sfConfig::get('app_search_engine'))
+    //networks to search
+    $networkIds = (array) $request->getParameter('network_ids');
+
+    //only show network options if user has home network other than United States
+    if (count($networkIds))
     {
-      case 'sphinx':
-        //networks to search
-        $networkIds = (array) $request->getParameter('network_ids');
+      $this->networks = LsDoctrineQuery::create()
+        ->from('LsList l')
+        ->whereIn('l.id', $networkIds)
+        ->fetchArray();
 
-        //only show network options if user has home network other than United States
-        if (count($networkIds))
+    }
+    else
+    {
+      $networkIds = null;
+    }
+
+    if ($this->getUser()->hasCredential('admin') || !sfConfig::get('app_blacklist_enabled'))
+    {
+      $this->results_pager = EntityTable::getSphinxPager($terms, $page, $num, $networkIds);
+    } 
+    else 
+    {
+      $blacklistIds = (array) sfConfig::get('app_blacklist_ids');
+      $entities = array();
+      $result = EntityTable::getSphinxHits($terms, $page, $num, $networkIds);
+
+      if ($result['total_found'] > 0 && isset($result['matches']))
+      {
+        $ids = array_diff(array_keys($result['matches']), $blacklistIds);
+
+        if (count($ids) > 0)
         {
-          $this->networks = LsDoctrineQuery::create()
-            ->from('LsList l')
-            ->whereIn('l.id', $networkIds)
-            ->fetchArray();
-
+          $db = Doctrine_Manager::connection();
+          $sql = 'SELECT e.*, FIELD(e.id, ' . implode(',', $ids) . ') AS field ' . 
+                 'FROM entity e WHERE e.id IN (' . implode(',', $ids) . ') AND e.is_deleted = 0 ' .
+                 'ORDER BY field';             
+          $stmt = $db->execute($sql);      
+          $entities = $stmt->fetchAll(PDO::FETCH_ASSOC);
         }
-        else
-        {
-          $networkIds = null;
-        }
-
-        $this->results_pager = EntityTable::getSphinxPager($terms, $page, $num, $networkIds);
-        break;
-        
-      case 'lucene':                      
-        $ary = EntityTable::getLuceneArray($terms, null);
-        $this->results_pager = new LsDoctrinePager($ary, $page, $num);
-        break;
-        
-      case 'mysql':
-      default:        
-        $terms = explode(' ', $terms);    
-        $q = EntityTable::getSimpleSearchQuery($terms);
-        $this->results_pager = new Doctrine_Pager($q, $page, $num);
-        break;
+      }
+      
+      $pager = new LsDoctrinePager($entities, $page, $num);
+      $pager->setNumResults(count($ids));
+      $pager->isSubsetWithCount(true);
+      $this->results_pager = $pager;
     }
 
     //search lists
