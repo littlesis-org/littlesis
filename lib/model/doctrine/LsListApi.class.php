@@ -220,17 +220,24 @@ class LsListApi
     // include images belonging to individuals that part of couples on the list
     $entityIds = self::getEntityIds($id, array('expand_couples' => $options['expand_couples']));
 
-    if (isset($options['with_address']) && $options['with_address'] == '1')
+    if (count($entityIds) > 0)
     {
-      $sql = 'SELECT i.entity_id, i.id AS image_id, i.filename FROM image i WHERE i.entity_id IN(' . join(',', $entityIds) . ') AND i.is_deleted = 0 AND i.address_id IS NOT NULL';
-    } else if (isset($options['all_images']) && $options['all_images'] == '1') {
-      $sql = 'SELECT i.entity_id, i.id AS image_id, i.filename FROM image i WHERE i.entity_id IN(' . join(',', $entityIds) . ') AND i.is_deleted = 0';
-    } else {
-      $sql = 'SELECT i.entity_id, i.id AS image_id, i.filename FROM image i WHERE i.entity_id IN(' . join(',', $entityIds) . ') AND i.is_featured = 1 AND i.is_deleted = 0 AND i.address_id IS NULL';
-    }
+      if (isset($options['with_address']) && $options['with_address'] == '1')
+      {
+        $sql = 'SELECT i.entity_id, i.id AS image_id, i.filename FROM image i WHERE i.entity_id IN(' . join(',', $entityIds) . ') AND i.is_deleted = 0 AND i.address_id IS NOT NULL';
+      } else if (isset($options['all_images']) && $options['all_images'] == '1') {
+        $sql = 'SELECT i.entity_id, i.id AS image_id, i.filename FROM image i WHERE i.entity_id IN(' . join(',', $entityIds) . ') AND i.is_deleted = 0';
+      } else {
+        $sql = 'SELECT i.entity_id, i.id AS image_id, i.filename FROM image i WHERE i.entity_id IN(' . join(',', $entityIds) . ') AND i.is_featured = 1 AND i.is_deleted = 0 AND i.address_id IS NULL';
+      }
 
-    $stmt = $db->execute($sql, array($id));
-    $rows = $stmt->fetchAll();
+      $stmt = $db->execute($sql, array($id));
+      $rows = $stmt->fetchAll();
+    }
+    else
+    {
+      $rows = array();
+    }
 
     return array_map(function($row) {
       return array('id' => intval($row['entity_id']), 'url' => ImageTable::generateS3Url('profile/' . $row['filename']), 'image_id' => intval($row['image_id']));
@@ -257,13 +264,19 @@ class LsListApi
 
   static function getArticles($id, $options=array())
   {
-    $db = Doctrine_Manager::connection();
-    $sql = 'SELECT le.entity_id, a.id AS article_id, a.title, a.url FROM ls_list_entity le ' . 
-           'JOIN article_entities ae ON (le.entity_id = ae.entity_id) ' .
-           'JOIN articles a ON (ae.article_id = a.id) ' .
-           'WHERE le.list_id = ? AND le.is_deleted = 0';
-    $stmt = $db->execute($sql, array($id));
-    $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $entityIds = self::getEntityIds($id, array('expand_couples' => $options['expand_couples']));
+
+    if (count($entityIds) > 0)
+    {
+      $db = Doctrine_Manager::connection();
+      $sql = 'SELECT ae.entity_id, a.id AS article_id, a.title, a.url FROM article_entities ae JOIN articles a ON (ae.article_id = a.id) WHERE ae.entity_id IN (' . join(',', $entityIds) . ')';
+      $stmt = $db->execute($sql, array($id));
+      $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+    else
+    {
+      $rows = array();
+    }
 
     return $rows;
   }  

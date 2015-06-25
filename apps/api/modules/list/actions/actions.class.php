@@ -134,7 +134,8 @@ class listActions extends LsApiActions
   public function executeArticles($request)
   {
     $this->setResponseFormat(array('json'));    
-    $this->data = LsListApi::getArticles($this->list['id']);
+    $options = $this->getParams(array('expand_couples'));
+    $this->data = LsListApi::getArticles($this->list['id'], $options);
     return $this->renderText(json_encode($this->data));
   }
 }
