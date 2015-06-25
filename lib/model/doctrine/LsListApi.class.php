@@ -47,7 +47,7 @@ class LsListApi
       }
     }
 
-    return $entityIds;
+    return array_unique($entityIds);
   }
 
 
@@ -217,19 +217,16 @@ class LsListApi
   {
     $db = Doctrine_Manager::connection();
 
+    // include images belonging to individuals that part of couples on the list
+    $entityIds = self::getEntityIds($id, array('expand_couples' => $options['expand_couples']));
+
     if (isset($options['with_address']) && $options['with_address'] == '1')
     {
-      $sql = 'SELECT le.entity_id, i.id AS image_id, i.filename FROM ls_list_entity le ' . 
-             'JOIN image i ON (le.entity_id = i.entity_id AND i.is_deleted = 0) ' .
-             'WHERE le.list_id = ? AND le.is_deleted = 0 AND i.address_id IS NOT NULL';
+      $sql = 'SELECT i.entity_id, i.id AS image_id, i.filename FROM image i WHERE i.entity_id IN(' . join(',', $entityIds) . ') AND i.is_deleted = 0 AND i.address_id IS NOT NULL';
     } else if (isset($options['all_images']) && $options['all_images'] == '1') {
-      $sql = 'SELECT le.entity_id, i.id AS image_id, i.filename FROM ls_list_entity le ' . 
-             'JOIN image i ON (le.entity_id = i.entity_id AND i.is_deleted = 0) ' .
-             'WHERE le.list_id = ? AND le.is_deleted = 0';
+      $sql = 'SELECT i.entity_id, i.id AS image_id, i.filename FROM image i WHERE i.entity_id IN(' . join(',', $entityIds) . ') AND i.is_deleted = 0';
     } else {
-      $sql = 'SELECT le.entity_id, i.id AS image_id, i.filename FROM ls_list_entity le ' . 
-             'JOIN image i ON (le.entity_id = i.entity_id AND i.is_featured = 1 AND i.is_deleted = 0) ' .
-             'WHERE le.list_id = ? AND le.is_deleted = 0 AND i.address_id IS NULL';
+      $sql = 'SELECT i.entity_id, i.id AS image_id, i.filename FROM image i WHERE i.entity_id IN(' . join(',', $entityIds) . ') AND i.is_featured = 1 AND i.is_deleted = 0 AND i.address_id IS NULL';
     }
 
     $stmt = $db->execute($sql, array($id));
