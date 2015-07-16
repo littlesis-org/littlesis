@@ -95,7 +95,7 @@ We're a grassroots watchdog network connecting the dots between the world's most
 <div id="splash-intro" class="row">
   <div id="splash-header" class="col-sm-12">
     <h1>Map the power with <strong>Oligrapher</strong></h1>
-    <?php link_to('Oligrapher', 'http://littlesis.org/oligrapher') ?> is a new tool for visualizing networks of influence using LittleSis data.
+    <?php echo link_to('Oligrapher', 'http://littlesis.org/oligrapher') ?> is a new tool for visualizing networks of influence using LittleSis data.
 
     <br><br>
 
