@@ -2629,7 +2629,7 @@ html div#content .form-control {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;     
-
+}
 
 html div#content td input[type="checkbox"] {
   margin-right: 3px;
@@ -2647,4 +2647,56 @@ html div#content td input[type="checkbox"] {
 .help_home_list {
   font-size: 12px;
   line-height: 1.2em;
+}
+
+
+/* maps on homepage */
+
+.splash-images {
+  margin-top: 30px; 
+  margin-bottom: 30px; 
+}
+
+.splash-images .splash-image {
+  height: 250px;
+  text-align: center;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.splash-image img {
+  width: 300px;
+  height: 225px;
+  border: 1px solid #ddd;
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+
+#splash-intro {
+  margin-top: 40px;
+}
+
+#splash-header {
+  font-size: 20px;
+  text-align: center;
+}
+
+#splash-header h1 {
+  font-size: 50px;
+}
+  
+#splash-header a.btn {
+  background-color: #A04040;
+  color: #fff;    
+  border: 0;
+  font-weight: 200;
+}
+
+#splash-join {
+  margin-top: 5px;
+  font-size: 12px;
+}
+
+#splash-contact {
+  font-size: 20px;
 }

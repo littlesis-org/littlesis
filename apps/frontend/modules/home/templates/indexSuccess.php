@@ -90,6 +90,36 @@ We're a grassroots watchdog network connecting the dots between the world's most
 </div>
 
 
+<!-- OLIGRAPHER PART -->
+
+<div id="splash-intro" class="row">
+  <div id="splash-header" class="col-sm-12">
+    <h1>Map the power with <strong>Oligrapher</strong></h1>
+    <?php link_to('Oligrapher', 'http://littlesis.org/oligrapher') ?> is a new tool for visualizing networks of influence using LittleSis data.
+
+    <br><br>
+
+    <?php echo link_to('Get started on a new map', 'http://littlesis.org/maps/new', array('class' => 'btn btn-lg')) ?>
+    <div id="splash-join">or <?php echo link_to('sign up', '@join') ?> for a LittleSis account</div>
+  </div>
+</div>
+
+<div class="row hidden-xs splash-images">
+  <div class="col-sm-4 splash-image">
+    <?php echo link_to(image_tag('system/fcc-map.jpg'), 'http://littlesis.org/maps/101-fcc-chairman-wheeler-staff-telecom-ties') ?><br>
+    <?php echo link_to('FCC Tight with Telecoms', 'http://littlesis.org/maps/101-fcc-chairman-wheeler-staff-telecom-ties') ?>
+  </div>
+  <div class="col-sm-4 splash-image">
+    <?php echo link_to(image_tag('system/data-society-map.jpg'), 'http://littlesis.org/partypolitics') ?><br>
+    <?php echo link_to('Big Data, Small World', 'http://littlesis.org/partypolitics') ?>
+  </div>
+  <div class="col-sm-4 splash-image">
+    <?php echo link_to(image_tag('system/ferguson-map.jpg'), 'http://littlesis.org/maps/259-profiting-from-ferguson') ?><br>
+    <?php echo link_to('Profiting from Ferguson', 'http://littlesis.org/maps/259-profiting-from-ferguson') ?>
+  </div>
+</div>
+
+
 <!-- BOTTOM PART -->
 
 <br />
