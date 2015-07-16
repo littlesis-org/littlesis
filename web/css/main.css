@@ -2700,3 +2700,8 @@ html div#content td input[type="checkbox"] {
 #splash-contact {
   font-size: 20px;
 }
+
+#splash-more-maps {
+  margin-top: 40px;
+  text-align: center;
+}

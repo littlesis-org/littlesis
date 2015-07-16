@@ -119,6 +119,9 @@ We're a grassroots watchdog network connecting the dots between the world's most
   </div>
 </div>
 
+<div id="splash-more-maps">
+  <?php echo link_to('View More Maps', 'http://littlesis.org/maps/featured', array('class' => 'btn btn-default btn-lg')) ?>
+</div>
 
 <!-- BOTTOM PART -->
 
