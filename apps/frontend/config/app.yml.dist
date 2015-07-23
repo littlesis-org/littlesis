@@ -68,7 +68,7 @@ all:
   amazon:
     enable_s3:            true
     enable_s3_assets:     true
-    s3_base:              "http://s3.amazonaws.com"
+    s3_base:              "//s3.amazonaws.com"
     s3_bucket:            pai-littlesis
     s3_folder:            images
     access_key:           AMAZON_ACCESS_KEY
