@@ -29,7 +29,8 @@ class NetworkMapTable extends Doctrine_Table
     }
     else
     {
-      $image_path = ($primary_ext == "Person" ? image_path("system/netmap-person.png") : image_path("system/netmap-org.png"));
+      // $image_path = ($primary_ext == "Person" ? image_path("system/netmap-person.png") : image_path("system/netmap-org.png"));
+      $image_path = null;
     }
 
     try 
