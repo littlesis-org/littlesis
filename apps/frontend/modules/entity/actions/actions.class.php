@@ -1549,21 +1549,22 @@ class entityActions extends sfActions
   public function executeImages($request)
   {
     $this->checkEntity($request, false, false);
+    $this->redirect(EntityTable::railsUrl($this->entity, "images", true));
 
-    $page = $request->getParameter('page', 1);
-    $num = $request->getParameter('num', 10);
+    // $page = $request->getParameter('page', 1);
+    // $num = $request->getParameter('num', 10);
     
-    $q = LsDoctrineQuery::create()
-      ->from('Image i')
-      ->where('i.entity_id = ?', $this->entity->id)
-      ->orderBy('i.updated_at DESC');
+    // $q = LsDoctrineQuery::create()
+    //   ->from('Image i')
+    //   ->where('i.entity_id = ?', $this->entity->id)
+    //   ->orderBy('i.updated_at DESC');
 
-    if (!$this->getUser()->isAuthenticated())
-    {
-      $q->andWhere('(i.caption IS NULL OR i.caption NOT LIKE "street view:%")');
-    }
+    // if (!$this->getUser()->isAuthenticated())
+    // {
+    //   $q->andWhere('(i.caption IS NULL OR i.caption NOT LIKE "street view:%")');
+    // }
       
-    $this->image_pager = new LsDoctrinePager($q, $page, $num);  
+    // $this->image_pager = new LsDoctrinePager($q, $page, $num);  
   }
 
 
