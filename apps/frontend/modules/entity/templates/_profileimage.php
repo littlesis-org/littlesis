@@ -7,8 +7,8 @@
   </a>
 <?php $image = EntityTable::getProfileImageById($entity['id']) ?>
 <?php if ($image) : ?>
-	<?php echo link_to(image_tag(ImageTable::getPath($image, 'profile'), array('alt' => '')), EntityTable::getInternalUrl($entity, 'images')) ?>
-  <?php slot('share_image', ImageTable::getPath($image, 'profile')) ?>
+	<?php echo link_to(image_tag(ImageTable::getPath($image, 'face'), array('alt' => '')), EntityTable::getInternalUrl($entity, 'images')) ?>
+  <?php slot('share_image', ImageTable::getPath($image, 'face')) ?>
 <?php else : ?>
   <?php $file = ($entity['primary_ext'] == 'Person') ? 'anon.png' : 'anons.png' ?>
 	<?php echo link_to(image_tag('system'.DIRECTORY_SEPARATOR.$file, array('alt' => 'Upload Image')), EntityTable::getInternalUrl($entity, 'uploadImage')) ?>
