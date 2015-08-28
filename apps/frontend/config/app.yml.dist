@@ -15,6 +15,7 @@ all:
     file_type: png
     mime_type: png
     square_file_type: jpg
+    profile_type: profile
 
   imagemagick:
     binary_path: /usr/bin/convert

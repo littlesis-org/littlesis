@@ -27,7 +27,7 @@ class NetworkMapTable extends Doctrine_Table
       }
       elseif (@$entity["filename"])
       {
-        $image_path = image_path(ImageTable::getPath($entity['filename'], 'face'));      
+        $image_path = image_path(ImageTable::getPath($entity['filename'], sfConfig::get('app_images_profile_type')));      
       }
       else
       {
