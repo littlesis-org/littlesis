@@ -11,24 +11,6 @@
 
 <table>
   <?php include_partial('reference/required', array('form' => $reference_form)) ?>
-  
-  <tr>
-    <td class="form_label">Child</td>
-    <td id="entity1_field" class="form_field text_big"><?php echo entity_link($entity1) ?></td>
-  </tr>
-
-  <tr>
-    <td></td>
-    <td class="form_field">
-      <a href="javascript:void(0);" onclick="switchEntities();">switch &uarr;&darr;</a>
-      <?php echo input_hidden_tag('switch', 0, 'id=switch') ?>
-    </td>
-  </tr>
-
-  <tr>
-    <td class="form_label">Parent</td>
-    <td id="entity2_field" class="form_field text_big"><?php echo entity_link($entity2) ?></td>
-  </tr>
 
   <tr>
     <td class="form_label"></td>
