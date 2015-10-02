@@ -76,7 +76,12 @@ class listActions extends sfActions
   
   public function executeView($request)
   {
-    $this->checkList($request);
+    // $this->checkList($request);
+    // $q = $this->list->getListEntitiesByRankQuery();
+    // $this->list_entity_pager = new LsDoctrinePager($q, $page, $num);
+
+    $this->checkList($request, false, false);
+    $this->redirect("http://" . $_SERVER['HTTP_HOST'] . "/lists/" . $this->list['id'] . "/members");  
   }
 
 
@@ -449,13 +454,7 @@ class listActions extends sfActions
     
     $q = $this->list->getListEntitiesByRankQuery();
     
-    $this->list_entity_pager = new LsDoctrinePager($q, $page, $num);  
-    $this->list_entity_pager->setAjax(true);
-    $this->list_entity_pager->setAjaxUpdateId('member_tabs_content');
-    $this->list_entity_pager->setAjaxIndicatorId('indicator');
-    $this->list_entity_pager->setAjaxHash('members');
-
-    $this->setLayout(false);
+    $this->list_entity_pager = new LsDoctrinePager($q, $page, $num);
   }
 
 
@@ -502,24 +501,8 @@ class listActions extends sfActions
     }
 
     $this->business_pager = new LsDoctrinePager($businesses, 1, 5);
-    $this->business_pager->setAjax(true);
-    $this->business_pager->setAjaxUpdateId('member_tabs_content');
-    $this->business_pager->setAjaxIndicatorId('indicator');
-    $this->business_pager->setAjaxHash('business');
-
     $this->government_pager = new LsDoctrinePager($govtBodies, 1, 5);
-    $this->government_pager->setAjax(true);
-    $this->government_pager->setAjaxUpdateId('member_tabs_content');
-    $this->government_pager->setAjaxIndicatorId('indicator');
-    $this->government_pager->setAjaxHash('government');
-
     $this->other_pager = new LsDoctrinePager($otherOrgs, 1, 5);
-    $this->other_pager->setAjax(true);
-    $this->other_pager->setAjaxUpdateId('member_tabs_content');
-    $this->other_pager->setAjaxIndicatorId('indicator');
-    $this->other_pager->setAjaxHash('otherOrgs');
-
-    $this->setLayout(false);
   }
   
   
@@ -543,12 +526,6 @@ class listActions extends sfActions
     );
 
     $this->business_pager = new LsDoctrinePager($q, $page, $num);
-    $this->business_pager->setAjax(true);
-    $this->business_pager->setAjaxUpdateId('member_tabs_content');
-    $this->business_pager->setAjaxIndicatorId('indicator');
-    $this->business_pager->setAjaxHash('business');
-
-    $this->setLayout(false);
   }
 
 
@@ -562,12 +539,6 @@ class listActions extends sfActions
     $q = $this->list->getSecondDegreeQuery(array(RelationshipTable::POSITION_CATEGORY, RelationshipTable::MEMBERSHIP_CATEGORY), $order=2, 'GovernmentBody', null, 'Person', true);
 
     $this->government_pager = new LsDoctrinePager($q, $page, $num);
-    $this->government_pager->setAjax(true);
-    $this->government_pager->setAjaxUpdateId('member_tabs_content');
-    $this->government_pager->setAjaxIndicatorId('indicator');
-    $this->government_pager->setAjaxHash('government');
-
-    $this->setLayout(false);
   }
   
   
@@ -581,12 +552,6 @@ class listActions extends sfActions
     $q = $this->list->getSecondDegreeQuery(array(RelationshipTable::POSITION_CATEGORY, RelationshipTable::MEMBERSHIP_CATEGORY), $order=2, null, array('Business', 'GovernmentBody'), 'Person', true);
 
     $this->other_pager = new LsDoctrinePager($q, $page, $num);
-    $this->other_pager->setAjax(true);
-    $this->other_pager->setAjaxUpdateId('member_tabs_content');
-    $this->other_pager->setAjaxIndicatorId('indicator');
-    $this->other_pager->setAjaxHash('otherOrgs');
-
-    $this->setLayout(false);
   }
 
 
@@ -617,13 +582,6 @@ class listActions extends sfActions
     }
   
     $this->committee_pager = new LsDoctrinePager($entities, $page, $num);
-    $this->committee_pager->setNumResults($count);
-    $this->committee_pager->setAjax(true);
-    $this->committee_pager->setAjaxUpdateId('member_tabs_content');
-    $this->committee_pager->setAjaxIndicatorId('indicator');
-    $this->committee_pager->setAjaxHash('giving');
-
-    $this->setLayout(false);
   }
 
 
@@ -653,13 +611,6 @@ class listActions extends sfActions
     }
   
     $this->donor_pager = new LsDoctrinePager($entities, $page, $num);
-    $this->donor_pager->setNumResults($count);
-    $this->donor_pager->setAjax(true);
-    $this->donor_pager->setAjaxUpdateId('member_tabs_content');
-    $this->donor_pager->setAjaxIndicatorId('indicator');
-    $this->donor_pager->setAjaxHash('funding');
-
-    $this->setLayout(false);
   }
 
 

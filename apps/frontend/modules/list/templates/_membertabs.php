@@ -1,7 +1,7 @@
 <?php $baseHref = '#' ?>
 <?php $tabs = array(
   'Members' => array(
-    'url' => $list->getInternalUrl('members'),
+    'url' => LsListTable::railsUrl($list, 'members', true),
     'href' => $baseHref . 'members',
     'actions' => array('members')
   )
@@ -28,25 +28,8 @@
   <?php endif; ?>
 <?php endif; ?>
 
-<?php $tabs['Data'] = array(
-  'url' => $list->getInternalUrl('data'),
-  'href' => $baseHref . 'data',
-  'remote' => false,
-  'actions' => array('data')
-) ?>
-
 <?php include_partial('global/tabs', array(
   'tabs' => $tabs,
-  'remote' => true,
   'update' => 'member_tabs_content',
   'active' => isset($active) ? $active : null,
 )) ?>
-
-
-<script type="text/javascript">
-<?php foreach ($tabs as $text => $ary) : ?>
-  <?php foreach ($ary['actions'] as $action) : ?>
-    if (window.location.hash.indexOf('#<?php echo $action ?>') > -1) { $('button_tabs_<?php echo str_replace(' ', '', strtolower($text)) ?>').setAttribute('class', 'active'); }
-  <?php endforeach; ?>
-<?php endforeach; ?>
-</script>

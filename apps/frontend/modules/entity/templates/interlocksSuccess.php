@@ -1,6 +1,5 @@
 <?php use_helper('Pager') ?>
 
-
 <?php $primary = $entity->getPrimaryExtension() ?>
 <?php $title = ($primary == 'Person') ? 'People in Common Orgs' : 'Orgs with Common People' ?>
 <?php $commonStr = ($primary == 'Person') ? 'Common Orgs' : 'Common People' ?>

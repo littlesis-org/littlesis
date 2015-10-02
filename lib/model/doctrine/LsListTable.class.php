@@ -243,4 +243,10 @@ class LsListTable extends Doctrine_Table
 
     return $lists;
   }
+
+  public static function railsUrl($list, $action=null, $full=false) 
+  {
+    return ($full ? ("http" . (sfContext::getInstance()->getRequest()->isSecure() ? "s" : "") . "://") . $_SERVER['HTTP_HOST'] : "") . "/lists/" . $list['id'] . "/" . $action;
+  }
+
 }

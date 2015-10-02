@@ -1,3 +1,7 @@
+<?php include_partial('list/basic', array('list' => $list)) ?>
+
+<?php include_partial('list/membertabs', array('list' => $list)) ?>
+
 <?php include_partial('global/section', array(
   'title' => 'Other Organizations',
   'pointer' => 'Non-business and non-govt orgs that people from ' . $list->name . ' have the most positions in'

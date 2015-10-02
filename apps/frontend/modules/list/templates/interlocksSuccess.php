@@ -1,5 +1,6 @@
-<?php include_partial('list/header', array('list' => $list, 'show_actions' => ($list->is_admin && !$sf_user->hasCredential('admin')) ? false : true)) ?>
+<?php include_partial('list/basic', array('list' => $list)) ?>
 
+<?php include_partial('list/membertabs', array('list' => $list)) ?>
 
 <?php include_partial('global/section', array(
   'title' => 'Businesses',

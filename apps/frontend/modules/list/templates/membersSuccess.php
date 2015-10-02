@@ -1,3 +1,9 @@
+<?php include_partial('list/basic', array('list' => $list)) ?>
+
+<!-- TABS -->
+
+<?php include_partial('list/membertabs', array('list' => $list)) ?>
+
 <?php use_helper('LsText') ?>
 
 
