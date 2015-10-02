@@ -1,5 +1,5 @@
 <?php include_partial('global/section', array(
-  'title' => 'Expert Tools'
+  'title' => 'Advanced Tools'
 )) ?>
 
 
@@ -9,5 +9,5 @@
 <?php if ($entity['primary_ext'] == 'Org') : ?>
   <?php echo link_to('match related donors',EntityTable::getInternalUrl($entity, 'matchRelated')) ?><br>
 <?php endif; ?>  
-<?php echo link_to('twitter accounts', '@railsEditTwitter?id=' . $entity['id']) ?><br>
+<?php //echo link_to('twitter accounts', '@railsEditTwitter?id=' . $entity['id']) ?><br>
 </div>
