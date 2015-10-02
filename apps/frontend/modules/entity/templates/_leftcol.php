@@ -39,7 +39,9 @@
   
 <?php endif; ?>
 
-<?php include_partial('entity/expertlinks', array('entity' => $entity)) ?>
+<?php if ($sf_user->isAuthenticated()) : ?>
+  <?php include_partial('entity/expertlinks', array('entity' => $entity)) ?>
+<?php endif; ?>
 
 <?php if ($sf_user->isAuthenticated() || !cache('leftcol_lists', 86400)) : ?>
   <?php include_partial('global/lists', array('entity' => $entity)) ?>
