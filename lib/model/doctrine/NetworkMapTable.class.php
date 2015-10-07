@@ -19,24 +19,16 @@ class NetworkMapTable extends Doctrine_Table
     $primary_ext = @$entity["primary_ext"] ? $entity["primary_ext"] : ((strpos($entity["url"], "person") === false) ? "Org" : "Person");
     $entity["primary_ext"] = $primary_ext;
 
-    if ($primary_ext == 'Person')
+    if (@$entity["image"] && strpos(@$entity["image"], "netmap") === false && strpos(@$entity["image"], "anon") === false)
     {
-      if (@$entity["image"] && strpos(@$entity["image"], "netmap") === false && strpos(@$entity["image"], "anon") === false)
-      {
-        $image_path = $entity["image"];
-      }
-      elseif (@$entity["filename"])
-      {
-        $image_path = image_path(ImageTable::getPath($entity['filename'], sfConfig::get('app_images_profile_type')));      
-      }
-      else
-      {
-        $image_path = null;
-      }
+      $image_path = $entity["image"];
+    }
+    elseif (@$entity["filename"])
+    {
+      $image_path = image_path(ImageTable::getPath($entity['filename'], sfConfig::get('app_images_profile_type')));      
     }
     else
     {
-      // $image_path = ($primary_ext == "Person" ? image_path("system/netmap-person.png") : image_path("system/netmap-org.png"));
       $image_path = null;
     }
 
