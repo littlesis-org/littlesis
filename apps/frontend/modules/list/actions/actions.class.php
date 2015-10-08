@@ -582,6 +582,7 @@ class listActions extends sfActions
     }
   
     $this->committee_pager = new LsDoctrinePager($entities, $page, $num);
+    $this->committee_pager->setNumResults($count);
   }
 
 
@@ -611,6 +612,7 @@ class listActions extends sfActions
     }
   
     $this->donor_pager = new LsDoctrinePager($entities, $page, $num);
+    $this->donor_pager->setNumResults($count);
   }
 
 
