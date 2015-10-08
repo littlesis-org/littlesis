@@ -81,7 +81,7 @@ class listActions extends sfActions
     // $this->list_entity_pager = new LsDoctrinePager($q, $page, $num);
 
     $this->checkList($request, false, false);
-    $this->redirect("http://" . $_SERVER['HTTP_HOST'] . "/lists/" . $this->list['id'] . "/members");  
+    $this->redirect(LsListTable::railsUrl($this->list, 'members', true));
   }
 
 
