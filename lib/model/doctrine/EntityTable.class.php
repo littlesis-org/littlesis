@@ -2013,7 +2013,8 @@ class EntityTable extends Doctrine_Table
 
   public static function railsUrl($entity, $action=null, $full=false) 
   {
-    return ($full ? ("http" . (sfContext::getInstance()->getRequest()->isSecure() ? "s" : "") . "://") . $_SERVER['HTTP_HOST'] : "") . "/entities/" . $entity['id'] . "/" . $action;
+    $id = $entity['id'] . '-' . LsSlug::convertNameToRailsSlug($entity['name']);
+    return ($full ? ("http" . (sfContext::getInstance()->getRequest()->isSecure() ? "s" : "") . "://") . $_SERVER['HTTP_HOST'] : "") . "/entities/" . $id . "/" . $action;
   }
 
   public static function getPartnerIds($id)

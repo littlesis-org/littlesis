@@ -28,5 +28,10 @@ class LsSlug
     }
     
     return $str;
-  }  
+  }
+
+  static function convertNameToRailsSlug($str)
+  {
+    return preg_replace('#-+#', '-', preg_replace('#[\W]#', '-', strtolower($str)));
+  }
 }
