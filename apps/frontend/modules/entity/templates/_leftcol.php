@@ -52,13 +52,14 @@
 <?php endif; ?>
 
 
-<?php include_partial('global/section', array(
-  'title' => 'Notes',
-  'pointer' => 'Analyst notes about ' . $entity['name']
+
+<?php include_component('note', 'recordSample', array(
+  'record' => $entity,
+  'model' => 'Entity',
+  'more_uri' => EntityTable::getInternalUrl($entity, 'notes')
 )) ?>
-Notes on entity pages are temporarily down for maintenance.
-<br>
-<br>
+<br />
+
 
 <?php if ($sf_user->hasCredential('editor') || $sf_user->hasCredential('merger')) : ?>
 
