@@ -570,11 +570,11 @@ class Relationship extends BaseRelationship
     {
       $conn->beginTransaction();
 
-      //if end_date is set, is_current must be false
-      if ($this->end_date && $this->is_current)
-      {
-        $this->is_current = false;
-      }
+      // if end_date is set, is_current must be false (DISABLED FOR NOW)
+      // if ($this->end_date && $this->is_current)
+      // {
+      //   $this->is_current = false;
+      // }
 
       $isModified = $this->isModified();
 
