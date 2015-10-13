@@ -159,6 +159,10 @@ addOrg:
   url:   entity/addOrg/*
   param: { module: entity, action: addOrg }
 
+addEntity:
+  url:   entities/new
+  param: { module: entity, action: new }
+
 entityRoute:
   url:   entity/:target/*
   param: { module: entity, action: route }
@@ -272,6 +276,10 @@ railsEditTwitter:
 maps:
   url:   /maps
   param: { module: map, action: list }
+
+addMap:
+  url:   maps/new
+  param: { module: map, action: new }
 
 
 # HELP
