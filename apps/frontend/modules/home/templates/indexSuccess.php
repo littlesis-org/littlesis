@@ -46,7 +46,7 @@ We're a grassroots watchdog network connecting the dots between the world's most
 <div style="float: left; margin-right: 2em;">
 <form action="http://groups.google.com/group/littlesis/boxsubscribe">
 
-<div class="input-group" style="width: 300px;">
+<div class="input-group" style="width: 280px;">
   <input class="form-control" type="text" name="email"
   placeholder="your email" size="25" />
   <span class="input-group-btn">
@@ -58,12 +58,16 @@ We're a grassroots watchdog network connecting the dots between the world's most
 </div>
 
 <div style="float: left; margin-right: 2em; padding-top: 8px;">
-<a href="https://twitter.com/twittlesis" class="twitter-follow-button" data-show-count="false" data-dnt="true">Follow @twittlesis</a>
+<a href="https://twitter.com/twittlesis" class="twitter-follow-button" data-show-count="false" data-show-screen-name="false" data-dnt="true">Follow</a>
 <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
 </div>
 
-<div style="padding-top: 8px;">
+<div style="padding-top: 8px; float: left; margin-right: 2em ">
 <div class="fb-like" data-href="https://www.facebook.com/LittleSis.org" data-send="false" data-layout="button_count" data-width="90" data-show-faces="false"></div>
+</div>
+
+<div id="donate">
+  <a href="http://public-accountability.org/donate/" class="btn" style="color: white; background-color: #cc5454; text-decoration: none;">Donate</a>
 </div>
 
 </div>

@@ -97,7 +97,8 @@ class homeComponents extends sfComponents
           $this->getContext()->getI18N()->__('Data API') => 'http://api.littlesis.org',
           $this->getContext()->getI18N()->__('Source Code') => 'https://github.com/littlesis-org/littlesis',
           $this->getContext()->getI18N()->__('Disclaimer') => '@disclaimer',
-          $this->getContext()->getI18N()->__('Contact Us') => '@contact'          
+          $this->getContext()->getI18N()->__('Contact Us') => '@contact',
+          $this->getContext()->getI18N()->__('Donate') => 'http://public-accountability.org/donate/'          
         )
       )
     ));
