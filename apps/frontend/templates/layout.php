@@ -25,6 +25,8 @@
 <meta property="og:url"              content="<?php echo $share_link ?>"/>
 <meta property="og:site_name"        content="LittleSis"/>
 
+<?php include_partial('global/analytics') ?>
+
 </head>
 <body style="<?php echo (!$sf_request->getParameter("is_local") && $sf_request->getParameter('module') == 'home' && $sf_request->getParameter('action') == 'index') && false ? ('background-image: url(\'' . image_path('system/bg-lombardi-white.jpg') . '\');') : '' ?>">
 
@@ -173,10 +175,6 @@
 
   </div>
 </div>
-
-
-<?php include_partial('global/analytics') ?>
-
 
 </body>
 
