@@ -1,9 +1,5 @@
 <br>
-<?php include_partial('global/warning', array(
-  'message' => 'This is high stakes.  You are potentially creating <strong>' . count($matches) . ' new ' . $default_type . ' entities and ' . $category_name . ' relationships</strong>. Proceed with caution!'
-)) ?>
 
-<br><br><br>
 
 
 <strong>Please process each of the following <?php echo count($matches) ?> names</strong>:<br />
