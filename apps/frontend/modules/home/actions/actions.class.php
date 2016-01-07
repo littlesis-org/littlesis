@@ -641,30 +641,32 @@ class homeActions extends sfActions
       $this->settings_form->bind($params);
 
 
+      // DON'T ALLOW EMAIL CHANGES BECAUSE THEY'RE NOT SYNCED TO RAILS USERS
       //if user submitted valid email address, make sure it isn't a duplicate
-      $errors = $this->settings_form->getErrorSchema()->getErrors();
+      // $errors = $this->settings_form->getErrorSchema()->getErrors();
 
-      if (!isset($errors['email']))
-      {
-        $q = LsDoctrineQuery::create()
-          ->from('sfGuardUser u')
-          ->where('u.id <> ? AND u.username LIKE ?', array($user->id, $params['email']));
+      // if (!isset($errors['email']))
+      // {
+      //   $q = LsDoctrineQuery::create()
+      //     ->from('sfGuardUser u')
+      //     ->where('u.id <> ? AND u.username LIKE ?', array($user->id, $params['email']));
         
-        if ($q->count())
-        {
-          $validatorSchema = $this->settings_form->getValidatorSchema();
-          $validatorSchema['email']->setMessage('invalid', "Sorry, there's already an account with that email address!");
-          $this->settings_form->getErrorSchema()->addError(new sfValidatorError($validatorSchema['email'], 'invalid'), 'email');        
-        }
-      }
+      //   if ($q->count())
+      //   {
+      //     $validatorSchema = $this->settings_form->getValidatorSchema();
+      //     $validatorSchema['email']->setMessage('invalid', "Sorry, there's already an account with that email address!");
+      //     $this->settings_form->getErrorSchema()->addError(new sfValidatorError($validatorSchema['email'], 'invalid'), 'email');        
+      //   }
+      // }
 
       
       if ($this->settings_form->isValid())
       {
-        $user->username = $params['email'];
-        $user->save();
+        // DON'T ALLOW EMAIL CHANGES BECAUSE THEY'RE NOT SYNCED TO RAILS USERS
+        // $user->username = $params['email'];
+        // $user->save();
 
-        $profile->email = $params['email'];
+        // $profile->email = $params['email'];
         $profile->home_network_id = $params['home_network_id'];
         $profile->enable_announcements = isset($params['enable_announcements']) ? 1 : 0;
         $profile->enable_notes_notifications = isset($params['enable_notes_notifications']) ? 1 : 0;

@@ -7,7 +7,8 @@ class UserSettingsForm extends BasesfGuardUserProfileForm
     $choices = LsListTable::getNetworksForSelect();
 
     $this->setWidgets(array(
-      'email'                       => new sfWidgetFormInput(array(), array('size' => 30)),
+      // DON'T ALLOW EMAIL CHANGES BECAUSE THEY'RE NOT SYNCED TO RAILS USERS
+      // 'email'                       => new sfWidgetFormInput(array(), array('size' => 30)),
       'home_network_id'             => new sfWidgetFormSelect(array('choices' => $choices)),
       'enable_announcements'        => new sfWidgetFormInputCheckBox(),
       'enable_notes_notifications'  => new sfWidgetFormInputCheckBox(),
@@ -19,7 +20,7 @@ class UserSettingsForm extends BasesfGuardUserProfileForm
     ));
 
     $this->setValidators(array(
-      'email'                       => new sfValidatorEmail(array('required' => true)),
+      // 'email'                       => new sfValidatorEmail(array('required' => true)),
       'home_network_id'             => new sfValidatorChoice(array('choices' => array_keys($choices), 'required' => true)),
       'enable_announcements'        => new sfValidatorBoolean(),
       'enable_notes_notifications'  => new sfValidatorBoolean(),
@@ -43,7 +44,7 @@ class UserSettingsForm extends BasesfGuardUserProfileForm
     ));
 
     $this->widgetSchema->setHelps(array(
-      'email' => 'use this to login and recieve notifications',
+      // 'email' => 'use this to login and recieve notifications',
       'home_network_id' => 'Default network for new entities',
       'enable_announcements' => 'send me important announcements about LittleSis',
       'enable_notes_notifications' => 'email me when an analyst writes me a note',
