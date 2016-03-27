@@ -46,7 +46,7 @@ Use the form below to sign up, and we'll be in touch with further instructions i
 
 <?php include_partial('global/formerrors', array('form' => $user_form)) ?>
 
-<form action="<?php echo url_for('home/join') ?>" method="POST">
+<form id="join-form" action="nospam.php" method="POST">
 <?php echo input_hidden_tag('code', $profile->invitation_code) ?>
 <?php echo $user_form['_csrf_token'] ?>
 
@@ -139,3 +139,13 @@ Use the form below to sign up, and we'll be in touch with further instructions i
 
 </form>
 </span>
+<script type="text/javascript">
+  $(document).ready(function() {
+    var waitTime = $(".form_errors").length == 0 ? 5000 : 0;
+
+    setTimeout(function() {
+      var form = $("#join-form")[0];
+      form.setAttribute("action", "<?php echo url_for('home/join') ?>");
+    }, waitTime);
+  });
+</script>
