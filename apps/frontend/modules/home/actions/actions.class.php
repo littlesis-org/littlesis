@@ -141,6 +141,11 @@ class homeActions extends sfActions
     //if form is posted, validate
 		if ($request->isMethod('post'))
 		{
+      if ($userParams["username"]) {
+        $this->redirect('home/joined');        
+        return;
+      }
+
       //bind request params to form
       $captcha = array(
         'recaptcha_challenge_field' => $request->getParameter('recaptcha_challenge_field'),

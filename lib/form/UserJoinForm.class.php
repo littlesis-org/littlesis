@@ -12,9 +12,9 @@ class UserJoinForm extends BaseFormDoctrine
       'public_name'       => new sfWidgetFormInput(array(), array('size' => 30)),
       'email'             => new sfWidgetFormInput(array(), array('size' => 30)),
       'reason'            => new sfWidgetFormTextarea(array(), array('cols' => 50, 'rows' => 3)), 
-      'password1'         => new sfWidgetFormInputPassword(array(), array('size' => 30)),
-      'password2'         => new sfWidgetFormInputPassword(array(), array('size' => 30)),
-      'user_agrees'       => new sfWidgetFormInputCheckbox(),
+      'pw1'         => new sfWidgetFormInputPassword(array(), array('size' => 30)),
+      'pw2'         => new sfWidgetFormInputPassword(array(), array('size' => 30)),
+      'accepts_terms'       => new sfWidgetFormInputCheckbox(),
       'captcha'           => new sfWidgetFormReCaptcha(array('public_key' => sfConfig::get('app_recaptcha_public_key')))
     ));
 
@@ -29,11 +29,11 @@ class UserJoinForm extends BaseFormDoctrine
       'reason'            => new sfValidatorString(array('required' => true), array(
         'required' => 'Who are you and why are you signing up?'
       )),
-      'password1'         => new sfValidatorRegex(array('pattern' => '/^[a-z0-9]{6,20}$/i')),
-      'password2'         => new sfValidatorString(array(), array(
+      'pw1'         => new sfValidatorRegex(array('pattern' => '/^[a-z0-9]{6,20}$/i')),
+      'pw2'         => new sfValidatorString(array(), array(
         'required' => 'You must enter the password twice'
       )),
-      'user_agrees'       => new sfValidatorBoolean(array('required' => true), array(
+      'accepts_terms'       => new sfValidatorBoolean(array('required' => true), array(
         'required' => 'You must accept the user agreement'
       )),
       'captcha'           => new sfValidatorReCaptcha(array('private_key' => sfConfig::get('app_recaptcha_private_key')), array(
@@ -59,9 +59,9 @@ class UserJoinForm extends BaseFormDoctrine
       'reason' => 'A little about you and why you\'re signing up',
       'analyst_reason' => 'Why you want to be an ' . link_to('analyst', '@howto'),
       'public_name' => 'Public username',
-      'password1' => 'Password',
-      'password2' => 'Password (again)',
-      'user_agrees' => 'Terms of use',
+      'pw1' => 'Password',
+      'pw2' => 'Password (again)',
+      'accepts_terms' => 'Terms of use',
       'captcha' => 'Spam test'
     ));
 

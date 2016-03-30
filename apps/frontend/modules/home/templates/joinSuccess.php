@@ -73,6 +73,11 @@ Use the form below to sign up, and we'll be in touch with further instructions i
     <?php echo input_hidden_tag('user[home_network_id]', LsListTable::US_NETWORK_ID) ?>
   <?php endif; ?>
 
+  <tr id="join-username">
+    <td class="form_label"><label for="user_username">Username</label></td>
+    <td class="form_field"><input type="text" name="user[username]"/> (required)</td>
+  </tr>
+
   <?php include_partial('global/formfield', array(
     'field' => $user_form['name_first'], 
     'help' => 'your name and email will not be public'
@@ -87,10 +92,10 @@ Use the form below to sign up, and we'll be in touch with further instructions i
     'help' => '4-30 chars; only letters, numbers, and periods'
   )) ?>
   <?php include_partial('global/formfield', array(
-    'field' => $user_form['password1'], 
+    'field' => $user_form['pw1'], 
     'help' => '6-20 chars, only letters and numbers'
   )) ?>
-  <?php include_partial('global/formfield', array('field' => $user_form['password2'])) ?>
+  <?php include_partial('global/formfield', array('field' => $user_form['pw2'])) ?>
 
   <?php if ($is_invited) : ?>
   	<?php echo input_hidden_tag('user[reason]', 'User was invited.') ?>
@@ -111,7 +116,7 @@ Use the form below to sign up, and we'll be in touch with further instructions i
   -->
 
 	<tr>
-		<td class="form_label <?php if ($user_form['user_agrees']->hasError()) { echo ' form_label_error'; } ?>"><?php echo $user_form['user_agrees']->renderLabel() ?></td>
+		<td class="form_label <?php if ($user_form['accepts_terms']->hasError()) { echo ' form_label_error'; } ?>"><?php echo $user_form['accepts_terms']->renderLabel() ?></td>
 		<td>
       <div class="terms_of_use">
          I understand that LittleSis's mission is to track people and groups with inordinate wealth, 
@@ -122,7 +127,7 @@ Use the form below to sign up, and we'll be in touch with further instructions i
          my account if they believe I am not following these guidelines in good faith.
         <br />        
         <br />
-        <?php echo $user_form['user_agrees']->render() ?> I accept the above terms of use
+        <?php echo $user_form['accepts_terms']->render() ?> I accept the above terms of use
       </div>
 		</td>
 	</tr>

@@ -2705,3 +2705,12 @@ html div#content td input[type="checkbox"] {
   margin-top: 40px;
   text-align: center;
 }
+
+/* hidden from real people :) */
+#join-username {
+  display: block;
+  line-height: 1px;
+  height: 1px;
+  width: 1px;
+  overflow: hidden;
+}
