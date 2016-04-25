@@ -12,9 +12,9 @@ class OsProcessMatchesTask extends LsTask
     $debugMode = null,
     $startTime = null,
     $databaseManager = null,
-    $fecImageBaseUrl = 'http://images.nictusa.com/cgi-bin/fecimg/?',
-    $fecCommitteeBaseUrl = 'http://query.nictusa.com/cgi-bin/com_detail/',
-    $fecSearchUrlPattern = 'http://query.nictusa.com/cgi-bin/qindcont/1/(lname|MATCHES|:%s:)|AND|(fname|MATCHES|:%s*:)';
+    $fecImageBaseUrl = 'http://docquery.fec.gov/cgi-bin/fecimg/?',
+    $fecCommitteeBaseUrl = 'http://docquery.fec.gov/cgi-bin/com_detail/',
+    $fecSearchUrlPattern = 'http://docquery.fec.gov/cgi-bin/qindcont/1/(lname|MATCHES|:%s:)|AND|(fname|MATCHES|:%s*:)';
 
 
   protected function configure()
