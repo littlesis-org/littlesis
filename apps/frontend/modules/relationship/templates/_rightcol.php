@@ -15,12 +15,4 @@
   <?php endif; ?>
 <?php endif; ?>
 
-<br />  
-<?php include_component('note', 'recordSample', array(
-  'record' => $relationship,
-  'more_uri' => RelationshipTable::getInternalUrl($relationship, 'notes'),
-  'model' => 'Relationship',
-  'name' => 'this relationship'
-)) ?>
-
 <?php end_slot() ?>

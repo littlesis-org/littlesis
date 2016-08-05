@@ -37,11 +37,6 @@
 <?php endif; ?>
 
 
-
-<?php include_partial('global/notes', array('record' => $entity)) ?>
-<br />
-
-
 <?php if ($sf_user->hasCredential('editor') || $sf_user->hasCredential('merger')) : ?>
 
   <?php if ($sf_user->hasCredential('merger') && !cache('similarEntities')) : ?>

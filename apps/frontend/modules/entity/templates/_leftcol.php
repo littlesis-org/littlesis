@@ -52,15 +52,6 @@
 <?php endif; ?>
 
 
-
-<?php include_component('note', 'recordSample', array(
-  'record' => $entity,
-  'model' => 'Entity',
-  'more_uri' => EntityTable::getInternalUrl($entity, 'notes')
-)) ?>
-<br />
-
-
 <?php if ($sf_user->hasCredential('editor') || $sf_user->hasCredential('merger')) : ?>
 
   <?php if ($sf_user->hasCredential('merger') && !cache('similarEntities')) : ?>
