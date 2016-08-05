@@ -225,7 +225,7 @@ class homeActions extends sfActions
           //save submitted email as password
           $user->username = $userParams['email'];
           $user->algorithm = 'sha1';
-          $user->setPassword($userParams['password1']);
+          $user->setPassword($userParams['pw1']);
           
           if (!$user->hasPermission('contributor'))
           {
