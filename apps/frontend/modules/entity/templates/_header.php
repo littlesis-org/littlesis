@@ -26,10 +26,6 @@
       'url' => EntityTable::getInternalUrl($entity, 'matchDonations'),
       'condition' => $sf_user->hasCredential('importer')
     ) ?>
-
-    <?php if (!OsEntityTransactionTable::countByEntityId($entity['id']) > 0) : ?>
-      <?php $donations['disabled'] = true ?>
-    <?php endif; ?>
     <?php $actions['match donations'] = $donations ?>
   <?php endif; ?>
 
