@@ -110,8 +110,8 @@ We're a grassroots watchdog network connecting the dots between the world's most
 
 <div class="row hidden-xs splash-images">
   <div class="col-sm-4 splash-image">
-    <?php echo link_to(image_tag('system/fcc-map.jpg'), 'http://littlesis.org/maps/101-fcc-chairman-wheeler-staff-telecom-ties') ?><br>
-    <?php echo link_to('FCC Tight with Telecoms', 'http://littlesis.org/maps/101-fcc-chairman-wheeler-staff-telecom-ties') ?>
+      <?php echo link_to(image_tag('system/Dakota_Access_Pipeline.jpg'), 'http://littlesis.org/maps/1634-who-s-banking-on-the-dakota-access-pipeline') ?><br>
+      <?php echo link_to("Who's Banking on the Dakota Access Pipeline?", 'http://littlesis.org/maps/1634-who-s-banking-on-the-dakota-access-pipeline') ?>
   </div>
   <div class="col-sm-4 splash-image">
     <?php echo link_to(image_tag('system/data-society-map.jpg'), 'http://littlesis.org/partypolitics') ?><br>
