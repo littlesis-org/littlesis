@@ -1,10 +1,10 @@
 #! /bin/bash
 
-git submodule init
-git submodule update
+# git submodule init
+# git submodule update
 cp config/ProjectConfiguration.class.php.dist config/ProjectConfiguration.class.php
 cp config/databases.yml.dist config/databases.yml
-cp web/.htaccess.dist web/.htaccess
+# cp web/.htaccess.dist web/.htaccess
 cp apps/frontend/config/app.yml.dist apps/frontend/config/app.yml
 cp apps/frontend/config/settings.yml.dist apps/frontend/config/settings.yml
 cp apps/api/config/app.yml.dist apps/api/config/app.yml
