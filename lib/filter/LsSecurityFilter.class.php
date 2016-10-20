@@ -8,6 +8,39 @@ class LsSecurityFilter extends sfBasicSecurityFilter
     $user = $context->getUser();
     $firstCall = $this->isFirstCall();
 
+
+    // attempt to log in with rails cookie
+    if ($firstCall && (!$user->isAuthenticated() || !$user->getGuardUser())) 
+    {
+        if ($cookie = $context->getRequest()->getCookie('_lilsis_session')) 
+        {
+            $sql = "SELECT data from sessions WHERE session_id = ?";
+            $db = Doctrine_Manager::connection();
+            $stmt = $db->execute($sql, array($cookie));
+            $results = $stmt->fetchAll();
+            
+            if (count($results) > 0) {
+                $sf_user_id = json_decode($results[0]["data"])->value->sf_user_id;
+                $q = Doctrine_Query::create()
+                    ->from('sfGuardUser')
+                    ->where('id = ?', $sf_user_id);
+
+                $sf_user = $q->fetchOne();
+                if ($sf_user)
+                {
+                    $user->signIn($sf_user);
+                }
+                else
+                {
+                    $context->getResponse()->setCookie(sfConfig::get('app_sf_guard_plugin_remember_cookie_name', 'sfRemember'), false, time()-86400);
+                }
+                 
+            }
+
+        }
+    }
+
+
     //attempt to log in user if they have the sfRemember cookie
     if (sfconfig::get('app_login_enabled') && $firstCall && (!$user->isAuthenticated() || !$user->getGuardUser()))
     {
