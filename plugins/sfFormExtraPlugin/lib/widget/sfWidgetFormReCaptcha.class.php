@@ -51,7 +51,7 @@ class sfWidgetFormReCaptcha extends sfWidgetForm
   {
     $this->addRequiredOption('public_key');
 
-    $this->addOption('use_ssl', false);
+    $this->addOption('use_ssl', true);
     $this->addOption('server_url', 'http://api.recaptcha.net');
     $this->addOption('server_url_ssl', 'https://api-secure.recaptcha.net');
   }
