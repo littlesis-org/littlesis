@@ -184,16 +184,11 @@ class EntityApi
 
       if (count($entity_fec_map))
       {
-        $databaseManager = sfContext::getInstance()->getDatabaseManager();
-        $rawDb = $databaseManager->getDatabase('raw');
-        $rawDb = Doctrine_Manager::connection($rawDb->getParameter('dsn'));  
-        $sql = "SELECT committee_id, party FROM os_committee " . 
-               "WHERE committee_id IN(" . join(',', array_fill(0, count($entity_fec_map), '?')) . ")";
+        $sql = "SELECT cmte_id, party FROM os_committees " . 
+               "WHERE cmte_id IN(" . join(',', array_fill(0, count($entity_fec_map), '?')) . ")";
 
-        $stmt = $rawDb->execute($sql, array_values($entity_fec_map));
+        $stmt = $db->execute($sql, array_values($entity_fec_map));
         $fec_party_map = $stmt->fetchAll(PDO::FETCH_KEY_PAIR);
-
-        $db = Doctrine_Manager::connection($databaseManager->getDatabase('main')->getParameter('dsn'));
 
         foreach ($org_ids as $org_id)
         {
