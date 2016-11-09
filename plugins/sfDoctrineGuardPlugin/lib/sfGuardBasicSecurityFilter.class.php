@@ -19,22 +19,53 @@ class sfGuardBasicSecurityFilter extends sfBasicSecurityFilter
 {
   public function execute ($filterChain)
   {
-    if ($this->isFirstCall() and !$this->getContext()->getUser()->isAuthenticated())
-    {
-      if ($cookie = $this->getContext()->getRequest()->getCookie(sfConfig::get('app_sf_guard_plugin_remember_cookie_name', 'sfRemember')))
+      $context = $this->getContext();
+      $user = $context->getUser();
+      $firstCall = $this->isFirstCall();
+
+      if ($firstCall && (!$user->isAuthenticated() || !$user->getGuardUser())) 
       {
-        $q = Doctrine_Query::create()
-              ->from('sfGuardRememberKey r')
-              ->innerJoin('r.sfGuardUser u')
-              ->where('r.remember_key = ?', $cookie);
+          if ($cookie = $context->getRequest()->getCookie('_lilsis_session')) 
+          {
+              $sql = "SELECT data from sessions WHERE session_id = ?";
+              $db = Doctrine_Manager::connection();
+              $stmt = $db->execute($sql, array($cookie));
+              $results = $stmt->fetchAll();
+            
+              if (count($results) > 0) {
+                  $sf_user_id = json_decode($results[0]["data"])->value->sf_user_id;
+                  $q = Doctrine_Query::create()
+                     ->from('sfGuardUser')
+                     ->where('id = ?', $sf_user_id);
 
-        if ($q->count())
-        {
-          $this->getContext()->getUser()->signIn($q->fetchOne()->sfGuardUser);
-        }
+                  $sf_user = $q->fetchOne();
+                  if ($sf_user)
+                  {
+                      $user->signIn($sf_user);
+                  }
+              }
+          }
       }
-    }
 
+    // if ($this->isFirstCall() and !$this->getContext()->getUser()->isAuthenticated())
+    // {
+        
+
+    //   if ($cookie = $this->getContext()->getRequest()->getCookie(sfConfig::get('app_sf_guard_plugin_remember_cookie_name', 'sfRemember')))
+    //   {
+    //     $q = Doctrine_Query::create()
+    //           ->from('sfGuardRememberKey r')
+    //           ->innerJoin('r.sfGuardUser u')
+    //           ->where('r.remember_key = ?', $cookie);
+
+    //     if ($q->count())
+    //     {
+    //       $this->getContext()->getUser()->signIn($q->fetchOne()->sfGuardUser);
+    //     }
+    //   }
+    // }
+
+    
     parent::execute($filterChain);
   }
 }
