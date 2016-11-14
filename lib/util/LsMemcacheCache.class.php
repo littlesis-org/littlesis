@@ -5,6 +5,15 @@ class LsMemcacheCache extends sfMemcacheCache
   /**
    * Adds a key to our array of keys, so that we can use removePattern
    */
+
+  public function initialize()
+  {
+     $options =  array(
+          "host" => "memcached"
+      )
+      parent::initialize($options);
+  }
+    
   protected function setCacheInfo($key)
   {
     //prepend key with prefix
