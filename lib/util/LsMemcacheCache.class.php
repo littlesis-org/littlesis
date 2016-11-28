@@ -10,7 +10,7 @@ class LsMemcacheCache extends sfMemcacheCache
   {
      $options =  array(
           "host" => "memcached"
-      )
+      );
       parent::initialize($options);
   }
     
