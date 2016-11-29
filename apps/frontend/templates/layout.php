@@ -27,6 +27,23 @@
 
 <?php include_partial('global/analytics') ?>
 
+<!-- giving tuesday -->
+<style type="text/css">
+#giving-top {
+    height: 28px;
+    width: 100%;
+    background-color: #ffff67;
+}
+
+#giving-top p {
+    padding-top: 2px;
+}
+
+#top {
+  margin-bottom: 20px;
+}
+</style>
+
 </head>
 <body style="<?php echo (!$sf_request->getParameter("is_local") && $sf_request->getParameter('module') == 'home' && $sf_request->getParameter('action') == 'index') && false ? ('background-image: url(\'' . image_path('system/bg-lombardi-white.jpg') . '\');') : '' ?>">
 
@@ -41,7 +58,12 @@
 }(document, 'script', 'facebook-jssdk'));</script>
 
 <div id="top">
-  <nav class="navbar navbar-default navbar-fixed-top">
+  <nav class="navbar navbar-default navbar-fixed-top" style="height:79px">
+    <div id="giving-top">
+	    <p class="text-center">Today is #GivingTuesday. Please <a href="http://public-accountability.org/donate/">make a tax-deductible donation</a> to support our efforts to develop and maintain LittleSis.org</p>
+	</div>
+
+
     <div id="top_content">
       <div class="navbar-header">
         <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
