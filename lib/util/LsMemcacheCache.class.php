@@ -115,10 +115,10 @@ class LsMemcacheCache extends sfMemcacheCache
    */
   public function removePatterns(Array $patterns)
   {
-    if (!$this->getOption('storeCacheInfo', false))
-    {
-      throw new sfCacheException('To use the "removePattern" method, you must set the "storeCacheInfo" option to "true".');
-    }
+    /* if (!$this->getOption('storeCacheInfo', false)) */
+    /* { */
+    /*   throw new sfCacheException('To use the "removePattern" method, you must set the "storeCacheInfo" option to "true".'); */
+    /* } */
 
     if (!count($patterns))
     {
