@@ -65,7 +65,7 @@
 <hr>
 <strong>Get the Bookmarklet</strong>
 <br>Drag this link to your browser’s bookmarks toolbar (don’t click):
-<br><strong><a href="javascript:(function(){var%20jqLoader={go:function(){if(!(window.jQuery&amp;&amp;window.jQuery.fn.jquery=='1.3.2')){var%20s=document.createElement('script');s.setAttribute('src','http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js');s.setAttribute('type','text/javascript');document.getElementsByTagName('head')[0].appendChild(s)}this.ok()},ok:function(){if(typeof(window.jQuery)!=='undefined'&amp;&amp;window.jQuery.fn.jquery=='1.3.2'){this.init()}else{setTimeout((function(){jqLoader.ok()}),100)}},init:function(){$.getScript('http://littlesis.org/js/bookmarklet.js',function(){$('body').addLittleSisToolbar()})}};jqLoader.go()})()"> LittleSis Bookmarklet</a></strong> 
+<br><strong><a href="javascript:(function(){var%20jqLoader={go:function(){if(!(window.jQuery&amp;&amp;window.jQuery.fn.jquery=='1.3.2')){var%20s=document.createElement('script');s.setAttribute('src','https://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js');s.setAttribute('type','text/javascript');document.getElementsByTagName('head')[0].appendChild(s)}this.ok()},ok:function(){if(typeof(window.jQuery)!=='undefined'&amp;&amp;window.jQuery.fn.jquery=='1.3.2'){this.init()}else{setTimeout((function(){jqLoader.ok()}),100)}},init:function(){$.getScript('https://littlesis.org/js/bookmarklet.js',function(){$('body').addLittleSisToolbar()})}};jqLoader.go()})()"> LittleSis Bookmarklet</a></strong> 
 <p><strong> Use the Bookmarklet</strong></p>
 <ol class="help-num-list">
 <li>Make sure you are logged into LittleSis.
