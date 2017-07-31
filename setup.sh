@@ -19,3 +19,5 @@ touch log/sphinx/searchd.log
 touch log/sphinx/query.log
 touch log/sphinx/searchd.pid
 chmod a+w log/sphinx/*
+mkdir -p cache/frontend/prod/config
+chmod -R 777 cache/
