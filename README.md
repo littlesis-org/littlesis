@@ -1,4 +1,4 @@
-# This repo has been depreciated
+# This repo has been deprecated 
 
 Please go here: [public-accountability/littlesis-rails](https://github.com/public-accountability/littlesis-rails)
 
