@@ -2,7 +2,7 @@
 
 Please go here: [public-accountability/littlesis-rails](https://github.com/public-accountability/littlesis-rails)
 
-All current development in LittleSis happens in that repository. We are about 95% done with migrating all features from this one to our new version (in rails).
+In 2018, we finished migrating LittleSis to rails. All current development happens in that repository.
 
 ## About LittleSis
 
